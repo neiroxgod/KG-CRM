@@ -10,25 +10,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
-}
-
 model Account {
   id Int @id @default(autoincrement())
   caption String
+  employers Employer[]
+  email String?
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
 }
 
-// model Employer {}
+model Employer {
+  id Int @id @default(autoincrement())
+  acccount Account @relation(fields: [accountId], references: [id])
+  refreshToken RefreshToken[]
+  accountId Int
+  name String
+  username String @unique
+  password String
+  email String?
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+}
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
+model RefreshToken {
+  id Int @id @default(autoincrement())
+  token String @unique
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  emplId Int
+  employer Employer @relation(fields: [emplId], references: [id])
 }
