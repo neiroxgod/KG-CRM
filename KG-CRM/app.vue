@@ -1,5 +1,4 @@
 <template>
-  <div class="bg-slate-900 w-full h-screen">
-    <NuxtPage />
-  </div>
+  <NuxtPage />
 </template>
+<script setup></script>
