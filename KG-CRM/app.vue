@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-6">
     <!-- Layout sidebar -->
-    <div class="col-start-1 row-span-2">
+    <div class="col-start-1 row-span-2 relative">
       <NuxtLayout name="sidebar" />
     </div>
     <!-- Layout navbar -->
