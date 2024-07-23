@@ -1,12 +1,8 @@
 <script setup>
-const layout = "default";
-const { useAuthUser, initAuth } = useAuth();
-const user = useAuthUser();
-
-if (!user) {
+const layout = ref("default");
+const userStore = useAuthStore();
+if (!userStore.user && !userStore.isLoading) {
   navigateTo("/employerAuth");
-} else {
-  console.log(user);
 }
 </script>
 

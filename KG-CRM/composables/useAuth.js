@@ -1,82 +1,59 @@
 import { jwtDecode } from "jwt-decode";
+import useFetchApi from "@/composables/useFetchApi"; // Импортируем useFetchApi
+import { useAuthStore } from "@/stores/UserStore.js"; // Импортируем хранилище
 
 export default () => {
-  const useAuthToken = () => useState("auth_token");
-  const useAuthUser = () => useState("auth_user");
-  const useAuthLoading = () => useState("auth_loading", () => true);
+  const authStore = useAuthStore(); // Получаем состояние из Pinia
 
-  const setToken = (newToken) => {
-    const authToken = useAuthToken();
-    authToken.value = newToken;
+  const login = async ({ username, password }) => {
+    const fetchApi = useFetchApi(authStore.token); // Получаем fetchApi с токеном
+    authStore.setLoading(true); // Устанавливаем состояние загрузки
+    try {
+      const data = await fetchApi("/api/auth/login", {
+        method: "POST",
+        body: {
+          username,
+          password,
+        },
+      });
+      authStore.setToken(data.access_token); // Устанавливаем токен
+      authStore.setUser(data.user); // Устанавливаем пользователя
+      return true;
+    } catch (error) {
+      console.error("Login error:", error); // Логируем ошибку
+      throw error; // Пробрасываем ошибку
+    } finally {
+      authStore.setLoading(false); // Завершаем загрузку
+    }
   };
 
-  const setUser = (newUser) => {
-    const authUser = useAuthUser();
-    authUser.value = newUser;
+  const refreshToken = async () => {
+    const fetchApi = useFetchApi(authStore.token); // Получаем fetchApi с токеном
+    try {
+      const data = await fetchApi("/api/auth/refresh");
+      authStore.setToken(data.access_token); // Устанавливаем новый токен
+      return true;
+    } catch (error) {
+      console.error("Refresh token error:", error);
+      throw error;
+    }
   };
 
-  const setIsAuthLoading = (value) => {
-    const authLoading = useAuthLoading();
-    authLoading.value = value;
-  };
-
-  const login = ({ username, password }) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const data = await useFetchApi("/api/auth/login", {
-          method: "POST",
-          body: {
-            username,
-            password,
-          },
-        });
-
-        setToken(data.access_token);
-        setUser(data.user);
-
-        resolve(true);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  };
-
-  const refreshToken = () => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const data = await useFetchApi("/api/auth/refresh");
-
-        setToken(data.access_token);
-        resolve(true);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  };
-
-  const getUser = () => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const data = await useFetchApi("/api/auth/user");
-
-        setUser(data.user);
-        resolve(true);
-      } catch (error) {
-        reject(error);
-      }
-    });
+  const getUser = async () => {
+    const fetchApi = useFetchApi(authStore.token); // Получаем fetchApi с токеном
+    try {
+      const data = await fetchApi("/api/auth/user");
+      authStore.setUser(data.user); // Устанавливаем пользователя
+      return true;
+    } catch (error) {
+      console.error("Get user error:", error);
+      throw error;
+    }
   };
 
   const reRefreshAccessToken = () => {
-    const authToken = useAuthToken();
-
-    if (!authToken.value) {
-      return;
-    }
-
-    const jwt = jwtDecode(authToken.value);
-
-    const newRefreshTime = jwt.exp - 60000;
+    const jwt = jwtDecode(authStore.token); // Используем токен из хранилища
+    const newRefreshTime = jwt.exp * 1000 - Date.now() - 60000; // Убедитесь, что время в миллисекундах
 
     setTimeout(async () => {
       await refreshToken();
@@ -84,47 +61,39 @@ export default () => {
     }, newRefreshTime);
   };
 
-  const initAuth = () => {
-    return new Promise(async (resolve, reject) => {
-      setIsAuthLoading(true);
-      try {
-        await refreshToken();
-        await getUser();
-
-        reRefreshAccessToken();
-
-        resolve(true);
-      } catch (error) {
-        console.log(error);
-        reject(error);
-      } finally {
-        setIsAuthLoading(false);
-      }
-    });
+  const initAuth = async () => {
+    authStore.setLoading(true); // Устанавливаем состояние загрузки
+    try {
+      await refreshToken();
+      await getUser();
+      reRefreshAccessToken();
+      return true;
+    } catch (error) {
+      console.error("Init auth error:", error);
+      throw error; // Пробрасываем ошибку
+    } finally {
+      authStore.setLoading(false); // Завершаем загрузку
+    }
   };
 
-  const logout = () => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await useFetchApi("/api/auth/logout", {
-          method: "POST",
-        });
-
-        setToken(null);
-        setUser(null);
-        resolve();
-      } catch (error) {
-        reject(error);
-      }
-    });
+  const logout = async () => {
+    const fetchApi = useFetchApi(authStore.token); // Получаем fetchApi с токеном
+    try {
+      await fetchApi("/api/auth/logout", { method: "POST" });
+      authStore.setToken(null); // Убираем токен
+      authStore.setUser(null); // Убираем пользователя
+    } catch (error) {
+      console.error("Logout error:", error);
+      throw error; // Пробрасываем ошибку
+    }
   };
 
   return {
     login,
-    useAuthUser,
-    useAuthToken,
     initAuth,
-    useAuthLoading,
     logout,
+    refreshToken,
+    getUser,
+    reRefreshAccessToken,
   };
 };
