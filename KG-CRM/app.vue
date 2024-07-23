@@ -1,9 +1,9 @@
 <template>
   <div>
     <!-- AuthPage -->
-
+    <SharedNuxtLoadingBar v-if="userStore.loading" />
     <!-- App -->
-    <div v-if="user" class="grid grid-cols-6">
+    <div v-else-if="userStore.user" class="grid grid-cols-6">
       <!-- Layout sidebar -->
       <div class="col-start-1 row-span-2 relative">
         <NuxtLayout name="sidebar" />
@@ -18,12 +18,14 @@
       </div>
     </div>
 
-    <NuxtPage v-else />
+    <div v-else>
+      <NuxtPage />
+    </div>
   </div>
 </template>
 <script setup>
-const { useAuthUser, initAuth } = useAuth();
-const user = useAuthUser();
+const { initAuth } = useAuth();
+const userStore = useAuthStore();
 
 onBeforeMount(() => {
   initAuth();

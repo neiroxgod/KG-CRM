@@ -1,19 +1,11 @@
-export default (url, options = {}) => {
-  try {
-    const { useAuthToken } = useAuth();
-
-    const authTokenValue = useAuthToken().value;
-
-    return $fetch(url, {
+export default (token) => {
+  return async (url, options = {}) => {
+    return await $fetch(url, {
       ...options,
       headers: {
         ...options.headers,
-        Authorization: authTokenValue ? `Bearer ${authTokenValue}` : "",
+        Authorization: `Bearer ${token}`, // Используйте токен, когда он будет передан
       },
     });
-  } catch (error) {
-    console.error("Ошибка получения токена авторизации:", error);
-    // Обработка ошибки или возврат значения по умолчанию
-    return $fetch(url, options);
-  }
+  };
 };

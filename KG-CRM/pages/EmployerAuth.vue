@@ -3,8 +3,6 @@ import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 
-const layout = "default";
-
 const formSchema = toTypedSchema(
   z.object({
     username: z.string().min(2).max(50),
@@ -21,7 +19,7 @@ const onSubmit = form.handleSubmit((values) => {
 </script>
 
 <template>
-  <NuxtLayout :name="layout">
+  <div>
     <AuthForm />
-  </NuxtLayout>
+  </div>
 </template>
