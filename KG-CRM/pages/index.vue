@@ -1,11 +1,15 @@
-<script setup lang="ts">
+<script setup>
 const layout = "default";
+const { useAuthUser, initAuth } = useAuth();
+const user = useAuthUser();
+
+if (!user) {
+  navigateTo("/employerAuth");
+} else {
+  console.log(user);
+}
 </script>
 
 <template>
-  <NuxtLayout :name="layout">
-    <div>
-      <h1>Привет, мир!</h1>
-    </div>
-  </NuxtLayout>
+  <NuxtLayout :name="layout"> </NuxtLayout>
 </template>

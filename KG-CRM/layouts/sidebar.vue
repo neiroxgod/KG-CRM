@@ -1,6 +1,11 @@
 <template>
   <div class="bg-Primary h-screen relatve">
-    .
+    <div class="absolute right-0">
+      <Icon
+        class="bg-white h-8 w-8"
+        name="material-symbols:subdirectory-arrow-left-rounded"
+      />
+    </div>
     <WidgetsSidebarLogo />
     <WidgetsSidebarItem
       v-for="route in mainRoutes"
