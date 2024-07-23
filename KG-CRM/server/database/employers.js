@@ -38,3 +38,11 @@ export const getUserByUsername = async (username) => {
     },
   });
 };
+
+export const getUserById = (userId) => {
+  return prisma.employer.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+};

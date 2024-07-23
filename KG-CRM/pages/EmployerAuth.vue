@@ -21,6 +21,7 @@ const onSubmit = form.handleSubmit((values) => {
 </script>
 
 <template>
-  <NuxtLayout :name="layout"></NuxtLayout>
-  <AuthForm />
+  <NuxtLayout :name="layout">
+    <AuthForm />
+  </NuxtLayout>
 </template>
