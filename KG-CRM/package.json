@@ -16,6 +16,8 @@
     "@prisma/nuxt": "^0.0.30",
     "@sidebase/nuxt-auth": "^0.6.7",
     "@tanstack/vue-table": "^8.19.3",
+    "@unovis/ts": "^1.4.3",
+    "@unovis/vue": "^1.4.3",
     "@vee-validate/zod": "^4.13.2",
     "@vueuse/core": "^10.11.0",
     "bcrypt": "^5.1.1",

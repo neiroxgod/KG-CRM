@@ -1,7 +1,9 @@
 <template>
-  <div class="flex items-center justify-center h-screen">
-    <div class="absolute w-20 h-20 animate-ping">
-      <div class="rounded-full bg-violet-900 w-full h-full"></div>
+  <div class="flex h-screen items-center justify-center bg-white">
+    <div class="absolute h-20 w-20 animate-spin">
+      <div
+        class="h-full w-full border-spacing-2 rounded-full border-8 border-t-violet-950 bg-white"
+      ></div>
     </div>
   </div>
 </template>

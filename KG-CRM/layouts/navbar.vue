@@ -32,6 +32,6 @@
 import { routeNames } from "../composables/routeNameTransformer";
 const route = useRoute();
 const pageTitle = computed(() => {
-  return routeNames[route.path] || "Неизвестный маршрут"; // Значение по умолчанию
+  return routeNames[route.path] || "Дешборд"; // Значение по умолчанию
 });
 </script>
