@@ -1,68 +1,5 @@
-<script setup>
-const layout = ref("default");
-const userStore = useAuthStore();
-if (!userStore.user && !userStore.isLoading) {
-  navigateTo("/employerAuth");
-}
-
-const reportStats = ref([
-  {
-    icon: "material-symbols:wallet",
-    label: "Прибыль",
-    stat: "235 000 Р",
-    additionalInfo: [
-      {
-        label: "Расходы",
-        stat: "12 000 Р",
-      },
-      {
-        label: "Доходы",
-        stat: "247 000 Р",
-      },
-    ],
-  },
-  {
-    icon: "material-symbols:chart-data",
-    label: "Средний чек",
-    stat: "3 500 Р",
-  },
-  {
-    icon: "material-symbols:person-play-rounded",
-    label: "Ученики",
-    stat: "35",
-    additionalInfo: [
-      {
-        label: "Новые",
-        stat: "24",
-      },
-      {
-        label: "Отток",
-        stat: "12",
-      },
-    ],
-  },
-  {
-    icon: "material-symbols:filter-vintage",
-    label: "Средний LTV, Р",
-    stat: "3 500 Р",
-  },
-]);
-</script>
-
 <template>
-  <div class="p-10">
-    <div>
-      <div
-        v-if="userStore.user"
-        class="text-4xl font-inter font-bold text-btnPrimary"
-      >
-        Добро пожаловать, {{ userStore.user.name }} !
-      </div>
-      <div class="text-xl font-inter font-thin mt-2">
-        Взгляните на статистику вашей школы!
-      </div>
-    </div>
-
+  <div class="overflow-y-auto">
     <div class="mt-5 flex justify-between">
       <WidgetsDashboardItem
         class="mr-5"
@@ -138,3 +75,60 @@ const reportStats = ref([
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+interface IStats {
+  icon: string;
+  label: string;
+  stat: string;
+  additionalInfo?: IStatsAdditional[];
+}
+
+interface IStatsAdditional {
+  label: string;
+  stat: string;
+}
+
+const reportStats = ref<IStats[]>([
+  {
+    icon: "material-symbols:wallet",
+    label: "Прибыль",
+    stat: "235 000 Р",
+    additionalInfo: [
+      {
+        label: "Расходы",
+        stat: "12 000 Р",
+      },
+      {
+        label: "Доходы",
+        stat: "247 000 Р",
+      },
+    ],
+  },
+  {
+    icon: "material-symbols:chart-data",
+    label: "Средний чек",
+    stat: "3 500 Р",
+  },
+  {
+    icon: "material-symbols:person-play-rounded",
+    label: "Ученики",
+    stat: "35",
+    additionalInfo: [
+      {
+        label: "Новые",
+        stat: "24",
+      },
+      {
+        label: "Отток",
+        stat: "12",
+      },
+    ],
+  },
+  {
+    icon: "material-symbols:filter-vintage",
+    label: "Средний LTV, Р",
+    stat: "3 500 Р",
+  },
+]);
+</script>
