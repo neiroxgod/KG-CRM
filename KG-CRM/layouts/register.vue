@@ -1,17 +1,17 @@
 <template>
   <form
-    @submit="handleSubmit(onSubmit)"
-    class="border p-6 bg-white shadow-md w-1/3 h-screen flex flex-col"
+    @submit.prevent="onSubmit"
+    class="min-w-96 border p-6 bg-white shadow-md w-1/3 h-screen flex flex-col"
   >
     <div class="text-3xl font-inter font-bold">Создание аккаунта</div>
     <div class="flex flex-col items-center w-full space-y-3">
-      <FormField v-slot="{ componentField }" name="userFio">
+      <FormField v-slot="{ componentField }" name="name">
         <FormItem class="w-full">
           <FormLabel>ФИО</FormLabel>
           <FormControl>
             <Input type="text" class="w-full" v-bind="componentField" />
           </FormControl>
-          <FormMessage v-if="errors.userFio">{{ errors.userFio }}</FormMessage>
+          <FormMessage v-if="errors.name">{{ errors.name }}</FormMessage>
         </FormItem>
       </FormField>
       <FormField v-slot="{ componentField }" name="caption">
@@ -47,7 +47,7 @@
         <FormItem class="w-full">
           <FormLabel>Пароль</FormLabel>
           <FormControl>
-            <Input type="text" class="w-full" v-bind="componentField" />
+            <Input type="password" class="w-full" v-bind="componentField" />
           </FormControl>
           <FormMessage v-if="errors.password">{{
             errors.password
@@ -58,7 +58,7 @@
         <FormItem class="w-full">
           <FormLabel>Повторите пароль</FormLabel>
           <FormControl>
-            <Input type="text" class="w-full" v-bind="componentField" />
+            <Input type="password" class="w-full" v-bind="componentField" />
           </FormControl>
           <FormMessage v-if="errors.repeatPassword">{{
             errors.repeatPassword
@@ -102,7 +102,7 @@ const formSchema = toTypedSchema(
       message: "Пожалуйста, укажите логин.",
       required_error: "Пожалуйста, укажите логин.",
     }),
-    userFio: z.string().min(1, {
+    name: z.string().min(1, {
       message: "Пожалуйста, введите ваше ФИО.",
       required_error: "Пожалуйста, введите ваше ФИО.",
     }),
@@ -129,32 +129,22 @@ const { handleSubmit, errors } = useForm({
   validationSchema: formSchema,
 });
 
-const onSubmit = (values) => {
-  console.log("FORM SUBMITED", values);
-  Toast({
-    title: "You submitted the following values:",
-    description: h(
-      "pre",
-      { class: "mt-2 w-[340px] rounded-md bg-slate-950 p-4" },
-      h("code", { class: "text-white" }, JSON.stringify(values, null, 2))
-    ),
-  });
-};
+const onSubmit = handleSubmit(async (values) => {
+  const { register } = useAuth();
 
-async function handleLogin() {
-  const { login } = useAuth();
-
-  userData.value.loading = true;
   try {
-    await login({
-      username: userData.value.username,
-      password: userData.value.password,
-    });
-    navigateTo("/");
+    await register({ ...values });
   } catch (error) {
     console.log(error);
   } finally {
-    userData.value.loading = false;
+    navigateTo("/");
   }
-}
+});
+
+const onFormSubmit = handleSubmit((values, { event }) => {
+  event.preventDefault(); // Prevent form submission
+  onSubmit(values); // Call your submit function
+});
+
+async function handleLogin() {}
 </script>

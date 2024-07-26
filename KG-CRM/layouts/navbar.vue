@@ -19,11 +19,7 @@
       </span>
     </div>
     <div class="text-xl flex items-center">
-      <Avatar id="avatar" class="mr-2">
-        <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
-        <AvatarFallback>CN</AvatarFallback>
-      </Avatar>
-      <Label for="avatar"> Садиков Артем </Label>
+      <WidgetsNavbarDropDown />
     </div>
   </div>
 </template>
@@ -31,6 +27,7 @@
 <script lang="ts" setup>
 import { routeNames } from "../composables/routeNameTransformer";
 const route = useRoute();
+const userStore = useAuthStore();
 const pageTitle = computed(() => {
   return routeNames[route.path] || "Дешборд"; // Значение по умолчанию
 });

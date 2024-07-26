@@ -1,13 +1,13 @@
 import { jwtDecode } from "jwt-decode";
-import useFetchApi from "@/composables/useFetchApi"; // Импортируем useFetchApi
-import { useAuthStore } from "@/stores/UserStore.js"; // Импортируем хранилище
+import useFetchApi from "@/composables/useFetchApi";
+import { useAuthStore } from "@/stores/UserStore";
 
 export default () => {
-  const authStore = useAuthStore(); // Получаем состояние из Pinia
+  const authStore = useAuthStore(); //Pinia stores/UserStore
 
   const login = async ({ username, password }) => {
-    const fetchApi = useFetchApi(authStore.token); // Получаем fetchApi с токеном
-    authStore.setLoading(true); // Устанавливаем состояние загрузки
+    const fetchApi = useFetchApi(authStore.token);
+    authStore.setLoading(true);
     try {
       const data = await fetchApi("/api/auth/login", {
         method: "POST",
@@ -16,22 +16,60 @@ export default () => {
           password,
         },
       });
-      authStore.setToken(data.access_token); // Устанавливаем токен
-      authStore.setUser(data.user); // Устанавливаем пользователя
+      authStore.setToken(data.access_token);
+      authStore.setUser(data.user);
       return true;
     } catch (error) {
-      console.error("Login error:", error); // Логируем ошибку
-      throw error; // Пробрасываем ошибку
+      console.error("Login error:", error);
+      throw error;
     } finally {
-      authStore.setLoading(false); // Завершаем загрузку
+      authStore.setLoading(false);
+    }
+  };
+
+  const register = async ({
+    username,
+    email,
+    password,
+    name,
+    caption,
+    repeatPassword,
+  }) => {
+    const fetchApi = useFetchApi(authStore.token);
+
+    if (password !== repeatPassword) {
+      return "passwords do not match";
+    }
+
+    authStore.setLoading(true);
+
+    try {
+      const data = await fetchApi("/api/auth/register", {
+        method: "POST",
+        body: {
+          email,
+          name,
+          caption,
+          username,
+          password,
+          repeatPassword,
+        },
+      });
+
+      await login({ username, password });
+    } catch (error) {
+      console.error("register error:", error);
+      throw error;
+    } finally {
+      authStore.setLoading(false);
     }
   };
 
   const refreshToken = async () => {
-    const fetchApi = useFetchApi(authStore.token); // Получаем fetchApi с токеном
+    const fetchApi = useFetchApi(authStore.token);
     try {
       const data = await fetchApi("/api/auth/refresh");
-      authStore.setToken(data.access_token); // Устанавливаем новый токен
+      authStore.setToken(data.access_token);
       return true;
     } catch (error) {
       console.error("Refresh token error:", error);
@@ -40,10 +78,10 @@ export default () => {
   };
 
   const getUser = async () => {
-    const fetchApi = useFetchApi(authStore.token); // Получаем fetchApi с токеном
+    const fetchApi = useFetchApi(authStore.token);
     try {
       const data = await fetchApi("/api/auth/user");
-      authStore.setUser(data.user); // Устанавливаем пользователя
+      authStore.setUser(data.user);
       return true;
     } catch (error) {
       console.error("Get user error:", error);
@@ -53,7 +91,7 @@ export default () => {
 
   const reRefreshAccessToken = () => {
     const jwt = jwtDecode(authStore.token); // Используем токен из хранилища
-    const newRefreshTime = jwt.exp * 1000 - Date.now() - 60000; // Убедитесь, что время в миллисекундах
+    const newRefreshTime = jwt.exp * 1000 - Date.now() - 60000;
 
     setTimeout(async () => {
       await refreshToken();
@@ -62,7 +100,7 @@ export default () => {
   };
 
   const initAuth = async () => {
-    authStore.setLoading(true); // Устанавливаем состояние загрузки
+    authStore.setLoading(true);
     try {
       await refreshToken();
       await getUser();
@@ -70,26 +108,27 @@ export default () => {
       return true;
     } catch (error) {
       console.error("Init auth error:", error);
-      throw error; // Пробрасываем ошибку
+      throw error;
     } finally {
-      authStore.setLoading(false); // Завершаем загрузку
+      authStore.setLoading(false);
     }
   };
 
   const logout = async () => {
-    const fetchApi = useFetchApi(authStore.token); // Получаем fetchApi с токеном
+    const fetchApi = useFetchApi(authStore.token);
     try {
       await fetchApi("/api/auth/logout", { method: "POST" });
-      authStore.setToken(null); // Убираем токен
-      authStore.setUser(null); // Убираем пользователя
+      authStore.setToken(null);
+      authStore.setUser(null);
     } catch (error) {
       console.error("Logout error:", error);
-      throw error; // Пробрасываем ошибку
+      throw error;
     }
   };
 
   return {
     login,
+    register,
     initAuth,
     logout,
     refreshToken,

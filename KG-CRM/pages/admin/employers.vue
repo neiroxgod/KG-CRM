@@ -1,66 +1,109 @@
 <template>
-  <div class="p-5 flex flex-row-reverse">
-    <SharedAddButton label="Добавить" />
-  </div>
-  <div class="mt-5">
-    <!-- https://tanstack.com/table/latest/docs/framework/vue/vue-table -->
-    <Table>
-      <TableCaption>Список сотрудников.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead> ФИО </TableHead>
-          <TableHead>Филиал</TableHead>
-          <TableHead>Должность</TableHead>
-          <TableHead> Номер </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        <TableRow v-for="empl in employers" :key="empl.id">
-          <TableCell class="font-medium">
-            {{ empl.fio }}
-          </TableCell>
-          <TableCell>{{ empl.filial }}</TableCell>
-          <TableCell>{{ empl.type[0].label }}</TableCell>
-          <TableCell>
-            {{ empl.phone }}
-          </TableCell>
-        </TableRow>
-      </TableBody>
-    </Table>
+  <div class="p-5">
+    <div class="flex flex-row-reverse">
+      <SharedAddButton label="Добавить" />
+    </div>
+    <div class="mt-5">
+      <DataTable :columns="columns" :data="data" />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-const employers = [
-  {
-    id: 1,
-    fio: "Садиков Артем Дмитриевич",
-    filial: "Камышин",
-    type: [
-      {
-        label: "Администратор",
-      },
-      {
-        label: "Преподаватель",
-      },
-    ],
-    phone: "+79994711222",
-  },
-  {
-    id: 2,
-    fio: "Садиков Артем Дмитриевич",
-    filial: "Камышин",
-    type: [
-      {
-        label: "Администратор",
-      },
-      {
-        label: "Преподаватель",
-      },
-    ],
-    phone: "+79994711222",
-  },
-];
+import { columns } from "@/components/widgets/modules/table/columns";
+import type { Payment } from "@/components/widgets/modules/table/columns";
+import DataTable from "@/components/widgets/modules/table/data.vue";
+
+const data = ref<Payment[]>([]);
+
+async function getData(): Promise<Payment[]> {
+  // Fetch data from your API here.
+  return [
+    {
+      id: "728ed52f",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      id: "728ed52f",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      id: "728ed52f",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      id: "728ed52f",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      id: "728ed52f",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      id: "728ed52f",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      id: "728ed52f",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      id: "728ed52f",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      id: "728ed52f",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      id: "728ed52f",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      id: "728ed52f",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      id: "728ed52f",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      id: "728ed52f",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+    // ...
+  ];
+}
+
+onMounted(async () => {
+  data.value = await getData();
+});
 </script>
 
 <style></style>

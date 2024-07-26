@@ -1,4 +1,8 @@
-export const routeNames = {
+interface IRouteNames {
+  [key: string]: string;
+}
+
+export const routeNames: IRouteNames = {
   "/admin/groups": "Учебные группы",
   "/admin/users": "Ученики",
   "/admin/employers": "Сотрудники",

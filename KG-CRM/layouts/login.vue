@@ -15,7 +15,7 @@
         <div class="w-full">
           <FormLabel>Пароль</FormLabel>
           <FormControl>
-            <Input class="w-full" v-model="data.password" />
+            <Input type="password" class="w-full" v-model="data.password" />
           </FormControl>
         </div>
       </div>
