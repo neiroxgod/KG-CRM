@@ -7,7 +7,7 @@
         <icon name="material-symbols:expand-more" />
       </div>
     </DropdownMenuTrigger>
-    <DropdownMenuContent class="w-56">
+    <DropdownMenuContent class="w-56 mr-5">
       <DropdownMenuLabel>{{ userStore.user!.name }}</DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
