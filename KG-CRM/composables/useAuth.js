@@ -30,6 +30,7 @@ export default () => {
   const register = async ({
     username,
     email,
+    phone,
     password,
     name,
     caption,
@@ -49,6 +50,7 @@ export default () => {
         body: {
           email,
           name,
+          phone,
           caption,
           username,
           password,

@@ -32,6 +32,15 @@
           <FormMessage v-if="errors.email">{{ errors.email }}</FormMessage>
         </FormItem>
       </FormField>
+      <FormField v-slot="{ componentField }" name="phone">
+        <FormItem class="w-full">
+          <FormLabel>Телефон</FormLabel>
+          <FormControl>
+            <Input type="text" class="w-full" v-bind="componentField" />
+          </FormControl>
+          <FormMessage v-if="errors.phone">{{ errors.phone }}</FormMessage>
+        </FormItem>
+      </FormField>
       <FormField v-slot="{ componentField }" name="username">
         <FormItem class="w-full">
           <FormLabel>Логин</FormLabel>
@@ -108,6 +117,10 @@ const formSchema = toTypedSchema(
     }),
     email: z.string().email({
       message: "Пожалуйста, введите корректную почту.",
+      required_error: "Пожалуйста, введите корректную почту.",
+    }),
+    phone: z.string().min(10, {
+      message: "Пожалуйста, введите корректный номер.",
       required_error: "Пожалуйста, введите корректную почту.",
     }),
     caption: z.string().min(1, {

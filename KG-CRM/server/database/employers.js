@@ -14,13 +14,23 @@ export const createUser = async (userData) => {
     },
   });
 
+  const filial = await prisma.filial.create({
+    data: {
+      accountId: account.id,
+      address: "По умолчанию",
+      caption: "Филиал по умолчанию",
+    },
+  });
+
   const employer = await prisma.employer.create({
     data: {
       accountId: account.id,
       name: userData.name,
+      phone: userData.phone,
+      email: userData.email,
       username: userData.username,
       password: userData.password,
-      email: userData.email,
+      filialId: filial.id,
     },
   });
 
@@ -29,6 +39,14 @@ export const createUser = async (userData) => {
     employer,
     userData,
   };
+};
+
+export const getEmployersByAccount = async (accountId) => {
+  return await prisma.employer.findMany({
+    where: {
+      accountId: parseInt(accountId),
+    },
+  });
 };
 
 export const getUserByUsername = async (username) => {

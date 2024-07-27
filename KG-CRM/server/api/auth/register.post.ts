@@ -4,7 +4,8 @@ import { userTransformer } from "~/server/transformers/user";
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
-  const { username, email, password, repeatPassword, name, caption } = body;
+  const { username, email, password, repeatPassword, name, caption, phone } =
+    body;
 
   if (
     !username ||
@@ -12,6 +13,7 @@ export default defineEventHandler(async (event) => {
     !password ||
     !repeatPassword ||
     !name ||
+    !phone ||
     !caption
   ) {
     return sendError(
@@ -27,7 +29,7 @@ export default defineEventHandler(async (event) => {
     );
   }
 
-  const userData = { username, email, password, name, caption };
+  const userData = { username, email, password, name, caption, phone };
 
   const employer = await createUser(userData);
 

@@ -5,14 +5,14 @@ import DropdownAction from "@/components/widgets/modules/table/dropdown.vue";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export interface Payment {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
+enum status {
+  "pending",
+  "processing",
+  "success",
+  "failed",
 }
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<any>[] = [
   {
     id: "select",
     header: ({ table }) =>
@@ -32,6 +32,20 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "name", // название поля в бд
+    header: ({ column }) => {
+      return h(
+        Button,
+        {
+          variant: "ghost",
+          onClick: () => column.toggleSorting(column.getIsSorted() === "asc"), // метод сортировки
+        },
+        () => ["ФИО", h(ArrowUpDown, { class: "ml-2 h-4 w-4" })] // Название колонки
+      );
+    },
+    cell: ({ row }) => h("div", { class: "lowercase" }, row.getValue("name")), //getValue - значение поля из бд
+  },
+  {
     accessorKey: "email",
     header: ({ column }) => {
       return h(
@@ -46,17 +60,18 @@ export const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => h("div", { class: "lowercase" }, row.getValue("email")),
   },
   {
-    accessorKey: "amount",
-    header: () => h("div", { class: "text-right" }, "Amount"),
-    cell: ({ row }) => {
-      const amount = Number.parseFloat(row.getValue("amount"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-
-      return h("div", { class: "text-right font-medium" }, formatted);
+    accessorKey: "phone",
+    header: ({ column }) => {
+      return h(
+        Button,
+        {
+          variant: "ghost",
+          onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+        },
+        () => ["Телефон", h(ArrowUpDown, { class: "ml-2 h-4 w-4" })]
+      );
     },
+    cell: ({ row }) => h("div", { class: "lowercase" }, row.getValue("phone")),
   },
   {
     id: "actions",
