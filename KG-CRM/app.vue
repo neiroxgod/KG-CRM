@@ -3,17 +3,18 @@
     <!-- Loader -->
     <SharedNuxtLoadingBar v-if="userStore.loading" />
     <!-- App -->
-    <div v-else-if="userStore.user" class="grid grid-cols-6">
-      <div class="col-start-1 row-span-2 relative">
+
+    <div v-else-if="userStore.user" class="flex">
+      <div class="w-[280px]">
         <NuxtLayout name="sidebar" />
       </div>
-
-      <div class="col-start-2 row-span-1 col-span-2 col-end-7 navbar">
-        <NuxtLayout name="navbar" />
-      </div>
-
-      <div class="col-start-2 row-span-2 col-end-7 col-span-2 content">
-        <NuxtPage />
+      <div class="flex-col w-full">
+        <div class="navbar">
+          <NuxtLayout name="navbar" />
+        </div>
+        <div class="content">
+          <NuxtPage />
+        </div>
       </div>
     </div>
 

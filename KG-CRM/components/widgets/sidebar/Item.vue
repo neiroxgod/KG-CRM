@@ -4,7 +4,12 @@
       <div
         class="flex content-middle items-center px-5 py-3 font-inter text-sm"
       >
-        <Icon class="h-6 w-6 mr-2" v-if="icon" :id="icon" :name="icon" />
+        <Icon
+          class="h-[24px] w-[24px] mr-2"
+          v-if="icon"
+          :id="icon"
+          :name="icon"
+        />
         <Label :for="icon">
           <slot />
         </Label>
