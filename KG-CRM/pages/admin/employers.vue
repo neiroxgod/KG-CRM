@@ -14,7 +14,7 @@ import { columns } from "@/components/widgets/modules/table/columns";
 import DataTable from "@/components/widgets/modules/table/data.vue";
 
 const data = ref([]);
-const userStore = useAuthStore();
+const userStore = useAuthStore(); //benis
 
 async function getData() {
   const fetchApi = useFetchApi(userStore.token);
