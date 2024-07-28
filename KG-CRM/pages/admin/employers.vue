@@ -102,7 +102,7 @@
       </Form>
     </div>
     <div class="mt-5">
-      <DataTable
+      <WidgetsModulesTableData
         v-if="data.employers"
         :columns="columns"
         :data="data.employers"
@@ -111,22 +111,21 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { columns } from "@/components/widgets/modules/table/columns";
-import DataTable from "@/components/widgets/modules/table/data.vue";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { toast } from "@/components/ui/toast";
 
-const data = ref<any>([]);
+const data = ref([]);
 const userStore = useAuthStore();
 async function getData() {
   const fetchApi = useFetchApi(userStore.token);
-  let employers = ref<any>([]);
+  let employers = ref([]);
   employers.value = await fetchApi("/api/employers/list", {
     method: "POST",
     body: {
-      accountId: userStore.user!.accountId,
+      accountId: userStore.user.accountId,
     },
   });
 
@@ -147,7 +146,7 @@ const formSchema = toTypedSchema(
   })
 );
 
-function onSubmit(values: any) {
+function onSubmit(values) {
   console.log("submited:", values);
   toast({
     title: "You submitted the following values:",

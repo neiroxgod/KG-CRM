@@ -9,14 +9,14 @@ export default () => {
     const fetchApi = useFetchApi(authStore.token);
     authStore.setLoading(true);
     try {
-      const data = await fetchApi("/api/auth/login", {
+      const data = await fetchApi("/auth/login", {
         method: "POST",
         body: {
           username,
           password,
         },
       });
-      authStore.setToken(data.access_token);
+      authStore.setToken(data.token);
       authStore.setUser(data.user);
       return true;
     } catch (error) {
@@ -45,7 +45,7 @@ export default () => {
     authStore.setLoading(true);
 
     try {
-      const data = await fetchApi("/api/auth/register", {
+      const data = await fetchApi("/auth/register", {
         method: "POST",
         body: {
           email,
@@ -54,7 +54,6 @@ export default () => {
           caption,
           username,
           password,
-          repeatPassword,
         },
       });
 

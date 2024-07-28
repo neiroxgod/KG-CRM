@@ -1,5 +1,12 @@
 {
+  "scripts": {
+    "start:dev": "concurrently \"npm run start:front\" \"npm run start:server\"",
+    "start:front": "cd KG-CRM && npm run dev",
+    "start:server": "cd crm_back && npm run start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
+    "concurrently": "^8.2.2",
     "typescript": "^5.5.3"
   }
 }

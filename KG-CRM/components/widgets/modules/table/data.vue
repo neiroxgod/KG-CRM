@@ -34,9 +34,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { ArrowUpDown, ChevronDown } from "lucide-vue-next";
-import { h, ref } from "vue";
-
+import { ChevronDown } from "lucide-vue-next";
 const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
 const columnVisibility = ref<VisibilityState>({});
