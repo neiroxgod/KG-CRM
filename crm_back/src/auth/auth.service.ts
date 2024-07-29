@@ -3,12 +3,14 @@ import {
   HttpStatus,
   Injectable,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateEmployerDto } from 'src/employers/dto/create-employer.dto';
 import { EmployersService } from 'src/employers/employers.service';
 import * as bcrypt from 'bcryptjs';
 import { Employer } from 'src/employers/employers.model';
+import { JwtAuthGuard } from './jwt-auth.guard';
 @Injectable()
 export class AuthService {
   constructor(
@@ -18,8 +20,9 @@ export class AuthService {
 
   async login(employerDto: CreateEmployerDto) {
     const employer = await this.validateUser(employerDto);
-    const token = this.generateToken(employer);
-    return [employer, token];
+    const token = await this.generateToken(employer);
+    const data = [{ employer: employer, token }];
+    return data;
   }
 
   async register(employerDto: CreateEmployerDto) {
@@ -39,8 +42,9 @@ export class AuthService {
       password: hashPassword,
     });
 
-    const token = this.generateToken(employer);
-    return [employer, token];
+    const token = await this.generateToken(employer);
+    const data = [{ employer: employer, token }];
+    return data;
   }
 
   async generateToken(employer: Employer) {
@@ -53,6 +57,10 @@ export class AuthService {
     return {
       token: this.jwtService.sign(payload),
     };
+  }
+
+  async checkToken() {
+    return { status: true };
   }
 
   private async validateUser(employerDto: CreateEmployerDto) {

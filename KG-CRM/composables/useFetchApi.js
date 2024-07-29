@@ -1,6 +1,9 @@
 export default (token) => {
   return async (url, options = {}) => {
-    return await $fetch(url, {
+    const config = useRuntimeConfig();
+    console.log("config", config);
+    return await useFetch(`http://localhost:7000${url}`, {
+      baseURL: config.public.baseURL,
       ...options,
       headers: {
         ...options.headers,

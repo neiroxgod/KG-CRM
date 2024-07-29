@@ -15,7 +15,6 @@ export default defineNuxtConfig({
   },
   modules: [
     "@nuxtjs/tailwindcss",
-    "@prisma/nuxt",
     "shadcn-nuxt",
     "@pinia/nuxt",
     "@nuxt/icon",
