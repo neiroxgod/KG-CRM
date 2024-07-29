@@ -33,4 +33,22 @@ export class EmployersService {
     });
     return Employer;
   }
+
+  async updateEmployersAccountId(id: number, accountId: number) {
+    const employer = await this.employerRepository.update(
+      { accountId },
+      {
+        where: { id },
+      },
+    );
+
+    return employer;
+  }
+
+  async getEmployer(id: number) {
+    const employer = await this.employerRepository.findOne({
+      where: { id },
+      include: { all: true },
+    });
+  }
 }

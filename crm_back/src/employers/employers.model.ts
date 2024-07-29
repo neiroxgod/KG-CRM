@@ -5,7 +5,11 @@ import {
   DataType,
   Table,
   BelongsToMany,
+  HasOne,
+  BelongsTo,
+  ForeignKey,
 } from 'sequelize-typescript';
+import { Account } from 'src/accounts/accounts.model';
 import { EmployerRoles } from 'src/roles/employer-roles.model';
 import { Role } from 'src/roles/roles.model';
 
@@ -28,6 +32,19 @@ export class Employer extends Model<Employer, EmployerCreatinAttrs> {
     primaryKey: true,
   })
   id: number;
+
+  @ApiProperty({ example: '1', description: 'Идентификатор аккаунта' })
+  @ForeignKey(() => Account)
+  @Column({
+    type: DataType.INTEGER,
+  })
+  accountId: number;
+
+  @ApiProperty({ example: '1', description: 'Идентификатор аккаунта' })
+  @Column({
+    type: DataType.INTEGER,
+  })
+  filialId: number;
 
   @ApiProperty({ example: 'best_login', description: 'Логин сотрудника' })
   @Column({
@@ -83,4 +100,7 @@ export class Employer extends Model<Employer, EmployerCreatinAttrs> {
 
   @BelongsToMany(() => Role, () => EmployerRoles)
   roles: Role[];
+
+  @BelongsTo(() => Account)
+  account: Account;
 }

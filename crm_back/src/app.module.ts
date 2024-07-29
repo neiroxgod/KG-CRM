@@ -9,6 +9,8 @@ import { Role } from './roles/roles.model';
 import { EmployerRoles } from './roles/employer-roles.model';
 import { Employer } from './employers/employers.model';
 import { AuthModule } from './auth/auth.module';
+import { AccountsModule } from './accounts/accounts.module';
+import { Account } from './accounts/accounts.model';
 
 @Module({
   controllers: [],
@@ -16,6 +18,7 @@ import { AuthModule } from './auth/auth.module';
   imports: [
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,
+      isGlobal: true,
     }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
@@ -24,7 +27,7 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [User, Role, EmployerRoles, Employer],
+      models: [User, Role, EmployerRoles, Employer, Account],
       autoLoadModels: true,
       synchronize: true,
     }),
@@ -32,6 +35,7 @@ import { AuthModule } from './auth/auth.module';
     RolesModule,
     EmployersModule,
     AuthModule,
+    AccountsModule,
   ],
 })
 export class AppModule {}

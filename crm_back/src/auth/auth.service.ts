@@ -1,6 +1,8 @@
 import {
+  forwardRef,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   UnauthorizedException,
   UseGuards,
@@ -10,12 +12,14 @@ import { CreateEmployerDto } from 'src/employers/dto/create-employer.dto';
 import { EmployersService } from 'src/employers/employers.service';
 import * as bcrypt from 'bcryptjs';
 import { Employer } from 'src/employers/employers.model';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { AccountsService } from 'src/accounts/accounts.service';
 @Injectable()
 export class AuthService {
   constructor(
     private employerService: EmployersService,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
+    @Inject(forwardRef(() => AccountsService))
+    private accountService: AccountsService,
   ) {}
 
   async login(employerDto: CreateEmployerDto) {
@@ -37,10 +41,18 @@ export class AuthService {
     }
 
     const hashPassword = await bcrypt.hash(employerDto.password, 5);
+
+    const { caption, email } = employerDto;
+    const account = await this.accountService.createAccount({ caption, email });
     const employer = await this.employerService.createEmployer({
       ...employerDto,
       password: hashPassword,
     });
+
+    await this.employerService.updateEmployersAccountId(
+      employer.id,
+      account.id,
+    );
 
     const token = await this.generateToken(employer);
     const data = [{ employer: employer, token }];
