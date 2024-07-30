@@ -1,7 +1,11 @@
 <script setup>
 const layout = ref("default");
 const userStore = useAuthStore();
-if (!userStore.user && !userStore.isLoading) {
+
+if (
+  (!localStorage.getItem("token") || localStorage.getItem("token") == "null") &&
+  !userStore.isLoading
+) {
   navigateTo("/employerAuth");
 }
 

@@ -1,4 +1,3 @@
-import { jwtDecode } from "jwt-decode";
 import useFetchApi from "@/composables/useFetchApi";
 import { useAuthStore } from "@/stores/UserStore";
 
@@ -9,15 +8,16 @@ export default () => {
     const fetchApi = useFetchApi(authStore.token);
     authStore.setLoading(true);
     try {
-      const data = await fetchApi("/api/auth/login", {
+      const data = await fetchApi("/auth/login", {
         method: "POST",
         body: {
           username,
           password,
         },
       });
-      authStore.setToken(data.access_token);
-      authStore.setUser(data.user);
+      authStore.setToken(data.data.value[0].token.token);
+      authStore.setUser(data.data.value[0].employer);
+      console.log(authStore);
       return true;
     } catch (error) {
       console.error("Login error:", error);
@@ -45,7 +45,7 @@ export default () => {
     authStore.setLoading(true);
 
     try {
-      const data = await fetchApi("/api/auth/register", {
+      const data = await fetchApi("/auth/register", {
         method: "POST",
         body: {
           email,
@@ -54,11 +54,10 @@ export default () => {
           caption,
           username,
           password,
-          repeatPassword,
         },
       });
-
-      await login({ username, password });
+      authStore.setToken(data.data.value[0].token.token);
+      authStore.setUser(data.data.value[0].employer);
     } catch (error) {
       console.error("register error:", error);
       throw error;
@@ -67,59 +66,29 @@ export default () => {
     }
   };
 
-  const refreshToken = async () => {
-    const fetchApi = useFetchApi(authStore.token);
-    try {
-      const data = await fetchApi("/api/auth/refresh");
-      authStore.setToken(data.access_token);
-      return true;
-    } catch (error) {
-      console.error("Refresh token error:", error);
-      throw error;
-    }
-  };
-
-  const getUser = async () => {
-    const fetchApi = useFetchApi(authStore.token);
-    try {
-      const data = await fetchApi("/api/auth/user");
-      authStore.setUser(data.user);
-      return true;
-    } catch (error) {
-      console.error("Get user error:", error);
-      throw error;
-    }
-  };
-
-  const reRefreshAccessToken = () => {
-    const jwt = jwtDecode(authStore.token); // Используем токен из хранилища
-    const newRefreshTime = jwt.exp * 1000 - Date.now() - 60000;
-
-    setTimeout(async () => {
-      await refreshToken();
-      reRefreshAccessToken();
-    }, newRefreshTime);
-  };
-
   const initAuth = async () => {
+    const fetchApi = useFetchApi(localStorage.getItem("token"));
     authStore.setLoading(true);
     try {
-      await refreshToken();
-      await getUser();
-      reRefreshAccessToken();
-      return true;
-    } catch (error) {
-      console.error("Init auth error:", error);
-      throw error;
+      const data = await fetchApi("/auth/verify");
+      if (data.status) {
+        console.log(data.status);
+      } else {
+        authStore.setToken(null);
+        authStore.setUser(null);
+      }
+    } catch (e) {
+      console.error("initAuth error:", e);
+      throw e;
     } finally {
       authStore.setLoading(false);
     }
   };
 
   const logout = async () => {
-    const fetchApi = useFetchApi(authStore.token);
     try {
-      await fetchApi("/api/auth/logout", { method: "POST" });
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
       authStore.setToken(null);
       authStore.setUser(null);
     } catch (error) {
@@ -133,8 +102,5 @@ export default () => {
     register,
     initAuth,
     logout,
-    refreshToken,
-    getUser,
-    reRefreshAccessToken,
   };
 };

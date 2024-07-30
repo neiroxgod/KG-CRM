@@ -28,6 +28,8 @@
 const { initAuth } = useAuth();
 const userStore = useAuthStore();
 
+userStore.loadFromLocalStorage();
+
 onBeforeMount(() => {
   initAuth();
 });
