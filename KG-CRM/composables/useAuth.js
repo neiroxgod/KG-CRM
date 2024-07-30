@@ -15,9 +15,10 @@ export default () => {
           password,
         },
       });
-      authStore.setToken(data.data.value[0].token.token);
-      authStore.setUser(data.data.value[0].employer);
-      console.log(authStore);
+      console.log(data);
+      authStore.setToken(data[0].token.token);
+      authStore.setUser(data[0].employer);
+      // console.log(authStore);
       return true;
     } catch (error) {
       console.error("Login error:", error);
@@ -56,8 +57,8 @@ export default () => {
           password,
         },
       });
-      authStore.setToken(data.data.value[0].token.token);
-      authStore.setUser(data.data.value[0].employer);
+      authStore.setToken(data[0].token.token);
+      authStore.setUser(data[0].employer);
     } catch (error) {
       console.error("register error:", error);
       throw error;
@@ -68,16 +69,18 @@ export default () => {
 
   const initAuth = async () => {
     const fetchApi = useFetchApi(localStorage.getItem("token"));
+
+    const data = ref(null);
+    const status = ref("pending");
+    const error = ref(null);
+
     authStore.setLoading(true);
     try {
-      const data = await fetchApi("/auth/verify");
-      if (data.status) {
-        console.log(data.status);
-      } else {
-        authStore.setToken(null);
-        authStore.setUser(null);
-      }
+      const response = await fetchApi("/auth/verify");
     } catch (e) {
+      authStore.setToken(null);
+      authStore.setUser(null);
+      navigateTo("/employerAuth");
       console.error("initAuth error:", e);
       throw e;
     } finally {

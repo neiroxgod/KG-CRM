@@ -55,12 +55,14 @@ export class AuthService {
     );
 
     const token = await this.generateToken(employer);
+    employer.accountId = account.id;
     const data = [{ employer: employer, token }];
     return data;
   }
 
   async generateToken(employer: Employer) {
     const payload = {
+      accountId: employer.accountId,
       username: employer.username,
       id: employer.id,
       roles: employer.roles,
