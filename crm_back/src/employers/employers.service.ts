@@ -31,7 +31,16 @@ export class EmployersService {
     return employers;
   }
 
+  async deleteEmployer(id: number) {
+    await this.employerRepository.destroy({
+      where: {
+        id,
+      },
+    });
+  }
+
   async getEmployerByUsername(username: string) {
+    //Уникальное поле, логин
     const Employer = await this.employerRepository.findOne({
       where: { username },
       include: { all: true },

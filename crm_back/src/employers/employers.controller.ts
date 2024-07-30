@@ -30,8 +30,16 @@ export class EmployersController {
   @ApiOperation({ summary: 'Получить пользователя' })
   @ApiResponse({ status: 200, type: Employer })
   @UseGuards(JwtAuthGuard)
-  @Get('/:id')
+  @Get('/get/:id')
   getEmployer(@Param('id') id: number) {
     return this.employerService.getEmployer(id);
+  }
+
+  @ApiOperation({ summary: 'Удалить пользователя' })
+  @ApiResponse({ status: 200, type: Employer })
+  @UseGuards(JwtAuthGuard)
+  @Get('/delete/:id')
+  deleteEmployer(@Param('id') id: number) {
+    return this.employerService.deleteEmployer(id);
   }
 }

@@ -8,6 +8,7 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 import { Employer } from 'src/employers/employers.model';
+import { Group } from 'src/groups/groups.model';
 import { Role } from 'src/roles/roles.model';
 
 interface AccountCreatinAttrs {
@@ -48,4 +49,9 @@ export class Account extends Model<Account, AccountCreatinAttrs> {
     foreignKey: 'accountId',
   })
   employers: Employer[];
+
+  @HasMany(() => Group, {
+    foreignKey: 'accountId',
+  })
+  groups: Group[];
 }
