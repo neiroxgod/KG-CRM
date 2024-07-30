@@ -102,11 +102,7 @@
       </Form>
     </div>
     <div class="mt-5">
-      <WidgetsModulesTableData
-        v-if="data.employers"
-        :columns="columns"
-        :data="data.employers"
-      />
+      <WidgetsModulesTableData :columns="columns" :data="data" />
     </div>
   </div>
 </template>
@@ -119,16 +115,13 @@ import { toast } from "@/components/ui/toast";
 
 const data = ref([]);
 const userStore = useAuthStore();
+console.log(userStore.user);
 async function getData() {
   const fetchApi = useFetchApi(userStore.token);
   let employers = ref([]);
-  employers.value = await fetchApi("/api/employers/list", {
-    method: "POST",
-    body: {
-      accountId: userStore.user.accountId,
-    },
+  employers.value = await fetchApi("/employers/", {
+    method: "GET",
   });
-
   return employers.value;
 }
 
