@@ -12,84 +12,55 @@
             <DialogTrigger as-child>
               <SharedAddButton label="Создать группу" />
             </DialogTrigger>
-            <DialogContent class="w-full">
+            <DialogContent class="max-w-[664px]">
               <DialogHeader>
                 <DialogTitle>Добавление группы</DialogTitle>
               </DialogHeader>
               <Separator />
               <form @submit="submitForm">
-                <div class="flex justify-between gap-4">
-                  <FormField v-slot="{ componentField }" name="name">
-                    <FormItem class="w-full">
-                      <FormLabel>ФИО</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          placeholder="Иванов Иван Иванович"
-                          v-bind="componentField"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  </FormField>
+                <div class="flex gap-6">
+                  <div class="w-full">
+                    <FormField v-slot="{ componentField }" name="caption">
+                      <FormItem class="w-full">
+                        <FormLabel>Название группы</FormLabel>
+                        <FormControl>
+                          <Input type="text" v-bind="componentField" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    </FormField>
 
-                  <FormField v-slot="{ componentField }" name="phone">
-                    <FormItem class="w-full">
-                      <FormLabel>Телефон</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="phone"
-                          placeholder="+7 999 999 99 99"
-                          v-bind="componentField"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  </FormField>
-                </div>
-                <div class="flex justify-between">
-                  <FormField v-slot="{ componentField }" name="email">
-                    <FormItem class="w-full">
-                      <FormLabel>Почта</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="test@mail.ru"
-                          v-bind="componentField"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  </FormField>
-                </div>
-                <div class="flex justify-between gap-4">
-                  <FormField v-slot="{ componentField }" name="username">
-                    <FormItem class="w-full">
-                      <FormLabel>Логин к CRM</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="test@mail.ru"
-                          v-bind="componentField"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  </FormField>
+                    <FormField v-slot="{ componentField }" name="language">
+                      <FormItem class="w-full mt-[24px]">
+                        <FormLabel>Программа обучние</FormLabel>
+                        <FormControl>
+                          <Input type="text" v-bind="componentField" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    </FormField>
+                  </div>
+                  <div class="w-full">
+                    <FormField v-slot="{ componentField }" name="language">
+                      <FormItem class="w-full">
+                        <FormLabel>Язык</FormLabel>
+                        <FormControl>
+                          <Input type="text" v-bind="componentField" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    </FormField>
 
-                  <FormField v-slot="{ componentField }" name="password">
-                    <FormItem class="w-full">
-                      <FormLabel>Пароль к CRM</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="test@mail.ru"
-                          v-bind="componentField"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  </FormField>
+                    <FormField v-slot="{ componentField }" name="teacherid">
+                      <FormItem class="w-full mt-[24px]">
+                        <FormLabel>Преподаватель</FormLabel>
+                        <FormControl>
+                          <Input type="text" v-bind="componentField" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    </FormField>
+                  </div>
                 </div>
               </form>
               <Separator />
@@ -109,60 +80,28 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import { columns } from "@/components/widgets/modules/group/columns";
 import DataTable from "@/components/widgets/modules/table/data.vue";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { toast } from "@/components/ui/toast";
-import { Captions } from "lucide-vue-next";
 
-const route = useRoute();
-console.log(route);
-
-// const data = ref<any>([]);
-
-const data = ref([
-  {
-    id: 1,
-    caption: "angl",
-    teacherId: "Учитель",
-    timestart: "2024-07-27 17:20:30.104",
-    timefinish: "2024-07-27 17:20:30.104",
-  },
-  {
-    id: 1,
-    caption: "angl",
-    teacherId: "Учитель",
-    timestart: "2024-07-27 17:20:30.104",
-    timefinish: "2024-07-27 17:20:30.104",
-  },
-  {
-    id: 1,
-    caption: "angl",
-    teacherId: "Учитель",
-    timestart: "2024-07-27 17:20:30.104",
-    timefinish: "2024-07-27 17:20:30.104",
-  },
-]);
-
+const data = ref([]);
 const userStore = useAuthStore();
-// async function getData() {
-//   const fetchApi = useFetchApi(userStore.token);
-//   let employers = ref<any>([]);
-//   employers.value = await fetchApi("/api/employers/list", {
-//     method: "POST",
-//     body: {
-//       accountId: userStore.user!.accountId,
-//     },
-//   });
 
-//   return employers.value;
-// }
+async function getData() {
+  const fetchApi = useFetchApi(userStore.token);
+  const groups = ref([]);
+  groups.value = await fetchApi("/groups/", {
+    method: "GET",
+  });
+  return groups.value;
+}
 
-// onMounted(async () => {
-//   data.value = await getData();
-// });
+onMounted(async () => {
+  data.value = await getData();
+});
 
 const formSchema = toTypedSchema(
   z.object({
@@ -174,7 +113,7 @@ const formSchema = toTypedSchema(
   })
 );
 
-function onSubmit(values: any) {
+function onSubmit(values) {
   console.log("submited:", values);
   toast({
     title: "You submitted the following values:",

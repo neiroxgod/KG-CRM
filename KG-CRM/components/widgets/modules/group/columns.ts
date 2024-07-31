@@ -32,7 +32,7 @@ export const columns: ColumnDef<any>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "caption", // название поля в бд
+    accessorKey: "language", // название поля в бд
     header: ({ column }) => {
       return h(
         Button,
@@ -44,7 +44,7 @@ export const columns: ColumnDef<any>[] = [
       );
     },
     cell: ({ row }) =>
-      h("div", { class: "lowercase" }, row.getValue("caption")), //getValue - значение поля из бд
+      h("div", { class: "lowercase" }, row.getValue("language")), //getValue - значение поля из бд
   },
   {
     accessorKey: "teacherId",

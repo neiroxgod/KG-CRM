@@ -1,12 +1,7 @@
 <template>
   <div class="p-5">
     <div class="flex flex-row-reverse">
-      <Form
-        v-slot="{ submitForm }"
-        as=""
-        :validation-schema="formSchema"
-        @submit="onSubmit"
-      >
+      <Form @submit.prevent="onSubmit" as="" :validation-schema="formSchema">
         <Dialog>
           <DialogTrigger as-child>
             <SharedAddButton />
@@ -16,7 +11,7 @@
               <DialogTitle>Создание сотрудника</DialogTitle>
             </DialogHeader>
             <Separator />
-            <form @submit="submitForm">
+            <form @submit="onSubmit">
               <div class="flex justify-between gap-4">
                 <FormField v-slot="{ componentField }" name="name">
                   <FormItem class="w-full">
@@ -67,7 +62,7 @@
                     <FormLabel>Логин к CRM</FormLabel>
                     <FormControl>
                       <Input
-                        type="email"
+                        type="username"
                         placeholder="test@mail.ru"
                         v-bind="componentField"
                       />
@@ -81,7 +76,7 @@
                     <FormLabel>Пароль к CRM</FormLabel>
                     <FormControl>
                       <Input
-                        type="email"
+                        type="password"
                         placeholder="test@mail.ru"
                         v-bind="componentField"
                       />
@@ -108,6 +103,7 @@
 </template>
 
 <script setup>
+import { useForm } from "vee-validate";
 import { columns } from "@/components/widgets/modules/table/columns";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
@@ -116,6 +112,7 @@ import { toast } from "@/components/ui/toast";
 const data = ref([]);
 const userStore = useAuthStore();
 console.log(userStore.user);
+
 async function getData() {
   const fetchApi = useFetchApi(userStore.token);
   let employers = ref([]);
@@ -139,17 +136,22 @@ const formSchema = toTypedSchema(
   })
 );
 
-function onSubmit(values) {
-  console.log("submited:", values);
-  toast({
-    title: "You submitted the following values:",
-    description: h(
-      "pre",
-      { class: "mt-2 w-[340px] rounded-md bg-slate-950 p-4" },
-      h("code", { class: "text-white" }, JSON.stringify(values, null, 2))
-    ),
+const { handleSubmit, errors } = useForm({
+  validationSchema: formSchema,
+});
+
+const onSubmit = handleSubmit(async (values) => {
+  const fetchApi = useFetchApi(userStore.token);
+  fetchApi("/employers/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(values),
+    Authorization: `Bearer ${userStore.token}`,
   });
-}
+  console.log("submited:", values);
+});
 </script>
 
 <style></style>
