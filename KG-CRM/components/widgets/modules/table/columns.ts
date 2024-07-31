@@ -12,6 +12,11 @@ enum status {
   "failed",
 }
 
+// const emit = defineEmits<{
+//   "delete:item": [number];
+//   "update:item": [number];
+// }>();
+
 export const columns: ColumnDef<any>[] = [
   {
     id: "select",
@@ -76,14 +81,14 @@ export const columns: ColumnDef<any>[] = [
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original;
+    cell: ({ row, table }) => {
+      const item = row.original;
 
       return h(
         "div",
         { class: "relative" },
         h(DropdownAction, {
-          payment,
+          item,
           onExpand: row.toggleExpanded,
         })
       );

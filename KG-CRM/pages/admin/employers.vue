@@ -100,7 +100,7 @@
       </form>
     </div>
     <div class="mt-5">
-      <WidgetsModulesTableData :columns="columns" :data="data" />
+      <WidgetsModulesTableData :columns="columns" :data="listStore.listState" />
     </div>
   </div>
 </template>
@@ -112,9 +112,8 @@ import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { useToast } from "@/components/ui/toast/use-toast";
 
-const data = ref([]);
 const userStore = useAuthStore();
-console.log(userStore.user);
+const listStore = useListStore();
 
 const dialogstate = ref(false);
 
@@ -128,7 +127,7 @@ async function getData() {
 }
 
 onMounted(async () => {
-  data.value = await getData();
+  listStore.listState = await getData();
 });
 
 const formSchema = toTypedSchema(
@@ -158,9 +157,7 @@ const onSubmit = handleSubmit(async (values) => {
     duration: 2000,
   });
   dialogstate.value = false;
-  data.value = [...data.value, employer.value];
-  // data.value.splice(data.value.length, 0, employer.value);
-  console.log(data.value);
+  listStore.listState = [...listStore.listState, employer.value];
 });
 </script>
 

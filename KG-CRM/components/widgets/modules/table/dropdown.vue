@@ -9,12 +9,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-
-defineProps<{
-  payment: {
-    id: string;
+import { useToast } from "~/components/ui/toast";
+const props = defineProps<{
+  item: {
+    id: number;
   };
 }>();
+
+const route = useRoute();
+const userStore = useAuthStore();
+const listStore = useListStore();
+const { toast } = useToast();
+
+const deleteItem = async function () {
+  const path = route.fullPath.split("/admin")[1];
+
+  const fetchApi = useFetchApi(userStore.token);
+  await fetchApi(path + "/delete/" + props.item.id);
+
+  listStore.removeFromList(props.item.id);
+  toast({
+    description: "Запись удалена!",
+    duration: 3000,
+  });
+};
 </script>
 
 <template>
@@ -28,7 +46,9 @@ defineProps<{
     <DropdownMenuContent align="end">
       <DropdownMenuItem> Редактировать </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem class="text-red-500"> Удалить </DropdownMenuItem>
+      <DropdownMenuItem @click="deleteItem" class="text-red-500">
+        Удалить
+      </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 </template>
