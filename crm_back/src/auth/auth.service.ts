@@ -53,9 +53,8 @@ export class AuthService {
       employer.id,
       account.id,
     );
-
-    const token = await this.generateToken(employer);
     employer.accountId = account.id;
+    const token = await this.generateToken(employer);
     const data = [{ employer: employer, token }];
     return data;
   }

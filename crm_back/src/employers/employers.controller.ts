@@ -15,8 +15,8 @@ export class EmployersController {
   @ApiResponse({ status: 200, type: Employer })
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() userDto: CreateEmployerDto, @GetUser() employer: any) {
-    return this.employerService.createEmployer(userDto, employer);
+  create(@Body() userDto: CreateEmployerDto) {
+    return this.employerService.createEmployer(userDto);
   }
 
   @ApiOperation({ summary: 'Список пользователей' })
