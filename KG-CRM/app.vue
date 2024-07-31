@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Toaster />
     <!-- Loader -->
     <SharedNuxtLoadingBar v-if="userStore.loading" />
     <!-- App -->
@@ -25,6 +26,8 @@
   </div>
 </template>
 <script setup>
+import Toaster from "./components/ui/toast/Toaster.vue";
+
 const { initAuth } = useAuth();
 const userStore = useAuthStore();
 

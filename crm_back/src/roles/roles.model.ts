@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import {
   Column,
   Model,
@@ -14,6 +14,7 @@ interface RoleCreationAttrs {
   description: String;
 }
 
+@ApiTags('Роли')
 @Table({ tableName: 'roles' })
 export class Role extends Model<Role, RoleCreationAttrs> {
   @ApiProperty({ example: '1', description: 'Айдишник' })

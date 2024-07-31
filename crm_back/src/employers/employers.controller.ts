@@ -11,12 +11,22 @@ import { GetUser } from 'src/decorators/auth.decorator';
 export class EmployersController {
   constructor(private employerService: EmployersService) {}
 
-  @ApiOperation({ summary: 'Создание пользователя' })
+  @ApiOperation({
+    summary: 'Регистрация сотрудника (выполняется при регистрации аккаунта)',
+  })
   @ApiResponse({ status: 200, type: Employer })
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() userDto: CreateEmployerDto) {
     return this.employerService.createEmployer(userDto);
+  }
+
+  @ApiOperation({ summary: 'Создание пользователя' })
+  @ApiResponse({ status: 200, type: Employer })
+  @UseGuards(JwtAuthGuard)
+  @Post('/add')
+  add(@Body() userDto: CreateEmployerDto, @GetUser() empl: any) {
+    return this.employerService.addEmployer(userDto, empl);
   }
 
   @ApiOperation({ summary: 'Список пользователей' })
