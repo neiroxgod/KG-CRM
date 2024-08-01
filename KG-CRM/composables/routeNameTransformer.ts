@@ -3,15 +3,15 @@ interface IRouteNames {
 }
 
 export const routeNamesMap: [RegExp, string][] = [
-  [/^\/admin\/groups(?:\/list|\/\d+)?$/, "Учебные группы"],
-  [/^\/admin\/users$/, "Ученики"],
-  [/^\/admin\/employers$/, "Сотрудники"],
-  [/^\/admin\/settings$/, "Настройки аккаунта"],
-  [/^\/admin\/reports$/, "Отчеты"],
-  [/^\/admin\/schedule$/, "Расписание"],
-  [/^\/admin\/filials$/, "Филиалы"],
-  [/^\/admin\/incomes$/, "Доходы"],
-  [/^\/admin\/expenditures$/, "Расходы"],
+  [/^\/admin\/groups(?:\/.*)?$/, "Учебные группы"],
+  [/^\/admin\/users(?:\/.*)?$/, "Ученики"],
+  [/^\/admin\/employers(?:\/.*)?$/, "Сотрудники"],
+  [/^\/admin\/settings(?:\/.*)?$/, "Настройки аккаунта"],
+  [/^\/admin\/reports(?:\/.*)?$/, "Отчеты"],
+  [/^\/admin\/schedule(?:\/.*)?$/, "Расписание"],
+  [/^\/admin\/filials(?:\/.*)?$/, "Филиалы"],
+  [/^\/admin\/incomes(?:\/.*)?$/, "Доходы"],
+  [/^\/admin\/expenditures(?:\/.*)?$/, "Расходы"],
 ];
 
 export function getRouteName(path: string): string | undefined {

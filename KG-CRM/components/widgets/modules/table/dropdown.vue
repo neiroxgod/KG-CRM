@@ -30,7 +30,7 @@ const deleteItem = async function () {
   const path = getMainRouteSegment(route.fullPath);
 
   const fetchApi = useFetchApi(userStore.token);
-  await fetchApi(path + "/delete/" + props.item.id);
+  await fetchApi("/" + path + "/delete/" + props.item.id);
 
   listStore.removeFromList(props.item.id);
   toast({
