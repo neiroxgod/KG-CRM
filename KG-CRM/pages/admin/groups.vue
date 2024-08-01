@@ -75,7 +75,7 @@
       </div>
     </div>
     <div class="mt-5">
-      <DataTable v-if="data" :columns="columns" :data="data" />
+      <DataTable v-if="data" :columns="columns" :data="listStore.listState" />
     </div>
   </div>
 </template>
@@ -89,6 +89,7 @@ import { toast } from "@/components/ui/toast";
 
 const data = ref([]);
 const userStore = useAuthStore();
+const listStore = useListStore();
 
 async function getData() {
   const fetchApi = useFetchApi(userStore.token);
@@ -100,7 +101,7 @@ async function getData() {
 }
 
 onMounted(async () => {
-  data.value = await getData();
+  listStore.listState = await getData();
 });
 
 const formSchema = toTypedSchema(
