@@ -25,10 +25,10 @@
 </template>
 
 <script lang="ts" setup>
-import { routeNames } from "../composables/routeNameTransformer";
+import { getRouteName } from "../composables/routeNameTransformer";
 const route = useRoute();
 const userStore = useAuthStore();
 const pageTitle = computed(() => {
-  return routeNames[route.path] || "Дешборд"; // Значение по умолчанию
+  return getRouteName(route.path) || "Дешборд"; // Значение по умолчанию
 });
 </script>

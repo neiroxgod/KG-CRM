@@ -27,6 +27,7 @@ module.exports = {
         Warning: "#F0AE2C",
         Success: "#2F9F77",
         btnPrimary: "#6A63F1",
+        textPrimary: "#374A6E",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

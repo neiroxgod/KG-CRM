@@ -4,6 +4,7 @@ import { ArrowUpDown, ChevronDown } from "lucide-vue-next";
 import DropdownAction from "@/components/widgets/modules/table/dropdown.vue";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import UserRow from "../employer/userRow.vue";
 
 enum status {
   "pending",
@@ -11,11 +12,6 @@ enum status {
   "success",
   "failed",
 }
-
-// const emit = defineEmits<{
-//   "delete:item": [number];
-//   "update:item": [number];
-// }>();
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -48,7 +44,15 @@ export const columns: ColumnDef<any>[] = [
         () => ["ФИО", h(ArrowUpDown, { class: "ml-2 h-4 w-4" })] // Название колонки
       );
     },
-    cell: ({ row }) => h("div", { class: "lowercase" }, row.getValue("name")), //getValue - значение поля из бд
+    cell: ({ row }) =>
+      h(
+        UserRow, //Добавлять аватарки сюда
+        {
+          class: "text-btnPrimary cursor-pointer font-inter font-medium",
+          onClick: () => navigateTo("/admin/employers/" + row.original.id),
+        },
+        row.getValue("name")
+      ), //getValue - значение поля из бд
   },
   {
     accessorKey: "email",

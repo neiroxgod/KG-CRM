@@ -21,8 +21,13 @@ const userStore = useAuthStore();
 const listStore = useListStore();
 const { toast } = useToast();
 
+function getMainRouteSegment(path: string): string | undefined {
+  const segments = path.split("/admin")[1]?.split("/");
+  return segments ? segments[1] : undefined;
+}
+
 const deleteItem = async function () {
-  const path = route.fullPath.split("/admin")[1];
+  const path = getMainRouteSegment(route.fullPath);
 
   const fetchApi = useFetchApi(userStore.token);
   await fetchApi(path + "/delete/" + props.item.id);

@@ -16,42 +16,42 @@
 const mainRoutes = ref([
   {
     caption: "Группы",
-    nuxtLink: "/admin/groups",
+    nuxtLink: "/admin/groups/list",
     icon: "material-symbols:groups-sharp",
   },
   {
     caption: "Ученики",
-    nuxtLink: "/admin/users",
+    nuxtLink: "/admin/users/list",
     icon: "material-symbols:user-attributes",
   },
   {
     caption: "Расходы/Доходы",
-    nuxtLink: "/admin/incomes",
+    nuxtLink: "/admin/incomes/list",
     icon: "material-symbols:attach-money",
   },
   {
     caption: "Филиалы",
-    nuxtLink: "/admin/filials",
+    nuxtLink: "/admin/filials/list",
     icon: "material-symbols:filter-vintage-outline",
   },
   {
     caption: "Настройки школы",
-    nuxtLink: "/admin/settings",
+    nuxtLink: "/admin/settings/list",
     icon: "material-symbols:settings-account-box-sharp",
   },
   {
     caption: "Расписание",
-    nuxtLink: "/admin/schedule",
+    nuxtLink: "/admin/schedule/list",
     icon: "material-symbols:auto-schedule",
   },
   {
     caption: "Сотрудники",
-    nuxtLink: "/admin/employers",
+    nuxtLink: "/admin/employers/list",
     icon: "material-symbols:work",
   },
   {
     caption: "Отчеты",
-    nuxtLink: "/admin/reports",
+    nuxtLink: "/admin/reports/list",
     icon: "material-symbols:dashboard-customize",
   },
 ]);
