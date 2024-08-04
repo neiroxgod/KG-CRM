@@ -7,6 +7,7 @@ import { Role } from 'src/roles/roles.model';
 import { EmployerRoles } from 'src/roles/employer-roles.model';
 import { RolesModule } from 'src/roles/roles.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { Files } from 'src/files/files.model';
 
 @Module({
   controllers: [EmployersController],

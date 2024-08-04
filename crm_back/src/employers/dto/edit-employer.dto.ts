@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateEmployerDto {
+export class EditEmployerDto {
+  @ApiProperty({ example: '1', description: 'Идентификатор сотрудника' })
+  id: number;
   @ApiProperty({ example: 'best_login', description: 'Логин сотрудника' })
   username: string;
   @ApiProperty({ example: '45', description: 'Айди сотрудника' })

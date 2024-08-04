@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -56,7 +57,7 @@ export class GroupsController {
   @ApiOperation({ summary: 'Удалить группу' })
   @ApiResponse({ status: 200, type: Group })
   @UseGuards(JwtAuthGuard)
-  @Get('/delete/:id')
+  @Delete('/delete/:id')
   deleteGroup(@Param('id') id: number) {
     return this.groupsService.deleteGroup(id);
   }

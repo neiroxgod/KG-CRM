@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
     <Label>{{ label }}</Label>
-    <TagsInput class="px-0 gap-0 w-80" :model-value="modelValue">
+    <TagsInput class="px-0 gap-0 w-full" :model-value="modelValue">
       <div class="flex gap-2 flex-wrap items-center px-3">
         <TagsInputItem v-for="item in modelValue" :key="item" :value="item">
           <TagsInputItemText />
@@ -10,6 +10,7 @@
       </div>
 
       <ComboboxRoot
+        ref="target"
         v-model="modelValue"
         v-model:open="open"
         v-model:searchTerm="searchTerm"
@@ -80,24 +81,33 @@ import {
   TagsInputItemDelete,
   TagsInputItemText,
 } from "@/components/ui/tags-input";
+import { onClickOutside } from "@vueuse/core";
+import type { ITags } from "~/composables/interfaces";
+
+const target = ref(null);
+
+onClickOutside(target, (event) => {
+  open.value = false;
+});
 
 const props = defineProps<{
   label: string;
-  tags?: Array<[]>;
+  tags: ITags[];
+  modelValue: string[];
 }>();
-const frameworks = [
-  { value: "ADMIN", label: "Администратор" },
-  { value: "TEACHER", label: "Преподаватель" },
-  { value: "MANAGER", label: "Менеджер" },
-  { value: "OWNER", label: "Владелец" },
-  { value: "DIRECTOR", label: "Директор" },
-];
+const emit = defineEmits(["update:modelValue"]);
 
-const modelValue = ref<string[]>([]);
 const open = ref(false);
 const searchTerm = ref("");
 
+watch(
+  () => props.modelValue,
+  function (newValue) {
+    emit("update:modelValue", [...props.modelValue]);
+  }
+);
+
 const filteredFrameworks = computed(() =>
-  frameworks.filter((i) => !modelValue.value.includes(i.label))
+  props.tags.filter((i) => !props.modelValue.includes(i.label))
 );
 </script>

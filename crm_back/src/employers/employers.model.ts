@@ -5,13 +5,15 @@ import {
   DataType,
   Table,
   BelongsToMany,
-  HasOne,
   BelongsTo,
   ForeignKey,
+  HasMany,
 } from 'sequelize-typescript';
 import { Account } from 'src/accounts/accounts.model';
+import { Files } from 'src/files/files.model';
 import { EmployerRoles } from 'src/roles/employer-roles.model';
 import { Role } from 'src/roles/roles.model';
+import { Tasks } from 'src/tasks/tasks.model';
 
 interface EmployerCreatinAttrs {
   username: string;
@@ -100,6 +102,12 @@ export class Employer extends Model<Employer, EmployerCreatinAttrs> {
 
   @BelongsToMany(() => Role, () => EmployerRoles)
   roles: Role[];
+
+  @HasMany(() => Tasks)
+  tasks: Tasks[];
+
+  @HasMany(() => Files)
+  files: Files[];
 
   @BelongsTo(() => Account)
   account: Account;

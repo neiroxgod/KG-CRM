@@ -1,5 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  image: {
+    dir: "assets/images",
+  },
   vue: {
     compilerOptions: {
       isCustomElement: (tag) => ["lite-youtube"].includes(tag),
@@ -19,6 +22,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@nuxt/icon",
     "@nuxtjs/google-fonts",
+    "@nuxt/image",
   ],
   googleFonts: {
     families: {

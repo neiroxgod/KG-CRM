@@ -1,48 +1,109 @@
 <template>
   <div class="p-5">
-    <!-- Header -->
-    <div class="w-full mb-5 flex justify-between">
-      <div class="flex">
-        <div class="h-32 w-32 bg-Primary rounded-full"></div>
-        <div class="px-5 py-2">
-          <div class="text-3xl font-inter font-bold">Иванов Петр Петрович</div>
-          <div class="flex">
-            <div class="mt-2">
-              <div class="text-md font-inter font-normal text-slate-600">
-                Роли
-              </div>
-              <div class="text-xl font-inter font-semibold">Преподаватель</div>
-            </div>
-            <div class="mt-2 ml-5">
-              <div class="text-md font-inter font-normal text-slate-600">
-                Пароль
-              </div>
-              <div class="text-xl font-inter font-semibold">6446849</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="py-2">
-        <Button>Создать задачу</Button>
-      </div>
-    </div>
+    <div class="mt-5 flex justify-between">
+      <div class="mr-5 w-2/6">
+        <div class="text-4xl font-bold font-inter">Иванов Иван Иванович</div>
+        <Accordion type="single" class="w-full" collapsible>
+          <AccordionItem value="mainInfo">
+            <AccordionTrigger> Основная информация </AccordionTrigger>
+            <AccordionContent>
+              <WidgetsModulesEmployerMainInfo
+                v-if="employer"
+                :employer="employer"
+              />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="roles">
+            <AccordionTrigger> Роли </AccordionTrigger>
+            <AccordionContent>
+              <TagsInput v-model="EmployerRoles">
+                <TagsInputItem
+                  v-for="item in EmployerRoles"
+                  :key="item.value"
+                  :value="item.value"
+                >
+                  <TagsInputItemText />
+                  <TagsInputItemDelete />
+                </TagsInputItem>
 
-    <!-- Main -->
-    <Separator></Separator>
+                <TagsInputInput placeholder="Fruits..." />
+              </TagsInput>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="assignedUsers">
+            <AccordionTrigger> Связанные ученики </AccordionTrigger>
+            <AccordionContent>
+              <div class="p-2 mt-1 bg-slate-200 w-full h-fit rounded-md">
+                <nuxt-link to="/users/">Сергеев Владимир Петрович</nuxt-link>
+              </div>
 
-    <div class="mt-5">
-      <Tabs>
-        <TabsList>
-          <TabsTrigger value="account"> Профиль </TabsTrigger>
-          <TabsTrigger value="password"> Выплаты </TabsTrigger>
-        </TabsList>
-        <TabsContent value="account">
-          <WidgetsModulesEmployerProfile />
-        </TabsContent>
-        <TabsContent value="password"> </TabsContent>
-      </Tabs>
+              <div class="p-2 mt-1 bg-slate-200 w-full h-fit rounded-md">
+                <nuxt-link to="/users/">Сергеев Владимир Петрович</nuxt-link>
+              </div>
+
+              <div class="p-2 mt-1 bg-slate-200 w-full h-fit rounded-md">
+                <nuxt-link to="/users/">Сергеев Владимир Петрович</nuxt-link>
+              </div>
+
+              <div class="p-2 mt-1 bg-slate-200 w-full h-fit rounded-md">
+                <nuxt-link to="/users/">Сергеев Владимир Петрович</nuxt-link>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="notes">
+            <AccordionTrigger> Заметки </AccordionTrigger>
+            <AccordionContent>
+              <div class="p-2 bg-slate-200 w-full h-fit rounded-md">
+                Проходила курсы повышения квалификации 2023.12.01
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </div>
+
+      <Separator orientation="vertical" />
+
+      <div class="w-4/6">
+        <Tabs>
+          <TabsList class="gap-10">
+            <TabsTrigger value="overview"> Обзор </TabsTrigger>
+            <TabsTrigger value="tasks"> Задачи </TabsTrigger>
+            <TabsTrigger value="payments"> Выплаты </TabsTrigger>
+            <TabsTrigger value="docs"> Документы </TabsTrigger>
+          </TabsList>
+          <TabsContent value="overview">
+            <WidgetsModulesEmployerOverview :employer="employer" />
+          </TabsContent>
+          <TabsContent value="tasks">
+            <WidgetsModulesEmployerTasks />
+          </TabsContent>
+          <TabsContent value="payments"> </TabsContent>
+          <TabsContent value="docs"> </TabsContent>
+        </Tabs>
+      </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { IEmployer } from "~/composables/interfaces";
+
+const route = useRoute();
+const userStore = useAuthStore();
+
+const employer = ref<IEmployer>();
+
+const EmployerRoles = ref<Array<Object>>();
+
+const getEmployer = async function (): Promise<IEmployer> {
+  const fetchApi = useFetchApi(userStore.token);
+
+  const response = await fetchApi("/employers/get/" + route.params.id);
+  EmployerRoles.value = response.roles;
+  return response as IEmployer;
+};
+
+onMounted(async () => {
+  employer.value = await getEmployer();
+});
+</script>

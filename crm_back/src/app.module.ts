@@ -15,6 +15,10 @@ import { GroupsModule } from './groups/groups.module';
 import { Group } from './groups/groups.model';
 import { GroupUsersModule } from './group-users/group-users.module';
 import { GroupUser } from './group-users/group-users.model';
+import { TasksModule } from './tasks/tasks.module';
+import { Tasks } from './tasks/tasks.model';
+import { FilesModule } from './files/files.module';
+import { Files } from './files/files.model';
 
 @Module({
   controllers: [],
@@ -31,7 +35,17 @@ import { GroupUser } from './group-users/group-users.model';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [User, Role, EmployerRoles, Employer, Account, Group, GroupUser],
+      models: [
+        User,
+        Role,
+        EmployerRoles,
+        Employer,
+        Account,
+        Group,
+        GroupUser,
+        Tasks,
+        Files,
+      ],
       autoLoadModels: true,
       synchronize: true,
     }),
@@ -42,6 +56,8 @@ import { GroupUser } from './group-users/group-users.model';
     AccountsModule,
     GroupsModule,
     GroupUsersModule,
+    TasksModule,
+    FilesModule,
   ],
 })
 export class AppModule {}

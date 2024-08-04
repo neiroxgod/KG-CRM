@@ -1,10 +1,20 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { EmployersService } from './employers.service';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { Employer } from './employers.model';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { GetUser } from 'src/decorators/auth.decorator';
+import { EditEmployerDto } from './dto/edit-employer.dto';
 
 @ApiTags('Сотрудники')
 @Controller('employers')
@@ -29,6 +39,14 @@ export class EmployersController {
     return this.employerService.addEmployer(userDto, empl);
   }
 
+  @ApiOperation({ summary: 'Редактирование пользователя' })
+  @ApiResponse({ status: 200, type: Employer })
+  @UseGuards(JwtAuthGuard)
+  @Patch('/edit')
+  edit(@Body() userDto: EditEmployerDto, @GetUser() empl: any) {
+    return this.employerService.editEmployer(userDto, empl);
+  }
+
   @ApiOperation({ summary: 'Список пользователей' })
   @ApiResponse({ status: 200, type: [Employer] })
   @UseGuards(JwtAuthGuard)
@@ -48,7 +66,7 @@ export class EmployersController {
   @ApiOperation({ summary: 'Удалить пользователя' })
   @ApiResponse({ status: 200, type: Employer })
   @UseGuards(JwtAuthGuard)
-  @Get('/delete/:id')
+  @Delete('/delete/:id')
   deleteEmployer(@Param('id') id: number) {
     return this.employerService.deleteEmployer(id);
   }

@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Employer } from './employers.model';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { RolesService } from 'src/roles/roles.service';
+import { EditEmployerDto } from './dto/edit-employer.dto';
 
 @Injectable()
 export class EmployersService {
@@ -39,6 +40,16 @@ export class EmployersService {
     return employers;
   }
 
+  async editEmployer(dto: EditEmployerDto, empl: any) {
+    const employer = await this.employerRepository.update(dto, {
+      where: {
+        id: dto.id,
+        accountId: empl.accountId,
+      },
+      returning: true,
+    });
+  }
+
   async deleteEmployer(id: number) {
     await this.employerRepository.destroy({
       where: {
@@ -72,5 +83,7 @@ export class EmployersService {
       where: { id },
       include: { all: true },
     });
+
+    return employer;
   }
 }

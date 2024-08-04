@@ -1,11 +1,11 @@
 <template>
   <div class="mt-2 w-full">
     <Label>{{ label }}</Label>
-    <Select v-model="data">
+    <Select class="w-full" v-model="data">
       <SelectTrigger>
         <SelectValue :placeholder="label" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent class="w-full">
         <SelectGroup>
           <SelectLabel>{{ label }}</SelectLabel>
           <SelectItem v-for="item in items" :key="item.id" :value="item.id">

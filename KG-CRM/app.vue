@@ -1,5 +1,6 @@
 <template>
   <div>
+    <NuxtLoadingIndicator />
     <Toaster />
     <!-- Loader -->
     <SharedNuxtLoadingBar v-if="userStore.loading" />

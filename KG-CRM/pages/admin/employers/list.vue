@@ -1,7 +1,7 @@
 <template>
   <div class="p-5">
     <div class="flex flex-row-reverse">
-      <WidgetsModulesEmployerCreateModal />
+      <WidgetsModulesEmployerCreateSheet />
     </div>
     <div class="mt-5">
       <WidgetsModulesTableData :columns="columns" :data="listStore.listState" />
