@@ -115,7 +115,6 @@ const formSchema = toTypedSchema(
 );
 
 function onSubmit(values) {
-  console.log("submited:", values);
   toast({
     title: "You submitted the following values:",
     description: h(

@@ -44,7 +44,6 @@ const props = defineProps<{
 const emit = defineEmits(["close"]);
 
 const saveChanges = () => {
-  console.log("Сохранение изменений для сотрудника ID:", props.employeeId);
   closeModal();
 };
 
@@ -55,7 +54,6 @@ const closeModal = () => {
 const employer = ref();
 
 async function getData() {
-  console.log(props.employeeId);
   const fetchApi = useFetchApi(userStore.token);
   const response = await fetchApi("/employers/get/" + props.employeeId, {
     method: "GET",
@@ -65,6 +63,5 @@ async function getData() {
 
 onMounted(async () => {
   employer.value = await getData();
-  console.log(employer.value);
 });
 </script>

@@ -63,7 +63,6 @@ async function handleLogin() {
     });
     navigateTo("/");
   } catch (error) {
-    console.log(error);
   } finally {
     data.loading = false;
   }

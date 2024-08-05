@@ -84,10 +84,6 @@ const table = useVueTable({
     },
   },
 });
-
-watchEffect(() => {
-  console.log("DataTable data:", props.data);
-});
 </script>
 
 <template>

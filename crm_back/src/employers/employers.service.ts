@@ -30,7 +30,6 @@ export class EmployersService {
   }
 
   async getAllEmployers(empl: any) {
-    console.log(empl);
     const employers = await this.employerRepository.findAll({
       where: {
         accountId: empl.accountId,

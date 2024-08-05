@@ -20,7 +20,6 @@ export class JwtAuthGuard implements CanActivate {
       const token = authHeader.split(' ')[1];
 
       if (bearer !== 'Bearer' || !token) {
-        console.log(authHeader);
         throw new UnauthorizedException({
           message: 'Пользователь не авторизован',
         });

@@ -5,11 +5,38 @@
         Найдено:
         <label class="font-bold">{{ tasks.length }}</label>
       </div>
-      <Button>Создать задачу</Button>
+      <Sheet>
+        <SheetTrigger as-child>
+          <Button variant="outline"> Создать </Button>
+        </SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Создать задачу</SheetTitle>
+            <SheetDescription>
+              Опишите задачу, выберите ответственного сотрудника и объект задачи
+              при необходимости, затем нажмите "Создать"
+            </SheetDescription>
+          </SheetHeader>
+          <div class="my-5">
+            <SharedTextareaWithLabel label="Текст задачи" />
+            <SharedSelectWithLabel label="Ответственный сотрудник" />
+            <SharedSelectWithLabel label="Ученик (опционально)" />
+
+            <Label> Срок до </Label>
+            <SharedDatePicker />
+          </div>
+          <SheetFooter>
+            <SheetClose as-child>
+              <Button type="submit"> Создать </Button>
+            </SheetClose>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </div>
 
     <div class="bg-slate-100 rounded-md w-full h-fit mt-5 p-5">
       <div
+        v-if="tasks.length"
         v-for="task in tasks"
         :class="
           task.timefinish
@@ -35,7 +62,7 @@
               v-if="task.targetUserId"
               class="text-md ml-2 cursor-pointer text-blue-500"
             >
-              Владислав Петренко
+              {{ task.targetUserId }}
             </div>
           </div>
         </div>
@@ -43,25 +70,11 @@
           {{ task.timedeadline }}
         </div>
       </div>
+      <WidgetsEmptyData v-else label="Упс.. похоже вам везет :-)" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const tasks = ref([
-  {
-    text: "Созвониться с учеником",
-    targetUserId: 11,
-    timedeadline: "2024-08-31 12:00:00",
-  },
-  {
-    text: "Провестри пробный урок",
-    timedeadline: "2024-08-31 12:00:00",
-    timefinish: "2024-08-31 12:43:22",
-  },
-  {
-    text: "Купи вкусняшки",
-    timedeadline: "2024-08-31 12:00:00",
-  },
-]);
+const tasks = ref([]);
 </script>

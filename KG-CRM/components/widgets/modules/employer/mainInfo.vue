@@ -52,7 +52,5 @@ const updateEmployer = async function () {
     method: "PATCH",
     body: { ...employerData.value },
   });
-
-  console.log(response);
 };
 </script>

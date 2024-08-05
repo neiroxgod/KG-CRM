@@ -15,10 +15,10 @@ export default () => {
           password,
         },
       });
-      console.log(data);
+
       authStore.setToken(data[0].token.token);
       authStore.setUser(data[0].employer);
-      // console.log(authStore);
+
       return true;
     } catch (error) {
       console.error("Login error:", error);

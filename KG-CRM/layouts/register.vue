@@ -148,7 +148,6 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     await register({ ...values });
   } catch (error) {
-    console.log(error);
   } finally {
     navigateTo("/");
   }
