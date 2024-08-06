@@ -22,7 +22,7 @@ import { useVModel } from "@vueuse/core";
 
 const props = defineProps<{
   label: string;
-  modelValue: string; //input
+  modelValue: number | string | undefined; //input
   items: Array<any>;
 }>();
 

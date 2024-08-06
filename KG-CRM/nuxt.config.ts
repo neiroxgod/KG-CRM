@@ -39,6 +39,7 @@ export default defineNuxtConfig({
         ital: "200..700",
       },
     },
+    download: true,
   },
   runtimeConfig: {
     jwtAccessSecret: process.env.JWT_ACCESS_TOKEN_SECRET,

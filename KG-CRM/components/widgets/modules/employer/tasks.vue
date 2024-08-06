@@ -18,12 +18,30 @@
             </SheetDescription>
           </SheetHeader>
           <div class="my-5">
-            <SharedTextareaWithLabel label="Текст задачи" />
-            <SharedSelectWithLabel label="Ответственный сотрудник" />
-            <SharedSelectWithLabel label="Ученик (опционально)" />
+            <SharedTextareaWithLabel
+              v-model:model-value="newTask.text"
+              label="Текст задачи"
+              placeholder="Например: 'Собрать подписи с родителей.'"
+            />
+            <SharedSelectWithLabel
+              v-model:model-value="newTask.employerId"
+              :items="employers"
+              label="Ответственный сотрудник"
+            />
+            <SharedSelectWithLabel
+              v-model:model-value="newTask.targetUserId"
+              :items="users"
+              label="Ученик (опционально)"
+            />
+
+            <SharedSelectWithLabel
+              v-model="newTask.targetEmployerId"
+              :items="employers"
+              label="Сотрудник (опционально)"
+            />
 
             <Label> Срок до </Label>
-            <SharedDatePicker />
+            <SharedDatePicker v-model="newTask.deadline" />
           </div>
           <SheetFooter>
             <SheetClose as-child>
@@ -76,5 +94,21 @@
 </template>
 
 <script setup lang="ts">
+import type { ITasks } from "~/composables/interfaces";
+import { getList } from "~/composables/getList";
+
 const tasks = ref([]);
+
+const employers = await new getList().employers();
+const users = await new getList().users();
+
+const newTask = ref<ITasks>({
+  text: "",
+  employerId: 1,
+  targetEmployerId: 1,
+  targetUserId: 1,
+  result: "",
+  timefinish: "",
+  deadline: "",
+});
 </script>

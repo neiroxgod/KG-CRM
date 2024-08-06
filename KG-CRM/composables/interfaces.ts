@@ -14,3 +14,13 @@ export interface ITags {
   label: string;
   value: string;
 }
+
+export interface ITasks {
+  text: string;
+  employerId: number;
+  targetUserId: number;
+  targetEmployerId: number;
+  deadline: string;
+  result?: string;
+  timefinish?: string;
+}
