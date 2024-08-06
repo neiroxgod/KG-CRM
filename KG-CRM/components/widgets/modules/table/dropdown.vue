@@ -38,6 +38,12 @@ const deleteItem = async function () {
     duration: 3000,
   });
 };
+
+const editItem = function () {
+  const ModalStore = useModalStore();
+  ModalStore.ChangeModalState();
+  console.log(ModalStore.ModalState);
+};
 </script>
 
 <template>
@@ -49,7 +55,7 @@ const deleteItem = async function () {
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
-      <DropdownMenuItem> Редактировать </DropdownMenuItem>
+      <DropdownMenuItem @click="editItem()"> Редактировать </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem @click="deleteItem" class="text-red-500">
         Удалить

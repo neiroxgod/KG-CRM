@@ -14,7 +14,10 @@ export class EmployersService {
 
   async createEmployer(dto: CreateEmployerDto) {
     const employer = await this.employerRepository.create(dto);
-    const role = await this.roleService.getRoleByValue('ADMIN');
+    const role = await this.roleService.createRole({
+      value: 'ADMIN',
+      description: 'TEST',
+    });
     await employer.$set('roles', [role.id]);
     employer.roles = [role];
     return employer;

@@ -1,22 +1,62 @@
 <template>
   <Sheet>
     <SheetTrigger as-child>
-      <SharedAddButton />
+      <SharedAddButton label="Добавить филиал" />
     </SheetTrigger>
     <SheetContent>
       <SheetHeader class="mb-2">
-        <SheetTitle>Создание сотрудника</SheetTitle>
+        <SheetTitle>Создание филиала</SheetTitle>
       </SheetHeader>
       <!--  -->
       <Separator />
       <form class="mt-2" @submit.prevent="onSubmit">
         <FormField v-slot="{ componentField }" name="name">
+          <FormItem class="w-full mb-2">
+            <Checkbox id="terms" />
+            <label
+              for="terms"
+              class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Активно
+            </label>
+          </FormItem>
+        </FormField>
+
+        <FormField v-slot="{ componentField }" name="name">
           <FormItem class="w-full">
-            <FormLabel>ФИО</FormLabel>
+            <FormLabel>Название филиала</FormLabel>
             <FormControl>
               <Input
                 type="text"
-                placeholder="Иванов Иван Иванович"
+                placeholder="Наименование филиала"
+                v-bind="componentField"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
+
+        <FormField v-slot="{ componentField }" name="city">
+          <FormItem class="w-full">
+            <FormLabel>Город</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                placeholder="Название города"
+                v-bind="componentField"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
+
+        <FormField v-slot="{ componentField }" name="adress">
+          <FormItem class="w-full">
+            <FormLabel>Адрес</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                placeholder="Камышина 12"
                 v-bind="componentField"
               />
             </FormControl>
@@ -38,27 +78,35 @@
           </FormItem>
         </FormField>
 
-        <FormField v-slot="{ componentField }" name="email">
+        <FormField v-slot="{ componentField }" name="timezone">
           <FormItem class="w-full">
-            <FormLabel>Почта</FormLabel>
-            <FormControl>
-              <Input
-                type="email"
-                placeholder="test@mail.ru"
-                v-bind="componentField"
-              />
-            </FormControl>
-            <FormMessage />
+            <FormLabel>Часовой пояс</FormLabel>
+            <Select v-bind="componentField" v-model="selectedTimezone">
+              <SelectTrigger>
+                <SelectValue placeholder="Выберите из списка" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem
+                    v-for="timezone in timezones"
+                    :key="timezone.value"
+                    :value="timezone.value"
+                  >
+                    {{ timezone.label }}
+                  </SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </FormItem>
         </FormField>
 
-        <FormField v-slot="{ componentField }" name="username">
+        <FormField v-slot="{ componentField }" name="link">
           <FormItem class="w-full">
-            <FormLabel>Логин к CRM</FormLabel>
+            <FormLabel>Ссылка на договор-оферты</FormLabel>
             <FormControl>
               <Input
                 type="text"
-                placeholder="test@mail.ru"
+                placeholder="Добавьте ссылку"
                 v-bind="componentField"
               />
             </FormControl>
@@ -66,19 +114,6 @@
           </FormItem>
         </FormField>
 
-        <FormField v-slot="{ componentField }" name="password">
-          <FormItem class="w-full">
-            <FormLabel>Пароль к CRM</FormLabel>
-            <FormControl>
-              <Input
-                type="password"
-                placeholder="test@mail.ru"
-                v-bind="componentField"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        </FormField>
         <Separator class="mt-5" />
       </form>
       <SheetFooter>
@@ -89,7 +124,7 @@
             class="bg-btnPrimary"
             form="dialogForm"
           >
-            Создать
+            Создать филиал
           </Button>
         </SheetClose>
       </SheetFooter>
@@ -117,11 +152,29 @@ const formSchema = toTypedSchema(
     password: z.string().min(6, "Пароль должен содержать минимум 6 символов"),
   })
 );
+
 const { toast } = useToast();
 
 const { handleSubmit, errors } = useForm({
   validationSchema: formSchema,
 });
+
+const timezones = [
+  { value: "Europe/Kaliningrad", label: "Калининград (GMT+2)" },
+  { value: "Europe/Moscow", label: "Москва (GMT+3)" },
+  { value: "Europe/Samara", label: "Самара (GMT+4)" },
+  { value: "Asia/Yekaterinburg", label: "Екатеринбург (GMT+5)" },
+  { value: "Asia/Omsk", label: "Омск (GMT+6)" },
+  { value: "Asia/Novosibirsk", label: "Новосибирск (GMT+7)" },
+  { value: "Asia/Krasnoyarsk", label: "Красноярск (GMT+7)" },
+  { value: "Asia/Irkutsk", label: "Иркутск (GMT+8)" },
+  { value: "Asia/Yakutsk", label: "Якутск (GMT+9)" },
+  { value: "Asia/Vladivostok", label: "Владивосток (GMT+10)" },
+  { value: "Asia/Magadan", label: "Магадан (GMT+11)" },
+  { value: "Asia/Kamchatka", label: "Камчатка (GMT+12)" },
+];
+
+const selectedTimezone = ref("");
 
 interface Employer {
   id: number;
