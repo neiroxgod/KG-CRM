@@ -12,8 +12,6 @@ import { GroupsService } from './groups.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { GetUser } from 'src/decorators/auth.decorator';
-import { CreateEmployerDto } from 'src/employers/dto/create-employer.dto';
-import { Employer } from 'src/employers/employers.model';
 import { CreateGroupDto } from './dto/create-group.Dto';
 import { Group } from './groups.model';
 

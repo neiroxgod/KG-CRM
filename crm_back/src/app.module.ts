@@ -4,10 +4,8 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { User } from './users/users.model';
 import { RolesModule } from './roles/roles.module';
-import { EmployersModule } from './employers/employers.module';
 import { Role } from './roles/roles.model';
-import { EmployerRoles } from './roles/employer-roles.model';
-import { Employer } from './employers/employers.model';
+import { UserRoles } from './roles/employer-roles.model';
 import { AuthModule } from './auth/auth.module';
 import { AccountsModule } from './accounts/accounts.module';
 import { Account } from './accounts/accounts.model';
@@ -19,6 +17,8 @@ import { TasksModule } from './tasks/tasks.module';
 import { Tasks } from './tasks/tasks.model';
 import { FilesModule } from './files/files.module';
 import { Files } from './files/files.model';
+import { FilialsModule } from './filials/filials.module';
+import { Filial } from './filials/filials.model';
 
 @Module({
   controllers: [],
@@ -38,26 +38,26 @@ import { Files } from './files/files.model';
       models: [
         User,
         Role,
-        EmployerRoles,
-        Employer,
+        UserRoles,
         Account,
         Group,
         GroupUser,
         Tasks,
         Files,
+        Filial,
       ],
       autoLoadModels: true,
       synchronize: true,
     }),
     UsersModule,
     RolesModule,
-    EmployersModule,
     AuthModule,
     AccountsModule,
     GroupsModule,
     GroupUsersModule,
     TasksModule,
     FilesModule,
+    FilialsModule,
   ],
 })
 export class AppModule {}

@@ -11,7 +11,7 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 import { Account } from 'src/accounts/accounts.model';
-import { EmployerRoles } from 'src/roles/employer-roles.model';
+import { UserRoles } from 'src/roles/employer-roles.model';
 import { Role } from 'src/roles/roles.model';
 
 interface GroupCreatinAttrs {

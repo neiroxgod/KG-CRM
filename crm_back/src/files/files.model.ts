@@ -8,7 +8,6 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { Account } from 'src/accounts/accounts.model';
-import { Employer } from 'src/employers/employers.model';
 import { User } from 'src/users/users.model';
 
 @Table({ tableName: 'files' })
@@ -27,12 +26,6 @@ export class Files extends Model<Files> {
   })
   @ForeignKey(() => Account)
   accountId: number;
-
-  @Column({
-    type: DataType.INTEGER,
-  })
-  @ForeignKey(() => Employer)
-  employerId: number;
 
   @Column({
     type: DataType.INTEGER,
@@ -64,9 +57,6 @@ export class Files extends Model<Files> {
     type: DataType.INTEGER,
   })
   size: number;
-
-  @BelongsTo(() => Employer)
-  employer: Employer;
 
   @BelongsTo(() => User)
   user: User;

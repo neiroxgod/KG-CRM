@@ -43,7 +43,16 @@ const props = defineProps<{
 const emit = defineEmits(["update:modelValue"]);
 
 const value = ref<DateValue>();
+
+watch(
+  () => value.value,
+  function (newValue) {
+    console.log(value.value?.toString());
+    emit("update:modelValue", value.value?.toDate("UTC"));
+  }
+);
 const df = new DateFormatter("ru-RU", {
-  dateStyle: "long",
+  dateStyle: "full",
+  timeStyle: "short",
 });
 </script>

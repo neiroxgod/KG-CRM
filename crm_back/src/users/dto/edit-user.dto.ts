@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateUserDto {
-  @ApiProperty({ example: '1', description: 'ID аккаунта' })
-  accountId: number;
+export class EditUserDto {
+  @ApiProperty({ example: '11', description: 'ID пользователя' })
+  readonly id: number;
 
   @ApiProperty({ example: 'user@email.ru', description: 'Почта пользователя' })
   readonly email: string;

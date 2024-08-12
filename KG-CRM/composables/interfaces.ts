@@ -20,7 +20,7 @@ export interface ITasks {
   employerId: number;
   targetUserId: number;
   targetEmployerId: number;
-  deadline: string;
+  timedeadline: string;
   result?: string;
   timefinish?: string;
 }

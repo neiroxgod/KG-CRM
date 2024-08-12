@@ -13,12 +13,9 @@ export class CreateTaskDto {
   @ApiProperty({ example: '411135', description: 'На кого задача (Ученик)' })
   targetUserId?: number;
 
-  @ApiProperty({ example: '411135', description: 'На кого задача (Сотрудник)' })
-  targetEmployerId?: number;
-
   @ApiProperty({
-    example: '2024-08-04 12:59:32',
+    example: '2024-08-04Z12:59:320T',
     description: 'Дедлайн задачи',
   })
-  deadline: string;
+  timedeadline: string;
 }

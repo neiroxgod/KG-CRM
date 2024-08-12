@@ -1,4 +1,4 @@
-import { useFetchApi, type IEmployer } from "#imports";
+import { useFetchApi, type IEmployer, type ITasks } from "#imports";
 import { useAuthStore } from "#imports";
 
 export class getList {
@@ -41,10 +41,10 @@ export class getList {
     });
   }
 
-  async tasks() {
-    return await this.fetchApi("/tasks/", {
+  async tasks(): Promise<[globalThis.ITasks]> {
+    return (await this.fetchApi("/tasks/", {
       method: "GET",
-    });
+    })) as [ITasks];
   }
 
   async filesById(id: number) {

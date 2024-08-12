@@ -28,6 +28,7 @@ export class TasksController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() taskDto: CreateTaskDto, @GetUser() empl: any) {
+    taskDto.timedeadline = new Date(taskDto.timedeadline).toISOString();
     return this.tasksService.createTask(taskDto, empl);
   }
 
@@ -53,14 +54,6 @@ export class TasksController {
   @Get('/get/user/:user_id')
   getTasksForUser(@Param('user_id') user_id: number) {
     return this.tasksService.getTasksForUser(user_id);
-  }
-
-  @ApiOperation({ summary: 'Получить задачи по сотруднику' })
-  @ApiResponse({ status: 200, type: Tasks })
-  @UseGuards(JwtAuthGuard)
-  @Get('/get/employer/:employer_id')
-  getTasksForEmployer(@Param('employer_id') employer_id: number) {
-    return this.tasksService.getTasksForEmployer(employer_id);
   }
 
   @ApiOperation({ summary: 'Удалить пользователя' })

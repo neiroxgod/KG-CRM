@@ -41,11 +41,11 @@
             />
 
             <Label> Срок до </Label>
-            <SharedDatePicker v-model="newTask.deadline" />
+            <SharedDatePicker v-model:model-value="newTask.timedeadline" />
           </div>
           <SheetFooter>
             <SheetClose as-child>
-              <Button type="submit"> Создать </Button>
+              <Button @click="createTask($event)"> Создать </Button>
             </SheetClose>
           </SheetFooter>
         </SheetContent>
@@ -96,19 +96,69 @@
 <script setup lang="ts">
 import type { ITasks } from "~/composables/interfaces";
 import { getList } from "~/composables/getList";
+import { toast } from "~/components/ui/toast";
 
-const tasks = ref([]);
-
+const userStore = useAuthStore();
+const tasks = ref<[ITasks]>();
 const employers = await new getList().employers();
 const users = await new getList().users();
+tasks.value = await new getList().tasks();
 
 const newTask = ref<ITasks>({
   text: "",
-  employerId: 1,
-  targetEmployerId: 1,
-  targetUserId: 1,
+  employerId: 0,
+  targetEmployerId: 0,
+  targetUserId: 0,
   result: "",
   timefinish: "",
-  deadline: "",
+  timedeadline: "",
 });
+
+const createTask = async function (e) {
+  if (newTask.value.text === "") {
+    e.preventDefault();
+    e.stopPropagation();
+
+    toast({
+      description: "Укажите текст задачи!",
+      variant: "destructive",
+      duration: 2000,
+    });
+    return;
+  }
+
+  if (!newTask.value.employerId) {
+    e.preventDefault();
+    e.stopPropagation();
+    toast({
+      description: "Укажите ответственного сотрудника!",
+      variant: "destructive",
+      duration: 2000,
+    });
+    return;
+  }
+
+  if (!newTask.value.employerId) {
+    e.preventDefault();
+    e.stopPropagation();
+    toast({
+      description: "Укажите дедлайн!",
+      variant: "destructive",
+      duration: 2000,
+    });
+    return;
+  }
+
+  const fetchApi = useFetchApi(userStore.token);
+  const task = await fetchApi("/tasks/", {
+    method: "POST",
+    body: { ...newTask.value },
+  });
+  toast({
+    description: "Задача успешно создана!",
+    duration: 2000,
+  });
+  console.log(task);
+  return task;
+};
 </script>

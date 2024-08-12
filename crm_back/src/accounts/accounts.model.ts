@@ -7,9 +7,9 @@ import {
   BelongsToMany,
   HasMany,
 } from 'sequelize-typescript';
-import { Employer } from 'src/employers/employers.model';
 import { Group } from 'src/groups/groups.model';
 import { Role } from 'src/roles/roles.model';
+import { User } from 'src/users/users.model';
 
 interface AccountCreatinAttrs {
   email: string;
@@ -45,10 +45,10 @@ export class Account extends Model<Account, AccountCreatinAttrs> {
   })
   caption: string;
 
-  @HasMany(() => Employer, {
+  @HasMany(() => User, {
     foreignKey: 'accountId',
   })
-  employers: Employer[];
+  users: User[];
 
   @HasMany(() => Group, {
     foreignKey: 'accountId',

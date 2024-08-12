@@ -4,14 +4,13 @@ import {
   Model,
   DataType,
   Table,
-  BelongsToMany,
   ForeignKey,
 } from 'sequelize-typescript';
-import { Employer } from 'src/employers/employers.model';
 import { Role } from './roles.model';
+import { User } from 'src/users/users.model';
 
-@Table({ tableName: 'employer_roles' })
-export class EmployerRoles extends Model<EmployerRoles> {
+@Table({ tableName: 'user_roles' })
+export class UserRoles extends Model<UserRoles> {
   @ApiProperty({ example: '1', description: 'Айдишник' })
   @Column({
     type: DataType.INTEGER,
@@ -32,9 +31,9 @@ export class EmployerRoles extends Model<EmployerRoles> {
     example: 'Имеет доступ ко всем разделам',
     description: 'Описание роли',
   })
-  @ForeignKey(() => Employer)
+  @ForeignKey(() => User)
   @Column({
     type: DataType.INTEGER,
   })
-  employerId: number;
+  userId: number;
 }

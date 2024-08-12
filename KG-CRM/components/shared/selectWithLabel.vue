@@ -9,7 +9,7 @@
         <SelectGroup>
           <SelectLabel>{{ label }}</SelectLabel>
           <SelectItem v-for="item in items" :key="item.id" :value="item.id">
-            {{ item.caption }}
+            {{ item.caption ? item.caption : item.name }}
           </SelectItem>
         </SelectGroup>
       </SelectContent>

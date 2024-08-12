@@ -8,30 +8,30 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CreateEmployerDto } from 'src/employers/dto/create-employer.dto';
-import { EmployersService } from 'src/employers/employers.service';
 import * as bcrypt from 'bcryptjs';
-import { Employer } from 'src/employers/employers.model';
 import { AccountsService } from 'src/accounts/accounts.service';
+import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/users.model';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    private employerService: EmployersService,
+    private userService: UsersService,
     private readonly jwtService: JwtService,
     @Inject(forwardRef(() => AccountsService))
     private accountService: AccountsService,
   ) {}
 
-  async login(employerDto: CreateEmployerDto) {
-    const employer = await this.validateUser(employerDto);
+  async login(user: CreateUserDto) {
+    const employer = await this.validateUser(user);
     const token = await this.generateToken(employer);
     const data = [{ employer: employer, token }];
     return data;
   }
 
-  async register(employerDto: CreateEmployerDto) {
-    const candidate = await this.employerService.getEmployerByUsername(
-      employerDto.username,
+  async register(user: CreateUserDto) {
+    const candidate = await this.userService.getEmployerByUsername(
+      user.username,
     );
     if (candidate) {
       throw new HttpException(
@@ -40,26 +40,26 @@ export class AuthService {
       );
     }
 
-    const hashPassword = await bcrypt.hash(employerDto.password, 5);
+    const hashPassword = await bcrypt.hash(user.password, 5);
 
-    const { caption, email } = employerDto;
-    const account = await this.accountService.createAccount({ caption, email });
-    const employer = await this.employerService.createEmployer({
-      ...employerDto,
+    const { name, email } = user;
+    const account = await this.accountService.createAccount({
+      caption: name,
+      email,
+    });
+    const employer = await this.userService.createEmployer({
+      ...user,
       password: hashPassword,
     });
 
-    await this.employerService.updateEmployersAccountId(
-      employer.id,
-      account.id,
-    );
+    await this.userService.updateEmployersAccountId(employer.id, account.id);
     employer.accountId = account.id;
     const token = await this.generateToken(employer);
     const data = [{ employer: employer, token }];
     return data;
   }
 
-  async generateToken(employer: Employer) {
+  async generateToken(employer: User) {
     const payload = {
       accountId: employer.accountId,
       username: employer.username,
@@ -76,12 +76,12 @@ export class AuthService {
     return { status: true };
   }
 
-  private async validateUser(employerDto: CreateEmployerDto) {
-    const employer = await this.employerService.getEmployerByUsername(
-      employerDto.username,
+  private async validateUser(user: CreateUserDto) {
+    const employer = await this.userService.getEmployerByUsername(
+      user.username,
     );
     const passwordEquals = await bcrypt.compare(
-      employerDto.password,
+      user.password,
       employer.password,
     );
 

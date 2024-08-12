@@ -6,8 +6,8 @@ import {
   Table,
   BelongsToMany,
 } from 'sequelize-typescript';
-import { Employer } from 'src/employers/employers.model';
-import { EmployerRoles } from './employer-roles.model';
+import { UserRoles } from './employer-roles.model';
+import { User } from 'src/users/users.model';
 
 interface RoleCreationAttrs {
   value: String;
@@ -33,6 +33,15 @@ export class Role extends Model<Role, RoleCreationAttrs> {
   value: string;
 
   @ApiProperty({
+    example: 'groups, payments, etc...',
+    description: 'Какие доступы дает роль',
+  })
+  @Column({
+    type: DataType.TEXT,
+  })
+  accessRights: string;
+
+  @ApiProperty({
     example: 'Имеет доступ ко всем разделам',
     description: 'Описание роли',
   })
@@ -41,6 +50,6 @@ export class Role extends Model<Role, RoleCreationAttrs> {
   })
   description: string;
 
-  @BelongsToMany(() => Employer, () => EmployerRoles)
-  employers: Employer[];
+  @BelongsToMany(() => User, () => UserRoles)
+  users: User[];
 }

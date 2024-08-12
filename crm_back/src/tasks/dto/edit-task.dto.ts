@@ -17,7 +17,7 @@ export class EditTaskDto {
     example: '2024-08-04 12:59:32',
     description: 'Дедлайн задачи',
   })
-  deadline: string;
+  timedeadline: string;
 
   @ApiProperty({
     example: '2024-08-04 12:59:32',

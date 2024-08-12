@@ -16,9 +16,9 @@
           <AccordionItem value="roles">
             <AccordionTrigger> Роли </AccordionTrigger>
             <AccordionContent>
-              <TagsInput v-model="EmployerRoles">
+              <TagsInput v-model="UserRoles">
                 <TagsInputItem
-                  v-for="item in EmployerRoles"
+                  v-for="item in UserRoles"
                   :key="item.value"
                   :value="item.value"
                 >
@@ -93,13 +93,13 @@ const userStore = useAuthStore();
 
 const employer = ref<IEmployer>();
 
-const EmployerRoles = ref<Array<Object>>();
+const UserRoles = ref<Array<Object>>();
 
 const getEmployer = async function (): Promise<IEmployer> {
   const fetchApi = useFetchApi(userStore.token);
 
   const response = await fetchApi("/employers/get/" + route.params.id);
-  EmployerRoles.value = response.roles;
+  UserRoles.value = response.roles;
   return response as IEmployer;
 };
 

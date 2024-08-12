@@ -4,23 +4,17 @@ import {
   Model,
   DataType,
   Table,
-  BelongsToMany,
-  HasOne,
   BelongsTo,
   ForeignKey,
 } from 'sequelize-typescript';
 import { Account } from 'src/accounts/accounts.model';
-import { Employer } from 'src/employers/employers.model';
-import { EmployerRoles } from 'src/roles/employer-roles.model';
-import { Role } from 'src/roles/roles.model';
 import { User } from 'src/users/users.model';
 
 interface TasksCreatingAttrs {
   text: string;
   employerId: number;
   accountId: number;
-  targetUserId: number;
-  targetEmployerId: number;
+  targetUserId?: number;
   timedeadline: string;
 }
 
@@ -46,7 +40,7 @@ export class Tasks extends Model<Tasks, TasksCreatingAttrs> {
     example: '1',
     description: 'Идентификатор ответственного сотрудника',
   })
-  @ForeignKey(() => Employer)
+  @ForeignKey(() => User)
   @Column({
     type: DataType.INTEGER,
   })
@@ -56,15 +50,9 @@ export class Tasks extends Model<Tasks, TasksCreatingAttrs> {
   @ForeignKey(() => User)
   @Column({
     type: DataType.INTEGER,
+    allowNull: true,
   })
-  targetUserId: number;
-
-  @ApiProperty({ example: '1', description: 'Идентификатор аккаунта' })
-  @ForeignKey(() => Employer)
-  @Column({
-    type: DataType.INTEGER,
-  })
-  targetEmployerId: number;
+  targetUserId?: number;
 
   @ApiProperty({ example: 'Провестри встречу', description: 'Текст задачи' })
   @Column({
@@ -86,7 +74,7 @@ export class Tasks extends Model<Tasks, TasksCreatingAttrs> {
     description: 'Дедлайн',
   })
   @Column({
-    type: DataType.DATE,
+    type: DataType.STRING,
   })
   timedeadline: string;
 
@@ -95,12 +83,9 @@ export class Tasks extends Model<Tasks, TasksCreatingAttrs> {
     description: 'Время закрытия задачи',
   })
   @Column({
-    type: DataType.DATE,
+    type: DataType.STRING,
   })
   timefinish: string;
-
-  @BelongsTo(() => Employer)
-  Employer: Employer;
 
   @BelongsTo(() => Account)
   account: Account;

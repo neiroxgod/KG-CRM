@@ -52,16 +52,6 @@ export class FilesService {
     return files;
   }
 
-  async getFilesByEmployerId(employer_id: number) {
-    const files = await this.fileRepository.findAll({
-      where: {
-        employerId: employer_id,
-      },
-    });
-
-    return files;
-  }
-
   async deleteFileById(id: number): Promise<void> {
     const file = await this.getFile(id);
     try {

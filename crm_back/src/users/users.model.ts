@@ -1,6 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Model, DataType, Table, HasMany } from 'sequelize-typescript';
+import {
+  Column,
+  Model,
+  DataType,
+  Table,
+  HasMany,
+  BelongsTo,
+  BelongsToMany,
+  ForeignKey,
+} from 'sequelize-typescript';
+import { Account } from 'src/accounts/accounts.model';
 import { Files } from 'src/files/files.model';
+import { UserRoles } from 'src/roles/employer-roles.model';
+import { Role } from 'src/roles/roles.model';
 import { Tasks } from 'src/tasks/tasks.model';
 
 interface UserCreationAttrs {
@@ -22,6 +34,7 @@ export class User extends Model<User, UserCreationAttrs> {
   id: number;
 
   @ApiProperty({ example: '3', description: 'Айдишник аккаунта связанного' })
+  @ForeignKey(() => Account)
   @Column({
     type: DataType.INTEGER,
   })
@@ -41,6 +54,15 @@ export class User extends Model<User, UserCreationAttrs> {
     type: DataType.STRING,
   })
   email: string;
+
+  @ApiProperty({
+    example: '+79999999999',
+    description: 'Телефон',
+  })
+  @Column({
+    type: DataType.STRING,
+  })
+  phone: string;
 
   @ApiProperty({ example: 'qwerty', description: 'Пароль пользователя' })
   @Column({
@@ -64,9 +86,15 @@ export class User extends Model<User, UserCreationAttrs> {
   })
   name: string;
 
+  @BelongsToMany(() => Role, () => UserRoles)
+  roles: Role[];
+
   @HasMany(() => Tasks)
   tasks: Tasks[];
 
   @HasMany(() => Files)
   files: Files[];
+
+  @BelongsTo(() => Account)
+  account: Account;
 }

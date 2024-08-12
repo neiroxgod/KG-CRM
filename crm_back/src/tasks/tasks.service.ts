@@ -10,6 +10,7 @@ export class TasksService {
 
   async createTask(dto: CreateTaskDto, empl: any) {
     dto.accountId = empl.accountId;
+    console.log(dto);
     const task = await this.taskRepository.create(dto);
     return task;
   }
@@ -52,14 +53,6 @@ export class TasksService {
       include: { all: true },
     });
     return userTasks;
-  }
-
-  async getTasksForEmployer(EmployerId: number) {
-    const employerTasks = await this.taskRepository.findAll({
-      where: { targetEmployerId: EmployerId },
-      include: { all: true },
-    });
-    return employerTasks;
   }
 
   async getTask(id: number) {
