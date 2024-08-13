@@ -59,7 +59,7 @@ export default () => {
       });
 
       authStore.setToken(data[0].token.token);
-      authStore.setUser(data[0].employer.user);
+      authStore.setUser(data[0].employer);
     } catch (error) {
       console.error("register error:", error);
       throw error;

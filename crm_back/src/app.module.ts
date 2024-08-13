@@ -48,7 +48,7 @@ import { Identity } from './users/identity-model';
       ],
       autoLoadModels: true,
       synchronize: true,
-      sync: { force: true },
+      // sync: { force: true },
     }),
     UsersModule,
     RolesModule,

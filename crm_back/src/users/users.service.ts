@@ -18,14 +18,18 @@ export class UsersService {
   async createEmployer(dto: CreateUserDto) {
     const employer = await this.userRepository.create(dto);
 
-    let role = await this.roleService.getRoleByValue('ADMIN');
+    let role = await this.roleService.getRoleByValue(
+      'Владелец',
+      employer.accountId,
+    );
 
     if (!role) {
-      role = await this.roleService.createRole({
-        value: 'admin',
-        description: 'Доступ ко всем разделам',
-        access_rights: '',
-      });
+      const status = await this.roleService.createBaseRoles(employer.accountId);
+
+      role = await this.roleService.getRoleByValue(
+        'Владелец',
+        employer.accountId,
+      );
     }
 
     const entity = {
@@ -38,7 +42,7 @@ export class UsersService {
     const identity = await this.createIdentity(entity);
 
     const result = await identity.reload({
-      include: [{ model: this.userRepository }],
+      include: { all: true },
     });
     return result;
   }
@@ -51,14 +55,18 @@ export class UsersService {
   async addEmployer(dto: CreateUserDto, empl: any) {
     dto.accountId = empl.accountId;
     const employer = await this.userRepository.create(dto);
-    let role = await this.roleService.getRoleByValue('ADMIN');
+    let role = await this.roleService.getRoleByValue(
+      'Администратор',
+      employer.accountId,
+    );
 
     if (!role) {
-      role = await this.roleService.createRole({
-        value: 'admin',
-        description: 'Доступ ко всем разделам',
-        access_rights: '',
-      });
+      await this.roleService.createBaseRoles(employer.accountId);
+
+      role = await this.roleService.getRoleByValue(
+        'Администратор',
+        employer.accountId,
+      );
     }
 
     const entity = {
@@ -70,9 +78,10 @@ export class UsersService {
 
     const identity = await this.createIdentity(entity);
 
-    await identity.$set('user', [employer.id]);
-    identity.user = employer;
-    return identity;
+    const result = await identity.reload({
+      include: { all: true },
+    });
+    return result;
   }
 
   async getAllEmployers(empl: any) {
@@ -127,18 +136,37 @@ export class UsersService {
     return employer;
   }
 
-  async getEmployer(id: number) {
+  async getUser(id: number) {
     const entity = await this.identityRepository.findOne({
       where: { userId: id },
       include: { all: true },
     });
-
     return entity;
   }
 
-  async createuser(dto: CreateUserDto) {
+  async createUser(dto: CreateUserDto, empl: any) {
+    dto.accountId = empl.accountId;
     const user = await this.userRepository.create(dto);
-    return user;
+
+    let role = await this.roleService.getRoleByValue('Ученик', user.accountId);
+
+    if (!role) {
+      this.roleService.createBaseRoles(user.accountId);
+    }
+
+    const entity = {
+      accountId: user.accountId,
+      userId: user.id,
+      filialId: user.filialId,
+      roleId: role.id,
+    } as Identity;
+
+    const identity = await this.createIdentity(entity);
+
+    const result = await identity.reload({
+      include: { all: true },
+    });
+    return result;
   }
 
   async getAllUsers() {

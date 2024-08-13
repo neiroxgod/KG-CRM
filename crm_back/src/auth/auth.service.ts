@@ -93,7 +93,7 @@ export class AuthService {
     );
     if (!employer) return false;
 
-    const entity = await this.userService.getEmployer(employer.id);
+    const entity = await this.userService.getUser(employer.id);
 
     const passwordEquals = await bcrypt.compare(
       user.password,

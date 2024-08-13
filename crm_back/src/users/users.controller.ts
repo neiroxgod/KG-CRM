@@ -59,8 +59,8 @@ export class UsersController {
   @ApiResponse({ status: 200, type: User })
   @UseGuards(JwtAuthGuard)
   @Get('/get/:id')
-  getEmployer(@Param('id') id: number) {
-    return this.usersService.getEmployer(id);
+  getUser(@Param('id') id: number) {
+    return this.usersService.getUser(id);
   }
 
   @ApiOperation({ summary: 'Удалить пользователя (Ученик или Сотрудник)' })
@@ -74,8 +74,8 @@ export class UsersController {
   @ApiOperation({ summary: 'Создание ученика' })
   @ApiResponse({ status: 200, type: User })
   @Post('/user/')
-  createUser(@Body() userDto: CreateUserDto) {
-    return this.usersService.createuser(userDto);
+  createUser(@Body() userDto: CreateUserDto, @GetUser() empl: any) {
+    return this.usersService.createUser(userDto, empl);
   }
 
   @ApiOperation({ summary: 'Список учеников' })

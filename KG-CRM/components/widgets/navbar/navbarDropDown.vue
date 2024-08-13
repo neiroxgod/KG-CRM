@@ -3,12 +3,12 @@
     <DropdownMenuTrigger class="flex align-middle items-center" as-child>
       <div class="cursor-pointer">
         <div class="h-10 w-10 bg-slate-300 mr-2 rounded-md"></div>
-        <Label>{{ userStore.user!.name }}</Label>
+        <Label>{{ user!.name }}</Label>
         <icon name="material-symbols:expand-more" />
       </div>
     </DropdownMenuTrigger>
     <DropdownMenuContent class="w-56 mr-5">
-      <DropdownMenuLabel>{{ userStore.user!.name }}</DropdownMenuLabel>
+      <DropdownMenuLabel>{{ user!.name }}</DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
         <DropdownMenuItem>
@@ -51,6 +51,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const userStore = useAuthStore();
+
+const { roles, user, account } = userStore.user;
 
 const handleLogOut = (): void => {
   useAuth().logout();

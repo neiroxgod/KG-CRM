@@ -27,7 +27,6 @@
 <script lang="ts" setup>
 import { getRouteName } from "../composables/routeNameTransformer";
 const route = useRoute();
-const userStore = useAuthStore();
 const pageTitle = computed(() => {
   return getRouteName(route.path) || "Дешборд"; // Значение по умолчанию
 });

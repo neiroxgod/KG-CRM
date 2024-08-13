@@ -1,10 +1,9 @@
 <script setup>
 const layout = ref("default");
 const userStore = useAuthStore();
-
 if (
   (!localStorage.getItem("token") || localStorage.getItem("token") == "null") &&
-  !userStore.isLoading
+  !userStore.loading
 ) {
   navigateTo("/employerAuth");
 }
@@ -60,7 +59,7 @@ const reportStats = ref([
         v-if="userStore.user"
         class="text-4xl font-inter font-bold text-btnPrimary"
       >
-        Добро пожаловать, {{ userStore.user.name }} !
+        Добро пожаловать, {{ userStore.user.user.name }} !
       </div>
       <div class="text-xl font-inter font-thin mt-2">
         Взгляните на статистику вашей школы!

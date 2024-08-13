@@ -4,9 +4,12 @@ import {
   Model,
   DataType,
   Table,
+  BelongsTo,
   BelongsToMany,
   HasMany,
+  ForeignKey,
 } from 'sequelize-typescript';
+import { Account } from 'src/accounts/accounts.model';
 import { Identity } from 'src/users/identity-model';
 
 interface RoleCreationAttrs {
@@ -25,6 +28,13 @@ export class Role extends Model<Role, RoleCreationAttrs> {
     primaryKey: true,
   })
   id: number;
+
+  @ApiProperty({ example: '1', description: 'ID Аккаунта' })
+  @ForeignKey(() => Account)
+  @Column({
+    type: DataType.INTEGER,
+  })
+  accountId: number;
 
   @ApiProperty({ example: 'Admin', description: 'Роль пользователя' })
   @Column({
@@ -50,6 +60,9 @@ export class Role extends Model<Role, RoleCreationAttrs> {
     type: DataType.STRING,
   })
   description: string;
+
+  @BelongsTo(() => Account)
+  account: Account;
 
   @HasMany(() => Identity)
   identity: Identity[];
