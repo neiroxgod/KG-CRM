@@ -5,7 +5,6 @@ import { ConfigModule } from '@nestjs/config';
 import { User } from './users/users.model';
 import { RolesModule } from './roles/roles.module';
 import { Role } from './roles/roles.model';
-import { UserRoles } from './roles/employer-roles.model';
 import { AuthModule } from './auth/auth.module';
 import { AccountsModule } from './accounts/accounts.module';
 import { Account } from './accounts/accounts.model';
@@ -19,6 +18,7 @@ import { FilesModule } from './files/files.module';
 import { Files } from './files/files.model';
 import { FilialsModule } from './filials/filials.module';
 import { Filial } from './filials/filials.model';
+import { Identity } from './users/identity-model';
 
 @Module({
   controllers: [],
@@ -38,16 +38,17 @@ import { Filial } from './filials/filials.model';
       models: [
         User,
         Role,
-        UserRoles,
         Account,
         Group,
         GroupUser,
         Tasks,
         Files,
         Filial,
+        Identity,
       ],
       autoLoadModels: true,
       synchronize: true,
+      sync: { force: true },
     }),
     UsersModule,
     RolesModule,

@@ -4,6 +4,9 @@ export class EditUserDto {
   @ApiProperty({ example: '11', description: 'ID пользователя' })
   readonly id: number;
 
+  @ApiProperty({ example: '11', description: 'ID филиала' })
+  readonly filialId: number;
+
   @ApiProperty({ example: 'user@email.ru', description: 'Почта пользователя' })
   readonly email: string;
 

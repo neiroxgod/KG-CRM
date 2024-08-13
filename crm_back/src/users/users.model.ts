@@ -4,22 +4,21 @@ import {
   Model,
   DataType,
   Table,
-  HasMany,
   BelongsTo,
-  BelongsToMany,
   ForeignKey,
+  HasMany,
+  HasOne,
 } from 'sequelize-typescript';
 import { Account } from 'src/accounts/accounts.model';
+import { Identity } from './identity-model';
 import { Files } from 'src/files/files.model';
-import { UserRoles } from 'src/roles/employer-roles.model';
-import { Role } from 'src/roles/roles.model';
 import { Tasks } from 'src/tasks/tasks.model';
 
 interface UserCreationAttrs {
-  email: String;
-  password: String;
-  username: String;
-  name?: String;
+  email: string;
+  password: string;
+  username: string;
+  name?: string;
 }
 
 @Table({ tableName: 'users' })
@@ -86,14 +85,14 @@ export class User extends Model<User, UserCreationAttrs> {
   })
   name: string;
 
-  @BelongsToMany(() => Role, () => UserRoles)
-  roles: Role[];
-
   @HasMany(() => Tasks)
   tasks: Tasks[];
 
   @HasMany(() => Files)
   files: Files[];
+
+  @HasOne(() => Identity)
+  identity: Identity;
 
   @BelongsTo(() => Account)
   account: Account;

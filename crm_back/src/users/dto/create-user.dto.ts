@@ -4,6 +4,9 @@ export class CreateUserDto {
   @ApiProperty({ example: '1', description: 'ID аккаунта' })
   accountId: number;
 
+  @ApiProperty({ example: '1', description: 'ID филиала' })
+  filialId: number;
+
   @ApiProperty({ example: 'user@email.ru', description: 'Почта пользователя' })
   readonly email: string;
 

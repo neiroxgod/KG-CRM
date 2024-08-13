@@ -5,6 +5,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AccountsModule } from 'src/accounts/accounts.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from 'src/users/users.module';
+import { FilialsModule } from 'src/filials/filials.module';
 
 @Module({
   controllers: [AuthController],
@@ -13,6 +14,7 @@ import { UsersModule } from 'src/users/users.module';
     ConfigModule.forRoot(),
     forwardRef(() => UsersModule),
     forwardRef(() => AccountsModule),
+    forwardRef(() => FilialsModule),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {

@@ -5,29 +5,74 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { Role } from 'src/roles/roles.model';
 import { RolesService } from 'src/roles/roles.service';
 import { EditUserDto } from './dto/edit-user.dto';
+import { Identity } from './identity-model';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User) private userRepository: typeof User,
+    @InjectModel(Identity) private identityRepository: typeof Identity,
     private roleService: RolesService,
   ) {}
 
   async createEmployer(dto: CreateUserDto) {
     const employer = await this.userRepository.create(dto);
-    const role = await this.roleService.getRoleByValue('ADMIN');
-    await employer.$set('roles', [role.id]);
-    employer.roles = [role];
-    return employer;
+
+    let role = await this.roleService.getRoleByValue('ADMIN');
+
+    if (!role) {
+      role = await this.roleService.createRole({
+        value: 'admin',
+        description: 'Доступ ко всем разделам',
+        access_rights: '',
+      });
+    }
+
+    const entity = {
+      accountId: employer.accountId,
+      userId: employer.id,
+      filialId: employer.filialId,
+      roleId: role.id,
+    } as Identity;
+
+    const identity = await this.createIdentity(entity);
+
+    const result = await identity.reload({
+      include: [{ model: this.userRepository }],
+    });
+    return result;
+  }
+
+  async createIdentity(identity: Identity) {
+    const entity = await this.identityRepository.create(identity);
+    return entity;
   }
 
   async addEmployer(dto: CreateUserDto, empl: any) {
     dto.accountId = empl.accountId;
     const employer = await this.userRepository.create(dto);
-    const role = await this.roleService.getRoleByValue('ADMIN');
-    await employer.$set('roles', [role.id]);
-    employer.roles = [role];
-    return employer;
+    let role = await this.roleService.getRoleByValue('ADMIN');
+
+    if (!role) {
+      role = await this.roleService.createRole({
+        value: 'admin',
+        description: 'Доступ ко всем разделам',
+        access_rights: '',
+      });
+    }
+
+    const entity = {
+      accountId: employer.accountId,
+      userId: employer.id,
+      filialId: employer.filialId,
+      roleId: role.id,
+    } as Identity;
+
+    const identity = await this.createIdentity(entity);
+
+    await identity.$set('user', [employer.id]);
+    identity.user = employer;
+    return identity;
   }
 
   async getAllEmployers(empl: any) {
@@ -83,12 +128,12 @@ export class UsersService {
   }
 
   async getEmployer(id: number) {
-    const employer = await this.userRepository.findOne({
-      where: { id },
+    const entity = await this.identityRepository.findOne({
+      where: { userId: id },
       include: { all: true },
     });
 
-    return employer;
+    return entity;
   }
 
   async createuser(dto: CreateUserDto) {

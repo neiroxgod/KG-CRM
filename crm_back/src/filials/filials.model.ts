@@ -21,7 +21,7 @@ interface FilialCreationAttrs {
   details?: string;
 }
 
-@Table({ tableName: 'groups' })
+@Table({ tableName: 'filials' })
 export class Filial extends Model<Filial, FilialCreationAttrs> {
   @ApiProperty({ example: '22', description: 'Идентификатор филиала' })
   @Column({

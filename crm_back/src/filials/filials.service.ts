@@ -9,6 +9,16 @@ import { UpdateFilialDto } from './dto/update-filial.dto';
 export class FilialsService {
   constructor(@InjectModel(Filial) private filialRepository: typeof Filial) {}
 
+  createMockFilial = async function () {
+    const mock = {
+      caption: 'По умолчанию',
+      address: 'По умолчанию',
+    };
+
+    const filial = await this.filialRepository.create(mock);
+    return filial;
+  };
+
   createFilial = async function (
     data: CreateFilialDto,
     employer: any,
