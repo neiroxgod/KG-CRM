@@ -8,8 +8,8 @@
             <AccordionTrigger> Основная информация </AccordionTrigger>
             <AccordionContent>
               <WidgetsModulesEmployerMainInfo
-                v-if="employer"
-                :employer="employer"
+                v-if="identity.user"
+                :employer="identity.user"
               />
             </AccordionContent>
           </AccordionItem>
@@ -72,7 +72,7 @@
             <TabsTrigger value="docs"> Документы </TabsTrigger>
           </TabsList>
           <TabsContent value="overview">
-            <WidgetsModulesEmployerOverview :employer="employer" />
+            <WidgetsModulesEmployerOverview :employer="identity.user" />
           </TabsContent>
           <TabsContent value="tasks">
             <WidgetsModulesEmployerTasks />
@@ -86,24 +86,21 @@
 </template>
 
 <script setup lang="ts">
-import type { IEmployer } from "~/composables/interfaces";
+import { getList } from "~/composables/getList";
 
 const route = useRoute();
 const userStore = useAuthStore();
 
-const employer = ref<IEmployer>();
+const getListInstance = new getList();
 
-const UserRoles = ref<Array<Object>>();
+const identity = ref();
 
-const getEmployer = async function (): Promise<IEmployer> {
-  const fetchApi = useFetchApi(userStore.token);
-
-  const response = await fetchApi("/employers/get/" + route.params.id);
-  UserRoles.value = response.roles;
-  return response as IEmployer;
-};
+const UserRoles = ref();
 
 onMounted(async () => {
-  employer.value = await getEmployer();
+  identity.value = await getListInstance.employerById(Number(route.params.id));
+  UserRoles.value = identity.value.roles;
+
+  console.log(identity.value);
 });
 </script>

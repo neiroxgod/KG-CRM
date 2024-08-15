@@ -30,14 +30,8 @@
             />
             <SharedSelectWithLabel
               v-model:model-value="newTask.targetUserId"
-              :items="users"
-              label="Ученик (опционально)"
-            />
-
-            <SharedSelectWithLabel
-              v-model="newTask.targetEmployerId"
               :items="employers"
-              label="Сотрудник (опционально)"
+              label="Объект задачи"
             />
 
             <Label> Срок до </Label>
@@ -64,8 +58,8 @@
       >
         <div class="flex">
           <Checkbox
-            :checked="task.timefinish ? true : false"
-            :disabled="true"
+            :checked="task.timefinish != '' ? true : false"
+            :disabled="task.timefinish ? true : false"
             class="rounded-full h-6 w-6"
           />
           <div
@@ -99,10 +93,12 @@ import { getList } from "~/composables/getList";
 import { toast } from "~/components/ui/toast";
 
 const userStore = useAuthStore();
-const tasks = ref<[ITasks]>();
+const tasks = ref();
+const route = useRoute();
+
 const employers = await new getList().employers();
 const users = await new getList().users();
-tasks.value = await new getList().tasks();
+tasks.value = await new getList().tasksByUserId(Number(route.params.id));
 
 const newTask = ref<ITasks>({
   text: "",
@@ -114,11 +110,13 @@ const newTask = ref<ITasks>({
   timedeadline: "",
 });
 
-const createTask = async function (e) {
-  if (newTask.value.text === "") {
-    e.preventDefault();
-    e.stopPropagation();
+const createTask = async (event: HTMLElementEventMap["click"]) => {
+  event.preventDefault();
+  event.stopPropagation();
 
+  const { text, employerId, timedeadline } = newTask.value;
+
+  if (!text) {
     toast({
       description: "Укажите текст задачи!",
       variant: "destructive",
@@ -127,9 +125,7 @@ const createTask = async function (e) {
     return;
   }
 
-  if (!newTask.value.employerId) {
-    e.preventDefault();
-    e.stopPropagation();
+  if (!employerId) {
     toast({
       description: "Укажите ответственного сотрудника!",
       variant: "destructive",
@@ -138,9 +134,7 @@ const createTask = async function (e) {
     return;
   }
 
-  if (!newTask.value.employerId) {
-    e.preventDefault();
-    e.stopPropagation();
+  if (!timedeadline) {
     toast({
       description: "Укажите дедлайн!",
       variant: "destructive",
@@ -150,15 +144,74 @@ const createTask = async function (e) {
   }
 
   const fetchApi = useFetchApi(userStore.token);
-  const task = await fetchApi("/tasks/", {
+  const createdTask = await fetchApi("/tasks/", {
     method: "POST",
     body: { ...newTask.value },
   });
+
+  if (!createdTask) {
+    toast({
+      description: "Произошла ошибка при создании задачи!",
+      variant: "destructive",
+      duration: 2000,
+    });
+    return;
+  }
+
+  tasks.value = [...tasks.value, createdTask];
+
   toast({
     description: "Задача успешно создана!",
     duration: 2000,
   });
-  console.log(task);
-  return task;
+
+  return createdTask;
 };
+// const createTask = async function (e) {
+//   if (newTask.value.text === "") {
+//     e.preventDefault();
+//     e.stopPropagation();
+
+//     toast({
+//       description: "Укажите текст задачи!",
+//       variant: "destructive",
+//       duration: 2000,
+//     });
+//     return;
+//   }
+
+//   if (!newTask.value.employerId) {
+//     e.preventDefault();
+//     e.stopPropagation();
+//     toast({
+//       description: "Укажите ответственного сотрудника!",
+//       variant: "destructive",
+//       duration: 2000,
+//     });
+//     return;
+//   }
+
+//   if (!newTask.value.employerId) {
+//     e.preventDefault();
+//     e.stopPropagation();
+//     toast({
+//       description: "Укажите дедлайн!",
+//       variant: "destructive",
+//       duration: 2000,
+//     });
+//     return;
+//   }
+
+//   const fetchApi = useFetchApi(userStore.token);
+//   const task = await fetchApi("/tasks/", {
+//     method: "POST",
+//     body: { ...newTask.value },
+//   });
+//   toast({
+//     description: "Задача успешно создана!",
+//     duration: 2000,
+//   });
+//   console.log(task);
+//   return task;
+// };
 </script>

@@ -102,6 +102,10 @@ import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { useToast } from "~/components/ui/toast";
+import type {
+  IIdentity,
+  IIdentityWithRelations,
+} from "~/composables/interfaces";
 
 const dialogstate = ref(false);
 
@@ -123,29 +127,21 @@ const { handleSubmit, errors } = useForm({
   validationSchema: formSchema,
 });
 
-interface Employer {
-  id: number;
-  accountId: number;
-  name: string;
-  username: string;
-  [key: string]: string | number;
-}
-
 const onSubmit = handleSubmit(async (values) => {
   const fetchApi = useFetchApi(userStore.token); // native JS composables
-  const employer = ref<Employer>();
-  const response = await fetchApi("/employers/add", {
+  const employer = ref<IIdentityWithRelations>();
+  const response = await fetchApi("/users/add", {
     method: "POST",
     body: { ...values },
   });
 
-  employer.value = response as Employer;
+  employer.value = response as IIdentityWithRelations;
 
   toast({
     description: "Сотрудник успешно создан!",
     duration: 2000,
   });
   dialogstate.value = false;
-  listStore.listState = [...listStore.listState, employer.value];
+  listStore.listState = [...listStore.listState, employer.value.user];
 });
 </script>

@@ -9,23 +9,16 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { columns } from "@/components/widgets/modules/table/columns";
+import { getList } from "~/composables/getList";
 
-const userStore = useAuthStore();
 const listStore = useListStore();
 
-async function getData() {
-  const fetchApi = useFetchApi(userStore.token);
-  const employers = ref([]);
-  employers.value = await fetchApi("/employers/", {
-    method: "GET",
-  });
-  return employers.value;
-}
-
 onMounted(async () => {
-  listStore.listState = await getData();
+  const user = await new getList().employers();
+
+  listStore.listState = user;
 });
 </script>
 

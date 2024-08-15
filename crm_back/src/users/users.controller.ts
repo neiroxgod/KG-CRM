@@ -50,6 +50,14 @@ export class UsersController {
   @ApiOperation({ summary: 'Список сотрудников' })
   @ApiResponse({ status: 200, type: [User] })
   @UseGuards(JwtAuthGuard)
+  @Get('/employers/list')
+  getEmployers(@GetUser() user: any) {
+    return this.usersService.getEmployersList(user);
+  }
+
+  @ApiOperation({ summary: 'Список сотрудников' })
+  @ApiResponse({ status: 200, type: [User] })
+  @UseGuards(JwtAuthGuard)
   @Get()
   getAll(@GetUser() user: any) {
     return this.usersService.getAllEmployers(user);
@@ -81,7 +89,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Список учеников' })
   @ApiResponse({ status: 200, type: [User] })
   @Get('/')
-  getAllUsers() {
-    return this.usersService.getAllUsers();
+  getAllUsers(@GetUser() user: any) {
+    return this.usersService.getAllUsers(user);
   }
 }

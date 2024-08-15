@@ -2,10 +2,9 @@
   <div class="p-5 bg-slate-100 h-fit w-full rounded-md">
     <div class="text-xl font-bold font-inter">Последние задачи</div>
     <WidgetsTaskShort
-      v-if="employer.tasks.length"
+      v-if="employer.tasks"
       v-for="task in employer.tasks"
-      :task-text="task.text"
-      :task-deadline="task.deadline"
+      :task="task"
     />
     <WidgetsEmptyData v-else label="У сотрудника нет задач" />
   </div>
@@ -15,9 +14,9 @@
     </div>
     <div class="flex justify-center gap-4 mt-5">
       <WidgetsDocument
-        v-if="employer.files.length"
+        v-if="employer.files"
         v-for="file in employer.files"
-        :label="file.caption"
+        :label="file.name"
         :description="file.createdAt"
         background="bg-gradient-to-br from-indigo-500/50 from-10% via-sky-500/50 via-30% to-emerald-500/50 to-90%"
       />
@@ -28,7 +27,7 @@
   <div class="mt-5" v-if="employer">
     <div class="text-xl font-bold font-inter">Последняя активность</div>
     <WidgetsActivity
-      v-if="employer.activity?.length"
+      v-if="employer.activity"
       v-for="activity in employer.activity"
       class="mt-2"
       :acitivity-user="employer.name"
@@ -42,7 +41,9 @@
 </template>
 
 <script lang="ts" setup>
+import type { IEmployerWithRelations } from "~/composables/interfaces";
+
 const props = defineProps<{
-  employer: IEmployer;
+  employer: IEmployerWithRelations;
 }>();
 </script>

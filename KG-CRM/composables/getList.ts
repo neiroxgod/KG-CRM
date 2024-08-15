@@ -5,14 +5,24 @@ export class getList {
   private userStore = useAuthStore();
   private fetchApi = useFetchApi(this.userStore.token);
 
-  async employers(): Promise<[globalThis.IEmployer]> {
-    return (await this.fetchApi("/employers/", {
+  /**
+   * Retrieves a list of employers from the API.
+   *
+   * @return {[globalThis.IIdentityWithRelations]} An array of employer objects.
+   */
+
+  async employers(
+    withIdentity = false
+  ): Promise<globalThis.IEmployer[] | IIdentityWithRelations[]> {
+    const list = (await this.fetchApi("/users/employers/list", {
       method: "GET",
-    })) as [IEmployer];
+    })) as IIdentityWithRelations[];
+    if (!withIdentity) return list.map((item) => item.user);
+    return list;
   }
 
   async employerById(id: number): Promise<globalThis.IEmployer> {
-    return (await this.fetchApi("/employers/get/" + id, {
+    return (await this.fetchApi("/users/get/" + id, {
       method: "GET",
     })) as IEmployer;
   }
@@ -43,6 +53,11 @@ export class getList {
 
   async tasks(): Promise<[globalThis.ITasks]> {
     return (await this.fetchApi("/tasks/", {
+      method: "GET",
+    })) as [ITasks];
+  }
+  async tasksByUserId(userId: number): Promise<[globalThis.ITasks]> {
+    return (await this.fetchApi(`/tasks/get/user/${userId}`, {
       method: "GET",
     })) as [ITasks];
   }
