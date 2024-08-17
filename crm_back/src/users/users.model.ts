@@ -13,6 +13,7 @@ import { Account } from 'src/accounts/accounts.model';
 import { Identity } from './identity-model';
 import { Files } from 'src/files/files.model';
 import { Tasks } from 'src/tasks/tasks.model';
+import { UserRoles } from 'src/roles/users-roles.model';
 
 interface UserCreationAttrs {
   email: string;
@@ -90,6 +91,9 @@ export class User extends Model<User, UserCreationAttrs> {
 
   @HasMany(() => Files)
   files: Files[];
+
+  @HasMany(() => UserRoles)
+  roles: UserRoles[];
 
   @HasOne(() => Identity)
   identity: Identity;

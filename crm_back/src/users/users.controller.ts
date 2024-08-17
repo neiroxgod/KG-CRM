@@ -47,6 +47,7 @@ export class UsersController {
     return this.usersService.editEmployer(userDto, empl);
   }
 
+
   @ApiOperation({ summary: 'Список сотрудников' })
   @ApiResponse({ status: 200, type: [User] })
   @UseGuards(JwtAuthGuard)
@@ -60,7 +61,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get()
   getAll(@GetUser() user: any) {
-    return this.usersService.getAllEmployers(user);
+    return this.usersService.getUsersList(user);
   }
 
   @ApiOperation({ summary: 'Получить пользователя' })

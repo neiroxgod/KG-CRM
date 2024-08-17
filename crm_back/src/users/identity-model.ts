@@ -4,19 +4,15 @@ import {
   Model,
   DataType,
   Table,
-  HasMany,
   BelongsTo,
   ForeignKey,
-  HasOne,
 } from 'sequelize-typescript';
 import { Account } from 'src/accounts/accounts.model';
-import { Role } from 'src/roles/roles.model';
 import { User } from './users.model';
 import { Filial } from 'src/filials/filials.model';
 
 interface IdentityCreationAttrs {
   userId: number;
-  roleId: number;
   accountId: number;
   filialId: number;
 }
@@ -39,13 +35,6 @@ export class Identity extends Model<Identity, IdentityCreationAttrs> {
   })
   userId: number;
 
-  @ApiProperty({ example: '1', description: 'ID роли' })
-  @ForeignKey(() => Role)
-  @Column({
-    type: DataType.INTEGER,
-  })
-  roleId: number;
-
   @ApiProperty({ example: '1', description: 'ID Аккаунта' })
   @ForeignKey(() => Account)
   @Column({
@@ -59,9 +48,6 @@ export class Identity extends Model<Identity, IdentityCreationAttrs> {
     type: DataType.INTEGER,
   })
   filialId: number;
-
-  @BelongsTo(() => Role)
-  roles: Role;
 
   @BelongsTo(() => User)
   user: User;

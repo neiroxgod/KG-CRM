@@ -1,13 +1,11 @@
 export interface IIdentity {
   id: number;
   userId: number;
-  roleId: number;
   accountId: number;
   filialId: number;
 }
 export interface IIdentityWithRelations extends IIdentity {
-  roles: IRoles;
-  user: IEmployer;
+  user: IUserWithRelations;
   account: IAccount;
 }
 
@@ -30,7 +28,17 @@ export interface IRoles {
   updated_at: string;
   deleted_at: string | null;
 }
-export interface IEmployer {
+
+export interface IRolesWithRelations extends IRoles {
+  id: number;
+  roleId: number;
+  userId: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  role: IRoles;
+}
+export interface IUser {
   id: number;
   name: string;
   email: string;
@@ -41,9 +49,10 @@ export interface IEmployer {
   accountId: number;
 }
 
-export interface IEmployerWithRelations extends IEmployer {
+export interface IUserWithRelations extends IUser {
   files: IFiles[];
   tasks: ITasks[];
+  roles: IRolesWithRelations[];
 }
 
 export interface ITags {
@@ -59,6 +68,22 @@ export interface ITasks {
   timedeadline: string;
   result?: string;
   timefinish?: string;
+}
+
+export interface IFilial {
+  id: number;
+  caption: string;
+  address: string;
+  createdAt: string;
+  updatedAt: string;
+  city: string;
+  timezone: string;
+  phone: string;
+  active: Boolean;
+  contractInfo: string;
+  details: string;
+  accountId: number;
+  account: IAccount | null;
 }
 
 export interface IFiles {

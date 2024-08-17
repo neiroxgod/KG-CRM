@@ -41,9 +41,9 @@
 </template>
 
 <script lang="ts" setup>
-import type { IEmployerWithRelations } from "~/composables/interfaces";
+import type { IUserWithRelations } from "~/composables/interfaces";
 
 const props = defineProps<{
-  employer: IEmployerWithRelations;
+  employer: IUserWithRelations;
 }>();
 </script>

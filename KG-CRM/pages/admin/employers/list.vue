@@ -11,12 +11,12 @@
 
 <script setup lang="ts">
 import { columns } from "@/components/widgets/modules/table/columns";
-import { getList } from "~/composables/getList";
+import { CRM_API } from "~/composables/getList";
 
 const listStore = useListStore();
 
 onMounted(async () => {
-  const user = await new getList().employers();
+  const user = await CRM_API().employers();
 
   listStore.listState = user;
 });

@@ -11,6 +11,8 @@ import {
 } from 'sequelize-typescript';
 import { Account } from 'src/accounts/accounts.model';
 import { Identity } from 'src/users/identity-model';
+import { User } from 'src/users/users.model';
+import { UserRoles } from './users-roles.model';
 
 interface RoleCreationAttrs {
   value: String;
@@ -61,9 +63,9 @@ export class Role extends Model<Role, RoleCreationAttrs> {
   })
   description: string;
 
+  @HasMany(() => UserRoles)
+  roles: UserRoles[];
+
   @BelongsTo(() => Account)
   account: Account;
-
-  @HasMany(() => Identity)
-  identity: Identity[];
 }

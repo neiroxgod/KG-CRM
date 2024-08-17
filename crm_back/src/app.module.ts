@@ -19,6 +19,7 @@ import { Files } from './files/files.model';
 import { FilialsModule } from './filials/filials.module';
 import { Filial } from './filials/filials.model';
 import { Identity } from './users/identity-model';
+import { UserRoles } from './roles/users-roles.model';
 
 @Module({
   controllers: [],
@@ -45,6 +46,7 @@ import { Identity } from './users/identity-model';
         Files,
         Filial,
         Identity,
+        UserRoles,
       ],
       autoLoadModels: true,
       synchronize: true,

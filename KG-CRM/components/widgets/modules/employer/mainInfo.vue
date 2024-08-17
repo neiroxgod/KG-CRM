@@ -28,29 +28,31 @@
       label="Логин"
     />
 
-    <SharedInputWithLabel
+    <SharedSelectWithLabel
       :on:change="updateEmployer"
-      v-model="employerData.password"
-      :placeholder="employer.password"
-      label="Пароль"
+      v-model="employerData.filialId"
+      :items="filials"
+      label="Филиалы"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import type { IEmployer } from "~/composables/interfaces";
+import type { IUser } from "~/composables/interfaces";
+import { CRM_API } from "~/composables/getList";
 
 const props = defineProps<{
-  employer: IEmployer;
+  employer: IUser;
 }>();
-const employerData = ref<IEmployer>(props.employer);
-const userStore = useAuthStore();
-
+const employerData = ref<IUser>(props.employer);
+const CRM_API_INSTANCE = new CRM_API();
+const filials = ref(await CRM_API_INSTANCE.filials.getList());
+console.log(filials.value);
 const updateEmployer = async function () {
-  const fetchApi = useFetchApi(userStore.token);
-  const response = await fetchApi("/employers/edit", {
-    method: "PATCH",
-    body: { ...employerData.value },
+  const response = CRM_API_INSTANCE.employers.update(employerData.value.id, {
+    ...employerData.value,
   });
+
+  return response;
 };
 </script>

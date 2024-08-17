@@ -8,7 +8,7 @@
             <AccordionTrigger> Основная информация </AccordionTrigger>
             <AccordionContent>
               <WidgetsModulesEmployerMainInfo
-                v-if="identity.user"
+                v-if="identity"
                 :employer="identity.user"
               />
             </AccordionContent>
@@ -16,11 +16,12 @@
           <AccordionItem value="roles">
             <AccordionTrigger> Роли </AccordionTrigger>
             <AccordionContent>
-              <TagsInput v-model="UserRoles">
+              <TagsInput>
                 <TagsInputItem
+                  v-if="UserRoles"
                   v-for="item in UserRoles"
-                  :key="item.value"
-                  :value="item.value"
+                  :key="item.role.id"
+                  :value="item.role.value"
                 >
                   <TagsInputItemText />
                   <TagsInputItemDelete />
@@ -72,7 +73,10 @@
             <TabsTrigger value="docs"> Документы </TabsTrigger>
           </TabsList>
           <TabsContent value="overview">
-            <WidgetsModulesEmployerOverview :employer="identity.user" />
+            <WidgetsModulesEmployerOverview
+              v-if="identity"
+              :employer="identity.user"
+            />
           </TabsContent>
           <TabsContent value="tasks">
             <WidgetsModulesEmployerTasks />
@@ -86,21 +90,18 @@
 </template>
 
 <script setup lang="ts">
-import { getList } from "~/composables/getList";
+import { CRM_API } from "~/composables/getList";
 
 const route = useRoute();
-const userStore = useAuthStore();
-
-const getListInstance = new getList();
-
-const identity = ref();
-
-const UserRoles = ref();
+const getListInstance = new CRM_API();
+const identity = ref<IIdentityWithRelations>();
+const UserRoles = ref<IRolesWithRelations[]>();
 
 onMounted(async () => {
-  identity.value = await getListInstance.employerById(Number(route.params.id));
-  UserRoles.value = identity.value.roles;
-
+  identity.value = await getListInstance.employers.getById(
+    Number(route.params.id)
+  );
   console.log(identity.value);
+  UserRoles.value = identity.value.user.roles;
 });
 </script>

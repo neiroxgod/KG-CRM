@@ -10,12 +10,14 @@ import { Op } from 'sequelize';
 import * as bcrypt from 'bcryptjs';
 import { Tasks } from 'src/tasks/tasks.model';
 import { Files } from 'src/files/files.model';
+import { UserRoles } from 'src/roles/users-roles.model';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User) private userRepository: typeof User,
     @InjectModel(Identity) private identityRepository: typeof Identity,
+    @InjectModel(UserRoles) private userRolesRepository: typeof UserRoles,
     private roleService: RolesService,
   ) {}
 
@@ -23,18 +25,22 @@ export class UsersService {
     const result = await this.identityRepository.findAll({
       include: [
         {
-          model: Role,
-          as: 'roles',
-          where: {
-            accountId: user.accountId,
-            value: {
-              [Op.notIn]: () => ['user'],
-            },
-          },
-        },
-        {
           model: User,
           as: 'user',
+          include: [
+            {
+              model: UserRoles,
+              as: 'roles',
+              include: [
+                {
+                  model: Role,
+                  as: 'role',
+                  where: { value: { [Op.ne]: 'Ученик' } },
+                },
+              ],
+            },
+          ],
+          nested: true,
         },
       ],
     });
@@ -53,17 +59,25 @@ export class UsersService {
     if (!role) {
       const status = await this.roleService.createBaseRoles(employer.accountId);
 
+      if (!status) {
+        throw new Error('Не удалось создать роли');
+      }
+
       role = await this.roleService.getRoleByValue(
         'Владелец',
         employer.accountId,
       );
     }
+    // Связываем пользователя с ролью
+    this.userRolesRepository.create({
+      userId: employer.id,
+      roleId: role.id,
+    });
 
     const entity = {
       accountId: employer.accountId,
       userId: employer.id,
       filialId: employer.filialId,
-      roleId: role.id,
     } as Identity;
 
     const identity = await this.createIdentity(entity);
@@ -90,17 +104,25 @@ export class UsersService {
     if (!role) {
       await this.roleService.createBaseRoles(employer.accountId);
 
+      if (!role) {
+        throw new Error('Не удалось создать роли');
+      }
+
       role = await this.roleService.getRoleByValue(
         'Администратор', // Стандартная должность
         employer.accountId,
       );
     }
 
+    this.userRolesRepository.create({
+      userId: employer.id,
+      roleId: role.id,
+    });
+
     const entity = {
       accountId: employer.accountId,
       userId: employer.id,
       filialId: employer.filialId,
-      roleId: role.id,
     } as Identity;
 
     const identity = await this.createIdentity(entity);
@@ -111,14 +133,30 @@ export class UsersService {
     return result;
   }
 
-  async getAllEmployers(empl: any) {
-    const employers = await this.userRepository.findAll({
-      where: {
-        accountId: empl.accountId,
-      },
-      include: { all: true },
+  async getUsersList(empl: any) {
+    const result = await this.identityRepository.findAll({
+      include: [
+        {
+          model: User,
+          as: 'user',
+          include: [
+            {
+              model: UserRoles,
+              as: 'roles',
+              include: [
+                {
+                  model: Role,
+                  as: 'role',
+                  where: { value: { [Op.in]: 'Ученик' } },
+                },
+              ],
+            },
+          ],
+          nested: true,
+        },
+      ],
     });
-    return employers;
+    return result;
   }
 
   async editEmployer(dto: EditUserDto, empl: any) {
@@ -130,7 +168,15 @@ export class UsersService {
       returning: true,
     });
 
-    return employer;
+    if (!employer) return null;
+
+    const identity = await this.identityRepository.findOne({
+      where: { userId: dto.id },
+      include: { all: true, nested: true },
+    });
+    if (!identity) return null;
+
+    return identity;
   }
 
   async deleteEmployer(id: number) {
@@ -189,11 +235,23 @@ export class UsersService {
     const entity = await this.identityRepository.findOne({
       where: { userId },
       include: [
-        { all: true, nested: true },
         {
           model: User,
           as: 'user',
-          include: [{ model: Tasks }, { model: Files }],
+          include: [
+            { model: Tasks },
+            { model: Files },
+            {
+              model: UserRoles,
+              as: 'roles',
+              include: [
+                {
+                  model: Role,
+                  as: 'role',
+                },
+              ],
+            },
+          ],
         },
       ],
     });
@@ -213,11 +271,15 @@ export class UsersService {
       this.roleService.createBaseRoles(user.accountId);
     }
 
+    this.userRolesRepository.create({
+      userId: user.id,
+      roleId: role.id,
+    });
+
     const entity = {
       accountId: user.accountId,
       userId: user.id,
       filialId: user.filialId,
-      roleId: role.id,
     } as Identity;
 
     const identity = await this.createIdentity(entity);

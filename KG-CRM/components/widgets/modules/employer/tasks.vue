@@ -89,16 +89,20 @@
 
 <script setup lang="ts">
 import type { ITasks } from "~/composables/interfaces";
-import { getList } from "~/composables/getList";
+import { CRM_API } from "~/composables/getList";
 import { toast } from "~/components/ui/toast";
 
 const userStore = useAuthStore();
 const tasks = ref();
 const route = useRoute();
 
-const employers = await new getList().employers();
-const users = await new getList().users();
-tasks.value = await new getList().tasksByUserId(Number(route.params.id));
+const CRM_API_INSTANCE = new CRM_API();
+
+const employers = await CRM_API_INSTANCE.employers.getList();
+const users = await CRM_API_INSTANCE.users.getList();
+tasks.value = await CRM_API_INSTANCE.tasks.getTasksByUserId(
+  Number(route.params.id)
+);
 
 const newTask = ref<ITasks>({
   text: "",

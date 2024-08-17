@@ -53,7 +53,7 @@ export class AuthService {
       email,
     });
 
-    const filial = await this.filialService.createMockFilial();
+    const filial = await this.filialService.createMockFilial(account.id);
 
     user.accountId = account.id;
     user.filialId = filial.id;
@@ -75,7 +75,6 @@ export class AuthService {
       accountId: accountId,
       username: username,
       id: id,
-      roles: entity.roles,
     };
 
     return {
