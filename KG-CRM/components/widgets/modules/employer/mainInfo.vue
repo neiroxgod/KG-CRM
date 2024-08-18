@@ -44,15 +44,26 @@ import { CRM_API } from "~/composables/getList";
 const props = defineProps<{
   employer: IUser;
 }>();
+
+const route = useRoute();
+const userStore = useAuthStore();
 const employerData = ref<IUser>(props.employer);
 const CRM_API_INSTANCE = new CRM_API();
 const filials = ref(await CRM_API_INSTANCE.filials.getList());
-console.log(filials.value);
 const updateEmployer = async function () {
-  const response = CRM_API_INSTANCE.employers.update(employerData.value.id, {
-    ...employerData.value,
-  });
-
-  return response;
+  if (typeof employerData.value.id === "number") {
+    const response = await CRM_API_INSTANCE.employers.update(
+      employerData.value.id,
+      {
+        ...employerData.value,
+      }
+    );
+    if (Number(route.params.id) === userStore.user?.userId) {
+      userStore.setUser(response);
+    }
+    return response;
+  } else {
+    console.error("Cannot update employer without id", employerData.value);
+  }
 };
 </script>

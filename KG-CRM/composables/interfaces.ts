@@ -39,14 +39,14 @@ export interface IRolesWithRelations extends IRoles {
   role: IRoles;
 }
 export interface IUser {
-  id: number;
+  id?: number;
   name: string;
   email: string;
   phone: string;
   username: string;
   password: string;
-  filialId: number;
-  accountId: number;
+  filialId?: number;
+  accountId?: number;
 }
 
 export interface IUserWithRelations extends IUser {

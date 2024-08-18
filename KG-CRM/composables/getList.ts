@@ -4,11 +4,11 @@ import {
   type ITasks,
 } from "#imports";
 import { useAuthStore } from "#imports";
-import type { IFiles, IUser } from "./interfaces";
+import type { IFiles, IUser, IUserWithRelations } from "./interfaces";
 
 export class CRM_API {
-  public userStore = useAuthStore();
-  public fetchApi = useFetchApi(this.userStore.token);
+  private userStore = useAuthStore();
+  private fetchApi = useFetchApi(this.userStore.token);
 
   private employersInstance = new Employers(this.fetchApi);
   private filialsInstance = new Filials(this.fetchApi);
@@ -18,6 +18,12 @@ export class CRM_API {
   private filesInstance = new Files(this.fetchApi);
   private rolesInstance = new Roles(this.fetchApi);
 
+  /**
+   * Initializes a new instance of the CRM_API class.
+   *
+   * @description Instantiates the employers, filials, users, groups, tasks, files, and roles instances.
+   * @return {undefined} No return value.
+   */
   constructor() {
     this.employersInstance = new Employers(this.fetchApi);
     this.filialsInstance = new Filials(this.fetchApi);
@@ -28,30 +34,61 @@ export class CRM_API {
     this.rolesInstance = new Roles(this.fetchApi);
   }
 
+  /**
+   * Returns the Employers instance associated with this CRM_API instance.
+   *
+   * @return {Employers} The Employers instance.
+   */
   get employers(): Employers {
     return this.employersInstance;
   }
 
+  /**
+   * Returns the Filials instance associated with this CRM_API instance.
+   *
+   * @return {Filials} The Filials instance.
+   */
   get filials(): Filials {
     return this.filialsInstance;
   }
 
+  /**
+   * Returns the Users instance associated with this CRM_API instance.
+   *
+   * @return {Users} The Users instance.
+   */
   get users(): Users {
     return this.usersInstance;
   }
-
+  /**
+   * Returns the Groups instance associated with this CRM_API instance.
+   *
+   * @return {Groups} The Users instance.
+   */
   get groups(): Groups {
     return this.groupsInstance;
   }
-
+  /**
+   * Returns the Tasks instance associated with this CRM_API instance.
+   *
+   * @return {Tasks} The Users instance.
+   */
   get tasks(): Tasks {
     return this.tasksInstance;
   }
-
+  /**
+   * Returns the Files instance associated with this CRM_API instance.
+   *
+   * @return {Files} The Users instance.
+   */
   get files(): Files {
     return this.filesInstance;
   }
-
+  /**
+   * Returns the Roles instance associated with this CRM_API instance.
+   *
+   * @return {Roles} The Users instance.
+   */
   get roles(): Roles {
     return this.rolesInstance;
   }
@@ -60,10 +97,26 @@ export class CRM_API {
 class Employers {
   constructor(private fetchApi: ReturnType<typeof useFetchApi>) {}
 
-  public async getList(): Promise<IIdentityWithRelations[]> {
-    return (await this.fetchApi("/users/employers/list", {
-      method: "GET",
-    })) as IIdentityWithRelations[];
+  public async getList(
+    withRelations = false
+  ): Promise<IIdentityWithRelations[] | IUserWithRelations[]> {
+    if (withRelations === true) {
+      return (await this.fetchApi("/users/employers/list", {
+        method: "GET",
+      })) as IIdentityWithRelations[];
+    } else {
+      const list = (await this.fetchApi("/users/employers/list", {
+        method: "GET",
+      })) as IIdentityWithRelations[];
+
+      const result = list.map((item) => {
+        return {
+          ...item.user,
+        };
+      });
+
+      return result;
+    }
   }
 
   public async getById(id: number): Promise<IIdentityWithRelations> {
@@ -83,9 +136,10 @@ class Employers {
     id: number,
     data: IUser
   ): Promise<IIdentityWithRelations> {
-    return (await this.fetchApi(`/users/${id}`, {
+    console.log(data);
+    return (await this.fetchApi(`/users/edit`, {
       method: "PATCH",
-      body: data,
+      body: { ...data },
     })) as IIdentityWithRelations;
   }
 
@@ -213,7 +267,7 @@ class Tasks {
   }
 
   public async getTasksByUserId(id: number): Promise<ITasks[]> {
-    return (await this.fetchApi(`/tasks/user/${id}`, {
+    return (await this.fetchApi(`/tasks/get/user/${id}`, {
       method: "GET",
     })) as ITasks[];
   }

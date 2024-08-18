@@ -1,6 +1,6 @@
 export const useAuthStore = defineStore("auth", () => {
   const token = ref<string | null>(null);
-  const user = ref<Object | null>(null);
+  const user = ref<IIdentityWithRelations | null>(null);
   const loading = ref<Boolean>(true);
 
   function setToken(newToken: string): void {
@@ -8,7 +8,7 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.setItem("token", newToken);
   }
 
-  function setUser(newUser: Object): void {
+  function setUser(newUser: IIdentityWithRelations): void {
     user.value = newUser;
     localStorage.setItem("user", JSON.stringify(newUser));
   }

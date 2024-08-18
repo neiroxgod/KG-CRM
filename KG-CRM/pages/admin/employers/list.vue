@@ -14,9 +14,9 @@ import { columns } from "@/components/widgets/modules/table/columns";
 import { CRM_API } from "~/composables/getList";
 
 const listStore = useListStore();
-
+const CRM_API_INSTANCE = new CRM_API();
 onMounted(async () => {
-  const user = await CRM_API().employers();
+  const user = await CRM_API_INSTANCE.employers.getList();
 
   listStore.listState = user;
 });

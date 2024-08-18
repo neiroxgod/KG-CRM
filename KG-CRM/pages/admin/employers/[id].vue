@@ -2,7 +2,9 @@
   <div class="p-5">
     <div class="mt-5 flex justify-between">
       <div class="mr-5 w-2/6">
-        <div class="text-4xl font-bold font-inter">Иванов Иван Иванович</div>
+        <div class="text-4xl font-bold font-inter">
+          {{ identity?.user.name }}
+        </div>
         <Accordion type="single" class="w-full" collapsible>
           <AccordionItem value="mainInfo">
             <AccordionTrigger> Основная информация </AccordionTrigger>

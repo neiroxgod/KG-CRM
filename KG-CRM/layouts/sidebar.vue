@@ -13,6 +13,7 @@
 </template>
 
 <script setup>
+// ТЯНУТЬ С БЕКА*
 const mainRoutes = ref([
   {
     caption: "Группы",
@@ -23,6 +24,11 @@ const mainRoutes = ref([
     caption: "Ученики",
     nuxtLink: "/admin/users/list",
     icon: "material-symbols:user-attributes",
+  },
+  {
+    caption: "Задачи",
+    nuxtLink: "/admin/tasks/list",
+    icon: "material-symbols:task",
   },
   {
     caption: "Расходы/Доходы",

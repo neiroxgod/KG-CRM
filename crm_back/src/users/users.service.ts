@@ -147,7 +147,7 @@ export class UsersService {
                 {
                   model: Role,
                   as: 'role',
-                  where: { value: { [Op.in]: 'Ученик' } },
+                  where: { value: { [Op.in]: ['Ученик'] } },
                 },
               ],
             },
@@ -179,7 +179,7 @@ export class UsersService {
     return identity;
   }
 
-  async deleteEmployer(id: number) {
+  async delete(id: number) {
     try {
       await this.identityRepository.destroy({
         where: {

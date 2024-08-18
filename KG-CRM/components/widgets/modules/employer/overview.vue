@@ -24,7 +24,7 @@
       <WidgetsEmptyData v-else label="Нет документов" />
     </div>
   </div>
-  <div class="mt-5" v-if="employer">
+  <!-- <div class="mt-5" v-if="employer">
     <div class="text-xl font-bold font-inter">Последняя активность</div>
     <WidgetsActivity
       v-if="employer.activity"
@@ -37,7 +37,7 @@
     />
 
     <WidgetsEmptyData v-else label="Пока нет активности :(" />
-  </div>
+  </div> -->
 </template>
 
 <script lang="ts" setup>

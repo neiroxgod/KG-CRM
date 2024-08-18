@@ -47,7 +47,6 @@ export class UsersController {
     return this.usersService.editEmployer(userDto, empl);
   }
 
-
   @ApiOperation({ summary: 'Список сотрудников' })
   @ApiResponse({ status: 200, type: [User] })
   @UseGuards(JwtAuthGuard)
@@ -77,7 +76,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Delete('/delete/:id')
   deleteEmployer(@Param('id') id: number) {
-    return this.usersService.deleteEmployer(id);
+    return this.usersService.delete(id);
   }
 
   @ApiOperation({ summary: 'Создание ученика' })

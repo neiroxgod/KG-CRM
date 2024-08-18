@@ -27,10 +27,12 @@ function getMainRouteSegment(path: string): string | undefined {
 }
 
 const deleteItem = async function () {
-  const path = getMainRouteSegment(route.fullPath);
-
+  let path = getMainRouteSegment(route.fullPath);
+  if (path == "employers") path = "users"; // !!! НЕ ВЫНОСИТЬ В getMainRouteSegment так как используется ниже с employers !!! Нет эндпоинта employers/delete, так как users/employers смежные сущности
   const fetchApi = useFetchApi(userStore.token);
-  await fetchApi("/" + path + "/delete/" + props.item.id);
+  await fetchApi("/" + path + "/delete/" + props.item.id, {
+    method: "DELETE",
+  });
 
   listStore.removeFromList(props.item.id);
   toast({
@@ -40,9 +42,12 @@ const deleteItem = async function () {
 };
 
 const editItem = function () {
-  const ModalStore = useModalStore();
-  ModalStore.ChangeModalState();
-  console.log(ModalStore.ModalState);
+  // const ModalStore = useModalStore(); //Убрал эту логику твою с редактированием филиалов, оставь просто по клику на фио редактирование, либо делай редактирование разделом через [id].vue
+  // ModalStore.ChangeModalState();
+  // console.log(ModalStore.ModalState);
+  navigateTo(
+    "/admin/" + getMainRouteSegment(route.fullPath) + "/" + props.item.id
+  );
 };
 </script>
 

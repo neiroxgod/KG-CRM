@@ -107,10 +107,13 @@ import type {
   IIdentityWithRelations,
 } from "~/composables/interfaces";
 
+import { CRM_API } from "~/composables/getList";
+
 const dialogstate = ref(false);
 
 const userStore = useAuthStore();
 const listStore = useListStore();
+const CRM_API_INSTANCE = new CRM_API();
 
 const formSchema = toTypedSchema(
   z.object({
@@ -130,9 +133,8 @@ const { handleSubmit, errors } = useForm({
 const onSubmit = handleSubmit(async (values) => {
   const fetchApi = useFetchApi(userStore.token); // native JS composables
   const employer = ref<IIdentityWithRelations>();
-  const response = await fetchApi("/users/add", {
-    method: "POST",
-    body: { ...values },
+  const response = await CRM_API_INSTANCE.employers.create({
+    ...values,
   });
 
   employer.value = response as IIdentityWithRelations;

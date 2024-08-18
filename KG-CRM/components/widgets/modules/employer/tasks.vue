@@ -147,11 +147,7 @@ const createTask = async (event: HTMLElementEventMap["click"]) => {
     return;
   }
 
-  const fetchApi = useFetchApi(userStore.token);
-  const createdTask = await fetchApi("/tasks/", {
-    method: "POST",
-    body: { ...newTask.value },
-  });
+  const createdTask = await CRM_API_INSTANCE.tasks.create({ ...newTask.value });
 
   if (!createdTask) {
     toast({
