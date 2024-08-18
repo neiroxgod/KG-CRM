@@ -271,6 +271,44 @@ class Tasks {
       method: "GET",
     })) as ITasks[];
   }
+
+  public async getAllTaskTypes(): Promise<ITaskTypesWithRelations[]> {
+    return (await this.fetchApi("/tasks/types/", {
+      method: "GET",
+    })) as ITaskTypesWithRelations[];
+  }
+
+  public async getTaskType(id: number): Promise<ITaskTypes> {
+    return (await this.fetchApi(`/tasks/types/${id}`, {
+      method: "GET",
+    })) as ITaskTypes;
+  }
+
+  public async createTaskType(dto: {
+    caption: string;
+    accentColor: string;
+  }): Promise<ITaskTypes> {
+    return (await this.fetchApi("/tasks/types/create", {
+      method: "POST",
+      body: dto,
+    })) as ITaskTypes;
+  }
+
+  public async editTaskType(
+    dto: { caption: string; accentColor: string },
+    id: number
+  ): Promise<ITaskTypes> {
+    return (await this.fetchApi(`/tasks/types/edit/${id}`, {
+      method: "PATCH",
+      body: dto,
+    })) as ITaskTypes;
+  }
+
+  public async deleteTaskType(id: number): Promise<void> {
+    await this.fetchApi(`/tasks/types/delete/${id}`, {
+      method: "DELETE",
+    });
+  }
 }
 
 class Files {

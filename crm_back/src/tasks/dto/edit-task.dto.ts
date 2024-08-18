@@ -7,8 +7,8 @@ export class EditTaskDto {
   @ApiProperty({ example: 'Провести встречу', description: 'текст задачи' })
   text: string;
 
-  @ApiProperty({ example: '11', description: 'ID ответственного сотрудника' })
-  employerId: number;
+  @ApiProperty({ example: '45', description: 'ID ответственного сотрудника' })
+  responsibleUserId: number;
 
   @ApiProperty({ example: 'Провести встречу', description: 'Результат задачи' })
   result: string;

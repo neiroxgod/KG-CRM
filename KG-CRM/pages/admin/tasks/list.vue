@@ -1,73 +1,125 @@
 <template>
   <div>
-    <div class="flex justify-end p-5">
-      <Sheet>
-        <SheetTrigger as-child>
-          <Button variant="outline"> Создать </Button>
-        </SheetTrigger>
-        <SheetContent>
-          <SheetHeader>
-            <SheetTitle>Создать задачу</SheetTitle>
-            <SheetDescription>
-              Опишите задачу, выберите ответственного сотрудника и объект задачи
-              при необходимости, затем нажмите "Создать"
-            </SheetDescription>
-          </SheetHeader>
-          <div class="my-5" v-if="users && newTask">
-            <SharedTextareaWithLabel
-              v-model:model-value="newTask.text"
-              label="Текст задачи"
-              placeholder="Например: 'Собрать подписи с родителей.'"
-            />
-            <SharedSelectWithLabel
-              v-model:model-value="newTask.employerId"
-              :items="users"
-              label="Ответственный сотрудник"
-            />
-            <SharedSelectWithLabel
-              v-model:model-value="newTask.targetUserId"
-              :items="users"
-              label="Объект задачи"
-            />
+    <div class="w-full p-5 h-[80vh]">
+      <!-- shadcn-tabs -->
+      <Tabs class="w-full">
+        <TabsList class="gap-10">
+          <TabsTrigger value="list">Список</TabsTrigger>
+          <TabsTrigger value="kanban">Доска</TabsTrigger>
+        </TabsList>
+        <TabsContent value="list">
+          <div class="flex justify-between">
+            <div class="flex gap-5 w-2/4">
+              <SharedSelectWithLabel
+                v-if="usersWithoutRelations"
+                v-model:model-value="filters.userId"
+                label="Ответственный сотрудник"
+                :items="usersWithoutRelations"
+              />
 
-            <Label> Срок до </Label>
-            <SharedDatePicker v-model:model-value="newTask.timedeadline" />
+              <SharedSelectWithLabel
+                v-if="taskTypes"
+                v-model:model-value="filters.taskType"
+                label="Тип задачи"
+                :items="taskTypes"
+              />
+            </div>
+            <div class="action">
+              <Sheet>
+                <SheetTrigger as-child>
+                  <Button variant="outline"> Создать </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>Создать задачу</SheetTitle>
+                    <SheetDescription>
+                      Опишите задачу, выберите ответственного сотрудника и
+                      объект задачи при необходимости, затем нажмите "Создать"
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div class="my-5" v-if="usersWithoutRelations">
+                    <SharedTextareaWithLabel
+                      v-model:model-value="newTask.text"
+                      label="Текст задачи"
+                      placeholder="Например: 'Собрать подписи с родителей.'"
+                    />
+
+                    <SharedSelectWithLabel
+                      v-if="taskTypes"
+                      v-model:model-value="newTask.taskType"
+                      :items="taskTypes"
+                      label="Тип задачи"
+                    />
+
+                    <SharedSelectWithLabel
+                      v-model:model-value="newTask.responsibleUserId"
+                      :items="usersWithoutRelations"
+                      label="Ответственный сотрудник"
+                    />
+
+                    <SharedSelectWithLabel
+                      v-model:model-value="newTask.targetUserId"
+                      :items="usersWithoutRelations"
+                      label="Объект задачи"
+                    />
+
+                    <Label> Срок до </Label>
+                    <SharedDatePicker
+                      v-model:model-value="newTask.timedeadline"
+                    />
+                  </div>
+                  <SheetFooter>
+                    <SheetClose as-child>
+                      <Button @click="createTask($event)"> Создать </Button>
+                    </SheetClose>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
-          <SheetFooter>
-            <SheetClose as-child>
-              <Button @click="createTask($event)"> Создать </Button>
-            </SheetClose>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
-    </div>
-    <div class="w-full p-5 bg-white h-[80vh]">
-      <div
-        v-if="users"
-        v-for="user in users"
-        class="mt-2 w-full h-fit bg-slate-100 rounded-md p-2"
-      >
-        <div class="text-md ml-2 flex">
-          {{ user.user.name }}
-        </div>
-        <div
-          v-for="task in user.user.tasks"
-          class="mt-2 h-12 bg-orange-600"
-        ></div>
-      </div>
+          <WidgetsModulesTasksList :tasks="listStore.listState" />
+        </TabsContent>
+        <TabsContent value="kanban">
+          <WidgetsModulesTasksKanban v-if="taskTypes" :task-types="taskTypes" />
+        </TabsContent>
+      </Tabs>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { CRM_API } from "~/composables/getList";
+import type { ITasksWithRelations } from "~/composables/interfaces";
 const CRM_API_INSTANCE = new CRM_API();
 const users = ref<IIdentityWithRelations[]>();
-const newTask = ref<ITasks>();
+const usersWithoutRelations = ref<IUser[]>();
+const taskTypes = ref<ITaskTypesWithRelations[]>();
+const listStore = useListStore();
+const filters = ref({
+  userId: 0,
+  taskType: 0,
+});
+const newTask = ref<ITasks>({
+  text: "",
+  responsibleUserId: 0,
+  targetUserId: 0,
+  taskType: 1,
+  result: "",
+  timefinish: "",
+  timedeadline: "",
+});
 onMounted(async () => {
+  listStore.listState =
+    (await CRM_API_INSTANCE.tasks.getList()) as ITasksWithRelations[];
   users.value = (await CRM_API_INSTANCE.employers.getList(
     true
   )) as IIdentityWithRelations[];
+  usersWithoutRelations.value = users.value.map(
+    (user: IIdentityWithRelations) => user.user
+  );
+
+  taskTypes.value =
+    (await CRM_API_INSTANCE.tasks.getAllTaskTypes()) as ITaskTypesWithRelations[];
 });
 
 const createTask = async (event: HTMLElementEventMap["click"]) => {

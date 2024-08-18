@@ -20,6 +20,8 @@ import { FilialsModule } from './filials/filials.module';
 import { Filial } from './filials/filials.model';
 import { Identity } from './users/identity-model';
 import { UserRoles } from './roles/users-roles.model';
+import { UsersTasks } from './tasks/users-tasks.model';
+import { TaskTypes } from './tasks/tasks-types.model';
 
 @Module({
   controllers: [],
@@ -47,6 +49,8 @@ import { UserRoles } from './roles/users-roles.model';
         Filial,
         Identity,
         UserRoles,
+        UsersTasks,
+        TaskTypes,
       ],
       autoLoadModels: true,
       synchronize: true,

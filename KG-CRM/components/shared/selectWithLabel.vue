@@ -8,7 +8,17 @@
       <SelectContent class="w-full">
         <SelectGroup>
           <SelectLabel>{{ label }}</SelectLabel>
-          <SelectItem v-for="item in items" :key="item.id" :value="item.id">
+          <SelectItem
+            class="mt-1 hover:border-2 box-border hover:border-blue-500 cursor-pointer"
+            :style="
+              item.accentColor
+                ? { 'background-color': `${item.accentColor}` }
+                : ''
+            "
+            v-for="item in items"
+            :key="item.id"
+            :value="item.id"
+          >
             {{ item.caption ? item.caption : item.name }}
           </SelectItem>
         </SelectGroup>

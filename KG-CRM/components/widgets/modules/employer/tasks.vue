@@ -24,7 +24,7 @@
               placeholder="Например: 'Собрать подписи с родителей.'"
             />
             <SharedSelectWithLabel
-              v-model:model-value="newTask.employerId"
+              v-model:model-value="newTask.responsibleUserId"
               :items="employers"
               label="Ответственный сотрудник"
             />
@@ -106,9 +106,9 @@ tasks.value = await CRM_API_INSTANCE.tasks.getTasksByUserId(
 
 const newTask = ref<ITasks>({
   text: "",
-  employerId: 0,
-  targetEmployerId: 0,
+  responsibleUserId: 0,
   targetUserId: 0,
+  taskType: 1,
   result: "",
   timefinish: "",
   timedeadline: "",
@@ -118,7 +118,7 @@ const createTask = async (event: HTMLElementEventMap["click"]) => {
   event.preventDefault();
   event.stopPropagation();
 
-  const { text, employerId, timedeadline } = newTask.value;
+  const { text, responsibleUserId, timedeadline } = newTask.value;
 
   if (!text) {
     toast({
@@ -129,7 +129,7 @@ const createTask = async (event: HTMLElementEventMap["click"]) => {
     return;
   }
 
-  if (!employerId) {
+  if (!responsibleUserId) {
     toast({
       description: "Укажите ответственного сотрудника!",
       variant: "destructive",

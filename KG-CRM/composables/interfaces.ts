@@ -60,14 +60,43 @@ export interface ITags {
   value: string;
 }
 
+// taskTypes interface
+export interface ITaskTypes {
+  id: number;
+  caption: string;
+  accentColor: string;
+}
+
+export interface ITaskTypesWithRelations extends ITaskTypes {
+  tasks: ITasksWithRelations[];
+}
+
 export interface ITasks {
+  id?: number;
   text: string;
-  employerId: number;
+  responsibleUserId?: number;
   targetUserId: number;
-  targetEmployerId: number;
+  objType?: string;
+  taskType?: number;
   timedeadline: string;
   result?: string;
   timefinish?: string;
+}
+
+export interface IUsersTasks {
+  userId: number;
+  taskId: number;
+  objType: string;
+}
+
+export interface IUsersTasksWithRelations extends IUsersTasks {
+  user: IUser;
+}
+
+export interface ITasksWithRelations extends ITasks {
+  taskTypeObj?: ITaskTypes;
+  usersTasks: IUsersTasksWithRelations[];
+  user: IUser;
 }
 
 export interface IFilial {

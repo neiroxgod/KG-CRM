@@ -6,15 +6,20 @@ import {
   Table,
   BelongsTo,
   ForeignKey,
+  HasMany,
 } from 'sequelize-typescript';
 import { Account } from 'src/accounts/accounts.model';
 import { User } from 'src/users/users.model';
+import { UsersTasks } from './users-tasks.model';
+import { TaskTypes } from './tasks-types.model';
 
-interface TasksCreatingAttrs {
+export interface TasksCreatingAttrs {
   text: string;
-  employerId: number;
-  accountId: number;
+  userId: number;
   targetUserId?: number;
+  objType?: string;
+  accountId: number;
+  taskType: number;
   timedeadline: string;
 }
 
@@ -38,21 +43,32 @@ export class Tasks extends Model<Tasks, TasksCreatingAttrs> {
 
   @ApiProperty({
     example: '1',
-    description: 'Идентификатор ответственного сотрудника',
+    description: 'Идентификатор создавшего задачу сотрудника',
   })
   @ForeignKey(() => User)
   @Column({
     type: DataType.INTEGER,
   })
-  employerId: number;
+  userId: number;
 
-  @ApiProperty({ example: '1', description: 'Идентификатор аккаунта' })
-  @ForeignKey(() => User)
+  @ApiProperty({
+    example: '12',
+    description: 'ID ученика или сотрудника',
+  })
   @Column({
     type: DataType.INTEGER,
-    allowNull: true,
   })
-  targetUserId?: number;
+  targetUserId: number;
+
+  @ApiProperty({
+    example: '1',
+    description: 'ID типа задачи',
+  })
+  @ForeignKey(() => TaskTypes)
+  @Column({
+    type: DataType.INTEGER,
+  })
+  taskType: number;
 
   @ApiProperty({ example: 'Провестри встречу', description: 'Текст задачи' })
   @Column({
@@ -86,6 +102,12 @@ export class Tasks extends Model<Tasks, TasksCreatingAttrs> {
     type: DataType.STRING,
   })
   timefinish: string;
+
+  @BelongsTo(() => TaskTypes)
+  taskTypeObj: TaskTypes;
+
+  @HasMany(() => UsersTasks)
+  usersTasks: UsersTasks[];
 
   @BelongsTo(() => Account)
   account: Account;
