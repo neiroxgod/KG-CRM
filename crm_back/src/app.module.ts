@@ -22,6 +22,7 @@ import { Identity } from './users/identity-model';
 import { UserRoles } from './roles/users-roles.model';
 import { UsersTasks } from './tasks/users-tasks.model';
 import { TaskTypes } from './tasks/tasks-types.model';
+import { OllamaModule } from './ollama/ollama.module';
 
 @Module({
   controllers: [],
@@ -65,6 +66,7 @@ import { TaskTypes } from './tasks/tasks-types.model';
     TasksModule,
     FilesModule,
     FilialsModule,
+    OllamaModule,
   ],
 })
 export class AppModule {}
