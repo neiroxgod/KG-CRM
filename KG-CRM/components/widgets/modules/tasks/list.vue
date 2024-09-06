@@ -4,100 +4,111 @@
     :key="task.id"
     class="border-2 mt-2 w-full rounded-md bg-white hover:bg-slate-50 transition-all duration-300"
   >
-    <div class="flex items-center justify-between">
-      <div class="flex items-center">
-        <div class="w-16 mx-5 p-2 text-center font-inter text-slate-600">
-          <div class="text-md font-light">
-            {{
-              new Date(task.timedeadline).toLocaleString("ru-RU", {
-                weekday: "long",
-              })
-            }}
+    <div v-if="task.timedeadline">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="w-16 mx-5 p-2 text-center font-inter text-slate-600">
+            <div class="text-md font-light">
+              {{
+                new Date(task.timedeadline).toLocaleString("ru-RU", {
+                  weekday: "long",
+                })
+              }}
+            </div>
+            <div class="text-xl font-medium">
+              {{ new Date(task.timedeadline).getDate() }}
+            </div>
+            <div class="text-sm font-light">
+              {{
+                new Date(task.timedeadline).toLocaleString("ru-RU", {
+                  month: "short",
+                })
+              }}
+            </div>
           </div>
-          <div class="text-xl font-medium">
-            {{ new Date(task.timedeadline).getDate() }}
-          </div>
-          <div class="text-sm font-light">
-            {{
-              new Date(task.timedeadline).toLocaleString("ru-RU", {
-                month: "short",
-              })
-            }}
-          </div>
-        </div>
 
-        <Separator class="mx-5 h-16 w-px bg-slate-200" orientation="vertical" />
-        <div>
-          <div class="flex align-center items-center gap-2">
-            <Icon name="material-symbols:timer-outline" class="" />
-            {{
-              new Intl.DateTimeFormat("ru-RU", {
-                hour: "2-digit",
-                minute: "2-digit",
-              }).format(new Date(task.timedeadline))
-            }}
+          <Separator
+            class="mx-5 h-16 w-px bg-slate-200"
+            orientation="vertical"
+          />
+          <div>
+            <div
+              v-if="task.timedeadline"
+              class="flex align-center items-center gap-2"
+            >
+              <Icon name="material-symbols:timer-outline" class="" />
+              {{
+                new Intl.DateTimeFormat("ru-RU", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }).format(new Date(task.timedeadline))
+              }}
+            </div>
+            <div class="flex align-center items-center gap-2">
+              <Icon name="material-symbols:person-outline" class="" />
+              {{ task.user.name }}
+            </div>
           </div>
-          <div class="flex align-center items-center gap-2">
-            <Icon name="material-symbols:person-outline" class="" />
-            {{ task.user.name }}
+          <Separator
+            class="mx-5 h-16 w-px bg-slate-200"
+            orientation="vertical"
+          />
+          <div class="text-md font-medium ml-5" v-if="task.taskTypeObj">
+            <div>{{ task.text }}</div>
+            <div
+              class="text-md font-light font-inter"
+              :style="{
+                color: `${task.taskTypeObj.accentColor}`,
+              }"
+            >
+              {{ task.taskTypeObj.caption }}
+            </div>
           </div>
         </div>
-        <Separator class="mx-5 h-16 w-px bg-slate-200" orientation="vertical" />
-        <div class="text-md font-medium ml-5" v-if="task.taskTypeObj">
-          <div>{{ task.text }}</div>
-          <div
-            class="text-md font-light font-inter"
-            :style="{
-              color: `${task.taskTypeObj.accentColor}`,
-            }"
+        <div class="mr-5">
+          <Button @click="toggleTask(task.id as number)" variant="outline"
+            >Редактировать</Button
           >
-            {{ task.taskTypeObj.caption }}
-          </div>
         </div>
       </div>
-      <div class="mr-5">
-        <Button @click="toggleTask(task.id as number)" variant="outline"
-          >Редактировать</Button
-        >
+      <div v-show="openTaskId === task.id" class="flex flex-col gap-2 p-2">
+        <SharedTextareaWithLabel
+          v-model:model-value="task.text"
+          label="Текст задачи"
+          placeholder="Например: 'Собрать подписи с родителей.'"
+        />
+
+        <SharedTextareaWithLabel
+          v-model:model-value="task.result"
+          label="Результат выполнения"
+          placeholder="Например: 'Собрал подписи с родителей.'"
+        />
+
+        <SharedSelectWithLabel
+          v-if="usersWithoutRelations"
+          v-model:model-value="task.user.id"
+          :items="usersWithoutRelations"
+          label="Ответственный сотрудник"
+        />
+
+        <SharedSelectWithLabel
+          v-if="taskTypes"
+          v-model:model-value="task.taskType"
+          :items="taskTypes"
+          label="Тип задачи"
+        />
+
+        <SharedSelectWithLabel
+          v-if="usersWithoutRelations"
+          v-model:model-value="task.targetUserId"
+          :items="usersWithoutRelations"
+          label="Объект задачи"
+        />
+        <Label> Срок до </Label>
+        <SharedDatePicker v-model:model-value="task.timedeadline" />
+        <!-- Добавьте другие поля для редактирования -->
+        <Button @click="saveTask(task.id)">Сохранить</Button>
       </div>
-    </div>
-    <div v-show="openTaskId === task.id" class="flex flex-col gap-2 p-2">
-      <SharedTextareaWithLabel
-        v-model:model-value="task.text"
-        label="Текст задачи"
-        placeholder="Например: 'Собрать подписи с родителей.'"
-      />
-
-      <SharedTextareaWithLabel
-        v-model:model-value="task.result"
-        label="Результат выполнения"
-        placeholder="Например: 'Собрал подписи с родителей.'"
-      />
-
-      <SharedSelectWithLabel
-        v-if="usersWithoutRelations"
-        v-model:model-value="task.user.id"
-        :items="usersWithoutRelations"
-        label="Ответственный сотрудник"
-      />
-
-      <SharedSelectWithLabel
-        v-if="taskTypes"
-        v-model:model-value="task.taskType"
-        :items="taskTypes"
-        label="Тип задачи"
-      />
-
-      <SharedSelectWithLabel
-        v-if="usersWithoutRelations"
-        v-model:model-value="task.targetUserId"
-        :items="usersWithoutRelations"
-        label="Объект задачи"
-      />
-      <Label> Срок до </Label>
-      <SharedDatePicker v-model:model-value="task.timedeadline" />
-      <!-- Добавьте другие поля для редактирования -->
-      <Button @click="saveTask(task.id)">Сохранить</Button>
     </div>
   </div>
 </template>
