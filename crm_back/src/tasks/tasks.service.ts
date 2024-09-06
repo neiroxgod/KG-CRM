@@ -65,6 +65,7 @@ export class TasksService {
         result: dto.result,
         timedeadline: dto.timedeadline,
         timefinish: dto.timefinish,
+        taskType: dto.taskType,
       },
       {
         where: {

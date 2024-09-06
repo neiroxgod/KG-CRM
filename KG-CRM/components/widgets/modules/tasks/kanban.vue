@@ -1,35 +1,57 @@
 <template>
-  <div class="w-full h-[85vh] overflow-auto bg-slate-100">
+  <div class="w-full bg-slate-100">
     <div class="flex gap-10 p-5 w-full">
       <div
         v-for="taskType in taskTypes"
         :key="taskType.id"
-        class="w-fit min-w-64"
+        class="min-w-72 w-72"
         @dragover.prevent
         @drop="handleDrop(taskType)"
       >
-        <div class="flex justify-between items-center">
-          <div class="flex items-center gap-2">
-            <div
-              :style="{ backgroundColor: taskType.accentColor }"
-              class="h-2 w-2 rounded-full"
-            ></div>
-            <div class="font-inter text-md font-semibold">
-              {{ taskType.caption }}
+        <div class="sticky top-0 bg-slate-100 pb-2 z-50">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <div
+                :style="{ backgroundColor: taskType.accentColor }"
+                class="h-2 w-2 rounded-full"
+              ></div>
+              <div class="font-inter text-md font-semibold">
+                {{ taskType.caption }}
+              </div>
             </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
+                <Button variant="ghost" class="w-8 h-8 p-0">
+                  <span class="sr-only">Открыть меню</span>
+                  <MoreVertical class="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  :disabled="taskType.accountId === null"
+                  @click="editItem(taskType.id)"
+                >
+                  Редактировать
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  :disabled="taskType.accountId === null"
+                  @click="deleteItem(taskType.id)"
+                  class="text-red-500"
+                >
+                  Удалить
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
-          <Icon
-            class="w-4 h-4 cursor-pointer"
-            name="material-symbols:more-vert"
-          />
-        </div>
-
-        <div>
-          <Button variant="outline" class="mt-5 w-full gap-2 text-blue-600">
-            <Icon class="w-4 h-4" name="material-symbols:add" /> Создать новую
-            задачу
-          </Button>
+          <div>
+            <Button variant="outline" class="mt-5 w-full gap-2 text-blue-600">
+              <Icon class="w-4 h-4" name="material-symbols:add" /> Создать новую
+              задачу
+            </Button>
+          </div>
         </div>
 
         <div
@@ -44,10 +66,27 @@
             <div class="font-inter text-md font-semibold">
               {{ task.text }}
             </div>
-            <Icon
-              class="w-4 h-4 cursor-pointer"
-              name="material-symbols:more-vert"
-            />
+
+            <DropdownMenu v-if="task.id">
+              <DropdownMenuTrigger as-child>
+                <Button variant="ghost" class="w-8 h-8 p-0">
+                  <span class="sr-only">Открыть меню</span>
+                  <MoreVertical class="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem @click="editTask(task.id)">
+                  Редактировать
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  @click="deleteTask(task.id)"
+                  class="text-red-500"
+                >
+                  Удалить
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           <div class="text-sm mt-2 font-light font-inter">
@@ -89,7 +128,11 @@
 </template>
 
 <script setup lang="ts">
+import { MoreVertical } from "lucide-vue-next";
+
 import type { ITaskTypesWithRelations } from "~/composables/interfaces";
+import { CRM_API } from "~/composables/getList";
+import { useToast } from "~/components/ui/toast";
 
 const props = defineProps<{
   taskTypes: ITaskTypesWithRelations[];
@@ -99,6 +142,24 @@ let draggedTask: any = null;
 let draggedTaskIndex: number = -1;
 let draggedTaskType: any = null;
 let initialyDragElement: Element | null = null;
+
+const CRM_API_INSTANCE = new CRM_API();
+const { toast } = useToast();
+
+const editTask = async (id: number) => {
+  console.log(id);
+};
+
+const deleteTask = async (id: number) => {
+  await CRM_API_INSTANCE.tasks.delete(id);
+
+  useListStore().removeFromList(id);
+
+  toast({
+    description: "Задача удалена!",
+    duration: 1000,
+  });
+};
 
 const handleDragStart = (
   task: any,
@@ -138,7 +199,7 @@ const handleDragEnd = (event: DragEvent) => {
   if (initialyDragElement) initialyDragElement.classList.remove("invisible");
 };
 
-const handleDrop = (targetTaskType: any) => {
+const handleDrop = async (targetTaskType: any) => {
   if (draggedTask && draggedTaskType) {
     // Удаляем задачу из исходного типа задач
     draggedTaskType.tasks.splice(draggedTaskIndex, 1);
@@ -146,13 +207,24 @@ const handleDrop = (targetTaskType: any) => {
     // Добавляем задачу в новый тип задач
     targetTaskType.tasks.push(draggedTask);
 
-    // Обновляем данные на сервере (реализуйте свою логику)
-    // ...
+    draggedTask.taskType = targetTaskType.id;
 
-    // Сбрасываем переменные
-    draggedTask = null;
-    draggedTaskIndex = -1;
-    draggedTaskType = null;
+    const result = await CRM_API_INSTANCE.tasks.update(
+      draggedTask.id,
+      draggedTask
+    );
+
+    if (result) {
+      toast({
+        title: "Задача перемещена",
+        duration: 1000,
+        variant: "success",
+      });
+
+      draggedTask = null;
+      draggedTaskIndex = -1;
+      draggedTaskType = null;
+    }
   }
 
   const draggingElement = document.querySelector(".dragging") as HTMLElement;
@@ -162,10 +234,6 @@ const handleDrop = (targetTaskType: any) => {
 
   if (initialyDragElement) initialyDragElement.classList.remove("invisible");
 };
-
-onMounted(async () => {
-  console.log(props.taskTypes);
-});
 </script>
 
 <style>

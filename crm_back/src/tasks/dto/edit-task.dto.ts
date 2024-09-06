@@ -13,6 +13,9 @@ export class EditTaskDto {
   @ApiProperty({ example: 'Провести встречу', description: 'Результат задачи' })
   result: string;
 
+  @ApiProperty({ example: '1', description: 'Айди типа задачи' })
+  taskType?: number;
+
   @ApiProperty({
     example: '2024-08-04 12:59:32',
     description: 'Дедлайн задачи',

@@ -2,85 +2,123 @@
   <div>
     <div class="w-full p-5 h-[80vh]">
       <!-- shadcn-tabs -->
-      <Tabs class="w-full">
+      <Tabs default-value="list" class="w-full">
         <TabsList class="gap-10">
           <TabsTrigger value="list">Список</TabsTrigger>
           <TabsTrigger value="kanban">Доска</TabsTrigger>
         </TabsList>
         <TabsContent value="list">
-          <div class="flex justify-between">
-            <div class="flex gap-5 w-2/4">
-              <SharedSelectWithLabel
-                v-if="usersWithoutRelations"
-                v-model:model-value="filters.userId"
-                label="Ответственный сотрудник"
-                :items="usersWithoutRelations"
-              />
+          <keep-alive>
+            <div class="flex justify-between">
+              <div class="flex gap-5 w-2/4">
+                <SharedSelectWithLabel
+                  v-if="usersWithoutRelations"
+                  v-model:model-value="filters.userId"
+                  label="Ответственный сотрудник"
+                  :items="usersWithoutRelations"
+                />
 
-              <SharedSelectWithLabel
-                v-if="taskTypes"
-                v-model:model-value="filters.taskType"
-                label="Тип задачи"
-                :items="taskTypes"
-              />
+                <SharedSelectWithLabel
+                  v-if="taskTypes"
+                  v-model:model-value="filters.taskType"
+                  label="Тип задачи"
+                  :items="taskTypes"
+                />
+              </div>
+              <div class="action">
+                <Sheet>
+                  <SheetTrigger as-child>
+                    <Button variant="outline"> Создать </Button>
+                  </SheetTrigger>
+                  <SheetContent>
+                    <SheetHeader>
+                      <SheetTitle>Создать задачу</SheetTitle>
+                      <SheetDescription>
+                        Опишите задачу, выберите ответственного сотрудника и
+                        объект задачи при необходимости, затем нажмите "Создать"
+                      </SheetDescription>
+                    </SheetHeader>
+                    <div class="my-5" v-if="usersWithoutRelations">
+                      <SharedTextareaWithLabel
+                        v-model:model-value="newTask.text"
+                        label="Текст задачи"
+                        placeholder="Например: 'Собрать подписи с родителей.'"
+                      />
+
+                      <SharedSelectWithLabel
+                        v-if="taskTypes"
+                        v-model:model-value="newTask.taskType"
+                        :items="taskTypes"
+                        label="Тип задачи"
+                      />
+
+                      <SharedSelectWithLabel
+                        v-model:model-value="newTask.responsibleUserId"
+                        :items="usersWithoutRelations"
+                        label="Ответственный сотрудник"
+                      />
+
+                      <SharedSelectWithLabel
+                        v-model:model-value="newTask.targetUserId"
+                        :items="usersWithoutRelations"
+                        label="Объект задачи"
+                      />
+
+                      <Label> Срок до </Label>
+                      <SharedDatePicker
+                        v-model:model-value="newTask.timedeadline"
+                      />
+                    </div>
+                    <SheetFooter>
+                      <SheetClose as-child>
+                        <Button @click="createTask($event)"> Создать </Button>
+                      </SheetClose>
+                    </SheetFooter>
+                  </SheetContent>
+                </Sheet>
+              </div>
             </div>
-            <div class="action">
-              <Sheet>
-                <SheetTrigger as-child>
-                  <Button variant="outline"> Создать </Button>
-                </SheetTrigger>
-                <SheetContent>
-                  <SheetHeader>
-                    <SheetTitle>Создать задачу</SheetTitle>
-                    <SheetDescription>
-                      Опишите задачу, выберите ответственного сотрудника и
-                      объект задачи при необходимости, затем нажмите "Создать"
-                    </SheetDescription>
-                  </SheetHeader>
-                  <div class="my-5" v-if="usersWithoutRelations">
-                    <SharedTextareaWithLabel
-                      v-model:model-value="newTask.text"
-                      label="Текст задачи"
-                      placeholder="Например: 'Собрать подписи с родителей.'"
-                    />
+          </keep-alive>
 
-                    <SharedSelectWithLabel
-                      v-if="taskTypes"
-                      v-model:model-value="newTask.taskType"
-                      :items="taskTypes"
-                      label="Тип задачи"
-                    />
-
-                    <SharedSelectWithLabel
-                      v-model:model-value="newTask.responsibleUserId"
-                      :items="usersWithoutRelations"
-                      label="Ответственный сотрудник"
-                    />
-
-                    <SharedSelectWithLabel
-                      v-model:model-value="newTask.targetUserId"
-                      :items="usersWithoutRelations"
-                      label="Объект задачи"
-                    />
-
-                    <Label> Срок до </Label>
-                    <SharedDatePicker
-                      v-model:model-value="newTask.timedeadline"
-                    />
-                  </div>
-                  <SheetFooter>
-                    <SheetClose as-child>
-                      <Button @click="createTask($event)"> Создать </Button>
-                    </SheetClose>
-                  </SheetFooter>
-                </SheetContent>
-              </Sheet>
-            </div>
-          </div>
           <WidgetsModulesTasksList :tasks="listStore.listState" />
         </TabsContent>
         <TabsContent value="kanban">
-          <WidgetsModulesTasksKanban v-if="taskTypes" :task-types="taskTypes" />
+          <div class="flex justify-end mb-5">
+            <Dialog>
+              <DialogTrigger as-child>
+                <Button variant="outline"> Создать тип </Button>
+              </DialogTrigger>
+              <DialogContent class="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Создание типа задач</DialogTitle>
+                  <DialogDescription>
+                    Укажите название типа задачи, а так же акцентный цвет задачи
+                  </DialogDescription>
+                </DialogHeader>
+                <div class="grid gap-4 py-4">
+                  <div class="grid grid-cols-4 items-center gap-4">
+                    <Label for="name" class="text-right"> Название </Label>
+                    <Input id="name" value="Pedro Duarte" class="col-span-3" />
+                  </div>
+                  <div class="grid grid-cols-4 items-center gap-4">
+                    <Label for="username" class="text-right"> Цвет </Label>
+                    <Input id="username" value="@peduarte" class="col-span-3" />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button type="submit"> Save changes </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <keep-alive>
+            <WidgetsModulesTasksKanban
+              class="overflow-auto h-[60vh]"
+              v-if="taskTypes"
+              :task-types="taskTypes"
+            />
+          </keep-alive>
         </TabsContent>
       </Tabs>
     </div>
@@ -99,6 +137,7 @@ const filters = ref({
   userId: 0,
   taskType: 0,
 });
+
 const newTask = ref<ITasks>({
   text: "",
   responsibleUserId: 0,
@@ -108,6 +147,7 @@ const newTask = ref<ITasks>({
   timefinish: "",
   timedeadline: "",
 });
+
 onMounted(async () => {
   listStore.listState =
     (await CRM_API_INSTANCE.tasks.getList()) as ITasksWithRelations[];

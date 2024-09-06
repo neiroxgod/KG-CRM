@@ -43,7 +43,7 @@
           </div>
         </div>
         <Separator class="mx-5 h-16 w-px bg-slate-200" orientation="vertical" />
-        <div class="text-md font-medium ml-5">
+        <div class="text-md font-medium ml-5" v-if="task.taskTypeObj">
           <div>{{ task.text }}</div>
           <div
             class="text-md font-light font-inter"

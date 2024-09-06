@@ -63,6 +63,7 @@ export interface ITags {
 // taskTypes interface
 export interface ITaskTypes {
   id: number;
+  accountId: number;
   caption: string;
   accentColor: string;
 }
