@@ -125,3 +125,11 @@ export interface IFiles {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface IEmployer {
+  id: number;
+  accountId: number;
+  name: string;
+  username: string;
+  [key: string]: string | number;
+}
