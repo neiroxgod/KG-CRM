@@ -9,7 +9,7 @@
       </SheetHeader>
       <!--  -->
       <Separator />
-      <form class="mt-2" @submit.prevent="onSubmit">
+      <form class="mt-2">
         <FormField v-slot="{ componentField }" name="name">
           <FormItem class="w-full mb-2">
             <Checkbox id="terms" />
@@ -30,6 +30,7 @@
                 type="text"
                 placeholder="Наименование филиала"
                 v-bind="componentField"
+                v-model:model-value="newFilials.caption"
               />
             </FormControl>
             <FormMessage />
@@ -44,6 +45,7 @@
                 type="text"
                 placeholder="Название города"
                 v-bind="componentField"
+                v-model:model-value="newFilials.city"
               />
             </FormControl>
             <FormMessage />
@@ -55,6 +57,7 @@
             <FormLabel>Адрес</FormLabel>
             <FormControl>
               <Input
+                v-model:model-value="newFilials.address"
                 type="text"
                 placeholder="Камышина 12"
                 v-bind="componentField"
@@ -69,6 +72,7 @@
             <FormLabel>Телефон</FormLabel>
             <FormControl>
               <Input
+                v-model:model-value="newFilials.phone"
                 type="phone"
                 placeholder="+7 999 999 99 99"
                 v-bind="componentField"
@@ -88,6 +92,7 @@
               <SelectContent>
                 <SelectGroup>
                   <SelectItem
+                    v-model:model-value="newFilials.timezone"
                     v-for="timezone in timezones"
                     :key="timezone.value"
                     :value="timezone.value"
@@ -119,8 +124,7 @@
       <SheetFooter>
         <SheetClose as-child class="mt-2">
           <Button
-            @click="onSubmit"
-            type="submit"
+            @click="createFilial($event)"
             class="bg-btnPrimary"
             form="dialogForm"
           >
@@ -137,11 +141,15 @@ import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { useToast } from "~/components/ui/toast";
+import { CRM_API } from "~/composables/getList";
+import type { IFilial, IAccount } from "~/composables/interfaces";
 
+const CRM_API_INSTANCE = new CRM_API();
 const dialogstate = ref(false);
-
 const userStore = useAuthStore();
 const listStore = useListStore();
+const filials = ref<IFilial[]>();
+const account = ref<IAccount[]>();
 
 const formSchema = toTypedSchema(
   z.object({
@@ -176,29 +184,36 @@ const timezones = [
 
 const selectedTimezone = ref("");
 
-interface Employer {
-  id: number;
-  accountId: number;
-  name: string;
-  username: string;
-  [key: string]: string | number;
-}
-
-const onSubmit = handleSubmit(async (values) => {
-  const fetchApi = useFetchApi(userStore.token); // native JS composables
-  const employer = ref<Employer>();
-  const response = await fetchApi("/employers/add", {
-    method: "POST",
-    body: { ...values },
-  });
-
-  employer.value = response as Employer;
-
-  toast({
-    description: "Сотрудник успешно создан!",
-    duration: 2000,
-  });
-  dialogstate.value = false;
-  listStore.listState = [...listStore.listState, employer.value];
+const newFilials = ref<IFilial>({
+  id: 0,
+  caption: "",
+  address: "",
+  createdAt: "",
+  updatedAt: "",
+  city: "",
+  timezone: "",
+  phone: "",
+  contractInfo: "",
+  details: "",
+  accountId: 0,
+  active: false,
+  account: {
+    id: 0,
+    caption: "",
+    email: "",
+    createdAt: "",
+    updatedAt: "",
+  },
 });
+
+const createFilial = async (event: HTMLElementEventMap["click"]) => {
+  if (!newFilials.value) return;
+  const createdFilial = await CRM_API_INSTANCE.filials.create({
+    ...newFilials.value,
+  });
+  console.log(createdFilial);
+  if (createdFilial) {
+    filials.value = (await CRM_API_INSTANCE.filials.getList()) as IFilial[];
+  }
+};
 </script>
