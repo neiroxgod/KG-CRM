@@ -12,7 +12,8 @@
       <form class="mt-2">
         <FormField v-slot="{ componentField }" name="name">
           <FormItem class="w-full mb-2">
-            <Checkbox id="terms" />
+            <Checkbox id="terms" v-model:checked="newFilials.active" />
+
             <label
               for="terms"
               class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -113,6 +114,7 @@
                 type="text"
                 placeholder="Добавьте ссылку"
                 v-bind="componentField"
+                v-model:model-value="newFilials.contractInfo"
               />
             </FormControl>
             <FormMessage />
@@ -185,32 +187,27 @@ const timezones = [
 const selectedTimezone = ref("");
 
 const newFilials = ref<IFilial>({
-  id: 0,
   caption: "",
   address: "",
-  createdAt: "",
-  updatedAt: "",
   city: "",
   timezone: "",
   phone: "",
   contractInfo: "",
   details: "",
-  accountId: 0,
-  active: false,
-  account: {
-    id: 0,
-    caption: "",
-    email: "",
-    createdAt: "",
-    updatedAt: "",
-  },
+  active: "indeterminate",
 });
 
 const createFilial = async (event: HTMLElementEventMap["click"]) => {
   if (!newFilials.value) return;
+  newFilials.value.active =
+    newFilials.value.active === "indeterminate"
+      ? false
+      : newFilials.value.active;
   const createdFilial = await CRM_API_INSTANCE.filials.create({
     ...newFilials.value,
   });
+
+  console.log("Active value before request:", newFilials.value.active);
   console.log(createdFilial);
   if (createdFilial) {
     filials.value = (await CRM_API_INSTANCE.filials.getList()) as IFilial[];

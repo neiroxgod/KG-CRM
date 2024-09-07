@@ -101,19 +101,19 @@ export interface ITasksWithRelations extends ITasks {
 }
 
 export interface IFilial {
-  id: number;
+  id?: number;
   caption: string;
   address: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
   city: string;
   timezone: string;
   phone: string;
-  active: Boolean;
+  active: boolean | string | undefined;
   contractInfo: string;
   details: string;
-  accountId: number;
-  account: IAccount | null;
+  accountId?: number;
+  account?: IAccount | null;
 }
 
 export interface IFiles {
