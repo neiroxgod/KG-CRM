@@ -33,7 +33,7 @@ export const columns: ColumnDef<any>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "name", // название поля в бд
+    accessorKey: "caption", // название поля в бд
     header: ({ column }) => {
       return h(
         Button,
@@ -51,7 +51,7 @@ export const columns: ColumnDef<any>[] = [
           class: "text-btnPrimary cursor-pointer font-inter font-medium",
           onClick: () => useModalStore().ChangeModalState(),
         },
-        row.getValue("name")
+        row.getValue("caption")
       ), //getValue - значение поля из бд
   },
   {

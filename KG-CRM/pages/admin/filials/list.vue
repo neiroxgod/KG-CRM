@@ -13,52 +13,24 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { columns } from "@/components/widgets/modules/filials/columns";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { toast } from "@/components/ui/toast";
+import type { IFilial } from "~/composables/interfaces";
+import { CRM_API } from "~/composables/getList";
 
-const templateData = [
-  {
-    id: 1,
-    name: "Смирнова Полина Михайловна",
-    city: "Москва",
-    address: "Камышин 12, бц Плаза",
-    phone: "+7 700 7777 7777",
-  },
-  {
-    id: 2,
-    name: "Смирнова Полина Михайловна",
-    city: "Москва",
-    address: "Камышин 12, бц Плаза",
-    phone: "+7 700 7777 7777",
-  },
-  {
-    id: 3,
-    name: "Смирнова Полина Михайловна",
-    city: "Москва",
-    address: "Камышин 12, бц Плаза",
-    phone: "+7 700 7777 7777",
-  },
-];
+const CRM_API_INSTANCE = new CRM_API();
 
-const data = ref(templateData);
+const filials = ref<IFilial[]>();
 const userStore = useAuthStore();
 const listStore = useListStore();
 const modalState = useModalStore();
 
-async function getData() {
-  const fetchApi = useFetchApi(userStore.token);
-  const filials = ref([]);
-  filials.value = await fetchApi("/filials/", {
-    method: "GET",
-  });
-  return filials.value;
-}
-
-onMounted(() => {
-  listStore.listState = data.value;
+onMounted(async () => {
+  filials.value = (await CRM_API_INSTANCE.filials.getList()) as IFilial[];
+  listStore.listState = filials.value;
 });
 
 const formSchema = toTypedSchema(
@@ -71,16 +43,16 @@ const formSchema = toTypedSchema(
   })
 );
 
-function onSubmit(values) {
-  toast({
-    title: "You submitted the following values:",
-    description: h(
-      "pre",
-      { class: "mt-2 w-[340px] rounded-md bg-slate-950 p-4" },
-      h("code", { class: "text-white" }, JSON.stringify(values, null, 2))
-    ),
-  });
-}
+// function onSubmit(values) {
+//   toast({
+//     title: "You submitted the following values:",
+//     description: h(
+//       "pre",
+//       { class: "mt-2 w-[340px] rounded-md bg-slate-950 p-4" },
+//       h("code", { class: "text-white" }, JSON.stringify(values, null, 2))
+//     ),
+//   });
+// }
 </script>
 
 <style></style>

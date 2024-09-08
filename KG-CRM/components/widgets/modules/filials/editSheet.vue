@@ -3,7 +3,7 @@
     <Sheet v-model:open="props.state">
       <SheetContent ref="target">
         <SheetHeader class="mb-2">
-          <SheetTitle>Создание филиала</SheetTitle>
+          <SheetTitle>Редактирование филиала</SheetTitle>
         </SheetHeader>
         <!--  -->
         <Separator />

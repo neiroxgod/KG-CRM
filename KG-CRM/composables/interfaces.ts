@@ -111,19 +111,19 @@ export interface ITasksHistory {
 }
 
 export interface IFilial {
-  id: number;
+  id?: number;
   caption: string;
   address: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
   city: string;
   timezone: string;
   phone: string;
-  active: Boolean;
+  active: boolean | string | undefined;
   contractInfo: string;
   details: string;
-  accountId: number;
-  account: IAccount | null;
+  accountId?: number;
+  account?: IAccount | null;
 }
 
 export interface IFiles {
@@ -134,4 +134,12 @@ export interface IFiles {
   size: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface IEmployer {
+  id: number;
+  accountId: number;
+  name: string;
+  username: string;
+  [key: string]: string | number;
 }
