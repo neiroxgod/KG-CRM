@@ -98,6 +98,16 @@ export interface ITasksWithRelations extends ITasks {
   taskTypeObj?: ITaskTypes;
   usersTasks: IUsersTasksWithRelations[];
   user: IUser;
+  taskHistory: ITasksHistory[];
+}
+
+export interface ITasksHistory {
+  id?: number;
+  comment: string;
+  userId: number;
+  taskId: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface IFilial {

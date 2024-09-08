@@ -14,6 +14,7 @@ import { Identity } from './identity-model';
 import { Files } from 'src/files/files.model';
 import { Tasks } from 'src/tasks/tasks.model';
 import { UserRoles } from 'src/roles/users-roles.model';
+import { TasksHistory } from 'src/tasks/task-history.model';
 
 interface UserCreationAttrs {
   email: string;
@@ -88,6 +89,9 @@ export class User extends Model<User, UserCreationAttrs> {
 
   @HasMany(() => Tasks)
   tasks: Tasks[];
+
+  @HasMany(() => TasksHistory)
+  tasksHistory: TasksHistory[];
 
   @HasMany(() => Files)
   files: Files[];

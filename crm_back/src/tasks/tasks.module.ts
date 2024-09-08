@@ -12,6 +12,7 @@ import { Identity } from 'src/users/identity-model';
 import { UserRoles } from 'src/roles/users-roles.model';
 import { Role } from 'src/roles/roles.model';
 import { RolesService } from 'src/roles/roles.service';
+import { TasksHistory } from './task-history.model';
 
 @Module({
   providers: [TasksService, UsersService, RolesService],
@@ -24,6 +25,7 @@ import { RolesService } from 'src/roles/roles.service';
       UserRoles,
       UsersTasks,
       TaskTypes,
+      TasksHistory,
       Role,
     ]),
     forwardRef(() => AuthModule),

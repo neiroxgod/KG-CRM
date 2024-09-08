@@ -47,10 +47,39 @@
           </div>
 
           <div>
-            <Button variant="outline" class="mt-5 w-full gap-2 text-blue-600">
-              <Icon class="w-4 h-4" name="material-symbols:add" /> Создать новую
-              задачу
-            </Button>
+            <Dialog>
+              <DialogTrigger as-child>
+                <Button class="w-full" variant="outline">
+                  <Icon class="w-4 h-4" name="material-symbols:add" /> Создать
+                  новую задачу</Button
+                >
+              </DialogTrigger>
+              <DialogContent
+                class="lg:max-w-[840px] overflow-y-auto sm:max-w-[425px]"
+              >
+                <DialogHeader>
+                  <DialogTitle>Создание задачи</DialogTitle>
+                  <DialogDescription>
+                    Укажите название задачи, дедлайн и ответственного сотрудника
+                  </DialogDescription>
+                </DialogHeader>
+                <Separator />
+                <div class="mt-2 flex flex-wrap gap-4">
+                  <SharedInputWithLabel label="Название задачи" />
+                  <SharedTextareaWithLabel label="Описание задачи" />
+                  <SharedSelectWithLabel label="Тип задачи" />
+                  <SharedSelectWithLabel label="Ответственный сотрудник" />
+                  <SharedSelectWithLabel label="Цель задачи" />
+
+                  <Label> Срок до </Label>
+                  <SharedDatePicker />
+                </div>
+                <Separator />
+                <DialogFooter>
+                  <Button class="bg-btnPrimary"> Создать </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 
@@ -137,6 +166,13 @@ import { useToast } from "~/components/ui/toast";
 const props = defineProps<{
   taskTypes: ITaskTypesWithRelations[];
 }>();
+
+const newTask = ref({
+  text: "",
+  timedeadline: null,
+  taskTypeId: null,
+  userId: null,
+});
 
 let draggedTask: any = null;
 let draggedTaskIndex: number = -1;

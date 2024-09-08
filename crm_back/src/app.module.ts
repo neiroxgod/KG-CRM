@@ -23,6 +23,7 @@ import { UserRoles } from './roles/users-roles.model';
 import { UsersTasks } from './tasks/users-tasks.model';
 import { TaskTypes } from './tasks/tasks-types.model';
 import { OllamaModule } from './ollama/ollama.module';
+import { TasksHistory } from './tasks/task-history.model';
 
 @Module({
   controllers: [],
@@ -52,6 +53,7 @@ import { OllamaModule } from './ollama/ollama.module';
         UserRoles,
         UsersTasks,
         TaskTypes,
+        TasksHistory,
       ],
       autoLoadModels: true,
       synchronize: true,

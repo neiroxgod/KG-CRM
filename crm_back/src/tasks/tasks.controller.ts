@@ -18,6 +18,7 @@ import { EditTaskDto } from './dto/edit-task.dto';
 import { TasksCreatingAttrs } from './tasks.model';
 import { TaskTypes } from './tasks-types.model';
 import { User } from 'src/users/users.model';
+import { TasksHistory } from './task-history.model';
 
 @ApiTags('Задачи')
 @Controller('tasks')
@@ -57,6 +58,38 @@ export class TasksController {
   @Get('/get/user/:user_id')
   getTasksForUser(@Param('user_id') user_id: number) {
     return this.tasksService.getTasksForUser(user_id);
+  }
+
+  @ApiOperation({ summary: 'Удаление истории задачи' })
+  @ApiResponse({ status: 200, type: Tasks })
+  @UseGuards(JwtAuthGuard)
+  @Delete('/history/delete/:id')
+  delete(@Param('id') id: number) {
+    return this.tasksService.deleteTaskHistory(id);
+  }
+
+  @ApiOperation({ summary: 'Редактирование истории задачи' })
+  @ApiResponse({ status: 200, type: TasksHistory })
+  @UseGuards(JwtAuthGuard)
+  @Patch('/history/edit')
+  editTaskHistory(@Body() data: any, @GetUser() empl: User) {
+    return this.tasksService.editTaskHistory(data, empl);
+  }
+
+  @ApiOperation({ summary: 'Добавление истории задачи' })
+  @ApiResponse({ status: 200, type: TasksHistory })
+  @UseGuards(JwtAuthGuard)
+  @Post('/history/add')
+  addTaskHistory(@Body() data: any, @GetUser() empl: User) {
+    return this.tasksService.addTaskHistory(data, empl);
+  }
+
+  @ApiOperation({ summary: 'Получение всех задач' })
+  @ApiResponse({ status: 200, type: [Tasks] })
+  @UseGuards(JwtAuthGuard)
+  @Get('/all')
+  getAllTasks(@GetUser() empl: any) {
+    return this.tasksService.getAllTasks(empl);
   }
 
   @ApiOperation({ summary: 'Список типов задач' })
