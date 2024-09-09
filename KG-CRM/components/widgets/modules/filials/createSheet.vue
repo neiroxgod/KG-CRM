@@ -206,11 +206,6 @@ const createFilial = async (event: HTMLElementEventMap["click"]) => {
   const createdFilial = await CRM_API_INSTANCE.filials.create({
     ...newFilials.value,
   });
-
-  console.log("Active value before request:", newFilials.value.active);
-  console.log(createdFilial);
-  if (createdFilial) {
-    filials.value = (await CRM_API_INSTANCE.filials.getList()) as IFilial[];
-  }
+  listStore.listState = [...listStore.listState, createdFilial];
 };
 </script>

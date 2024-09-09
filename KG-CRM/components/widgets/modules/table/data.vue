@@ -84,6 +84,8 @@ const table = useVueTable({
     },
   },
 });
+
+const rowData = ref();
 </script>
 
 <template>

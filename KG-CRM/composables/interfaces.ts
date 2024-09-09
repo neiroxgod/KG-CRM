@@ -109,7 +109,7 @@ export interface IFilial {
   city: string;
   timezone: string;
   phone: string;
-  active: boolean | string | undefined;
+  active: boolean | "indeterminate" | undefined;
   contractInfo: string;
   details: string;
   accountId?: number;

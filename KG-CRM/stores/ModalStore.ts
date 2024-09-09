@@ -1,12 +1,29 @@
-export const useModalStore = defineStore("modal", () => {
-  const ModalState = ref<boolean>(false);
+// export const useModalStore = defineStore("modal", () => {
+//   const ModalState = ref<boolean>(false);
 
-  const ChangeModalState = function (): void {
-    ModalState.value = !ModalState.value;
-  };
+//   const ChangeModalState = function (): void {
+//     ModalState.value = !ModalState.value;
+//   };
 
-  return {
-    ModalState,
-    ChangeModalState,
-  };
+//   return {
+//     ModalState,
+//     ChangeModalState,
+//   };
+// });
+
+export const useModalStore = defineStore("modal", {
+  state: () => ({
+    ModalState: false,
+    selectedFilial: null as IFilial | null, // Добавляем свойство для выбранного филиала
+  }),
+  actions: {
+    setSelectedFilial(filial: IFilial) {
+      this.selectedFilial = filial;
+      this.ModalState = !this.ModalState;
+    },
+    clearSelectedFilial() {
+      this.selectedFilial = null;
+    },
+    // Другие действия
+  },
 });

@@ -411,7 +411,7 @@ class Filials {
   }
 
   public async update(id: number, data: IFilial): Promise<IFilial> {
-    return (await this.fetchApi(`/filials/${id}`, {
+    return (await this.fetchApi(`/filials/`, {
       method: "PATCH",
       body: data,
     })) as IFilial;

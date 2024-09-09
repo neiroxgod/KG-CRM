@@ -49,7 +49,7 @@ export const columns: ColumnDef<any>[] = [
         UserRow, //Добавлять аватарки сюда
         {
           class: "text-btnPrimary cursor-pointer font-inter font-medium",
-          onClick: () => useModalStore().ChangeModalState(),
+          onClick: () => useModalStore().setSelectedFilial(row.original),
         },
         row.getValue("caption")
       ), //getValue - значение поля из бд

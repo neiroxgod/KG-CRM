@@ -2,7 +2,7 @@ export const useListStore = defineStore("list", () => {
   const listState = ref<any[]>([]);
 
   const addToList = function (item: Object): void {
-    listState.value.push(item);
+    listState.value = [...listState.value, item];
   };
 
   const removeFromList = (id: number): void => {

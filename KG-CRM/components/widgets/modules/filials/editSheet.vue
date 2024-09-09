@@ -1,6 +1,6 @@
 <template>
   <div class="p-5">
-    <Sheet v-model:open="props.state">
+    <Sheet v-model:open="isOpen">
       <SheetContent ref="target">
         <SheetHeader class="mb-2">
           <SheetTitle>Редактирование филиала</SheetTitle>
@@ -8,9 +8,9 @@
         <!--  -->
         <Separator />
         <form class="mt-2" @submit.prevent="onSubmit">
-          <FormField v-slot="{ componentField }" name="name">
+          <FormField v-slot="{ componentField }" name="active">
             <FormItem class="w-full mb-2">
-              <Checkbox id="terms" />
+              <Checkbox v-model="filialsData.active" id="terms" />
               <label
                 for="terms"
                 class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -20,11 +20,12 @@
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="name">
+          <FormField v-slot="{ componentField }" name="caption">
             <FormItem class="w-full">
               <FormLabel>Название филиала</FormLabel>
               <FormControl>
                 <Input
+                  v-model="filialsData.caption"
                   type="text"
                   placeholder="Наименование филиала"
                   v-bind="componentField"
@@ -39,6 +40,7 @@
               <FormLabel>Город</FormLabel>
               <FormControl>
                 <Input
+                  v-model="filialsData.city"
                   type="text"
                   placeholder="Название города"
                   v-bind="componentField"
@@ -53,6 +55,7 @@
               <FormLabel>Адрес</FormLabel>
               <FormControl>
                 <Input
+                  v-model="filialsData.address"
                   type="text"
                   placeholder="Камышина 12"
                   v-bind="componentField"
@@ -67,6 +70,7 @@
               <FormLabel>Телефон</FormLabel>
               <FormControl>
                 <Input
+                  v-model="filialsData.phone"
                   type="phone"
                   placeholder="+7 999 999 99 99"
                   v-bind="componentField"
@@ -79,7 +83,7 @@
           <FormField v-slot="{ componentField }" name="timezone">
             <FormItem class="w-full">
               <FormLabel>Часовой пояс</FormLabel>
-              <Select v-bind="componentField" v-model="selectedTimezone">
+              <Select v-bind="componentField" v-model="filialsData.timezone">
                 <SelectTrigger>
                   <SelectValue placeholder="Выберите из списка" />
                 </SelectTrigger>
@@ -98,11 +102,12 @@
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="link">
+          <FormField v-slot="{ componentField }" name="contractInfo">
             <FormItem class="w-full">
               <FormLabel>Ссылка на договор-оферты</FormLabel>
               <FormControl>
                 <Input
+                  v-model="filialsData.contractInfo"
                   type="text"
                   placeholder="Добавьте ссылку"
                   v-bind="componentField"
@@ -117,12 +122,12 @@
         <SheetFooter>
           <SheetClose as-child class="mt-2">
             <Button
-              @click="onSubmit"
+              @click="updateFilial($event)"
               type="submit"
               class="bg-btnPrimary"
               form="dialogForm"
             >
-              Создать филиал
+              Сохранить изменения
             </Button>
           </SheetClose>
         </SheetFooter>
@@ -132,31 +137,36 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { useToast } from "~/components/ui/toast";
+import type { IFilial } from "~/composables/interfaces";
+import { CRM_API } from "~/composables/getList";
+
+const CRM_API_INSTANCE = new CRM_API();
 
 const props = defineProps<{
   state: boolean | undefined;
+  filial: IFilial;
 }>();
 
-const dialogstate = ref(false);
-const userStore = useAuthStore();
-const listStore = useListStore();
+// Локальное состояние для открытия/закрытия формы
+const isOpen = ref(props.state || false);
 
 const formSchema = toTypedSchema(
   z.object({
-    username: z.string().min(2, "Введите логин"),
-    name: z.string().min(2, "Введите ФИО"),
-    email: z.string().email("Укажите корректную почту"),
-    phone: z.string().min(10, "Укажите телефон"),
-    password: z.string().min(6, "Пароль должен содержать минимум 6 символов"),
+    caption: z.string().min(2, "Введите название филиала"),
+    city: z.string().min(2, "Введите название города"),
+    address: z.string().min(5, "Введите адрес"),
+    phone: z.string().min(10, "Введите телефон"),
+    timezone: z.string().min(1, "Выберите часовой пояс"),
+    contractInfo: z.string().url("Введите корректную ссылку"),
   })
 );
 
 const { toast } = useToast();
-
 const { handleSubmit, errors } = useForm({
   validationSchema: formSchema,
 });
@@ -178,29 +188,39 @@ const timezones = [
 
 const selectedTimezone = ref("");
 
-interface Filials {
-  id: number;
-  name: string;
-  city: string;
-  adress: string;
-  phone: number;
-}
+// Создаем копию данных филиала, чтобы не изменять props напрямую
+const filialsData = ref<IFilial>({ ...props.filial });
 
-const onSubmit = handleSubmit(async (values) => {
-  const fetchApi = useFetchApi(userStore.token); // native JS composables
-  const employer = ref<Filials>();
-  const response = await fetchApi("/filials/1", {
-    method: "POST",
-    body: { ...values },
-  });
+console.log("Updating filial with ID:", filialsData.value.id);
 
-  employer.value = response as Filials;
+const updateFilial = async (event: HTMLElementEventMap["click"]) => {
+  try {
+    if (!filialsData.value.id) {
+      throw new Error("Филиал не имеет ID.");
+    }
 
-  toast({
-    description: "Сотрудник успешно создан!",
-    duration: 2000,
-  });
-  dialogstate.value = false;
-  listStore.listState = [...listStore.listState, employer.value];
-});
+    const updatedFilial = await CRM_API_INSTANCE.filials.update(
+      filialsData.value.id,
+      { ...filialsData.value }
+    );
+
+    console.log("Updated filial:", updatedFilial);
+
+    toast({
+      title: "Успех",
+      description: "Данные филиала успешно обновлены",
+      duration: 5000,
+    });
+
+    isOpen.value = false; // Закрываем форму после успешного обновления
+  } catch (error) {
+    console.error(error);
+
+    toast({
+      title: "Ошибка",
+      description: "Ошибка при обновлении данных филиала",
+      duration: 5000,
+    });
+  }
+};
 </script>

@@ -3,6 +3,7 @@
     <WidgetsModulesFilialsEditSheet
       v-if="modalState.ModalState === true"
       :state="modalState.ModalState"
+      :filial="modalState.selectedFilial"
     />
     <div class="flex flex-row-reverse">
       <WidgetsModulesFilialsCreateSheet />
@@ -24,7 +25,6 @@ import { CRM_API } from "~/composables/getList";
 const CRM_API_INSTANCE = new CRM_API();
 
 const filials = ref<IFilial[]>();
-const userStore = useAuthStore();
 const listStore = useListStore();
 const modalState = useModalStore();
 
@@ -42,17 +42,6 @@ const formSchema = toTypedSchema(
     password: z.string().min(6, "Пароль должен содержать минимум 6 символов"),
   })
 );
-
-// function onSubmit(values) {
-//   toast({
-//     title: "You submitted the following values:",
-//     description: h(
-//       "pre",
-//       { class: "mt-2 w-[340px] rounded-md bg-slate-950 p-4" },
-//       h("code", { class: "text-white" }, JSON.stringify(values, null, 2))
-//     ),
-//   });
-// }
 </script>
 
 <style></style>
