@@ -145,6 +145,7 @@ import { useToast } from "~/components/ui/toast";
 import type { IFilial } from "~/composables/interfaces";
 import { CRM_API } from "~/composables/getList";
 
+const listStore = useListStore();
 const CRM_API_INSTANCE = new CRM_API();
 
 const props = defineProps<{
@@ -186,41 +187,25 @@ const timezones = [
   { value: "Asia/Kamchatka", label: "Камчатка (GMT+12)" },
 ];
 
-const selectedTimezone = ref("");
-
-// Создаем копию данных филиала, чтобы не изменять props напрямую
 const filialsData = ref<IFilial>({ ...props.filial });
 
-console.log("Updating filial with ID:", filialsData.value.id);
-
 const updateFilial = async (event: HTMLElementEventMap["click"]) => {
-  try {
-    if (!filialsData.value.id) {
-      throw new Error("Филиал не имеет ID.");
-    }
-
-    const updatedFilial = await CRM_API_INSTANCE.filials.update(
-      filialsData.value.id,
-      { ...filialsData.value }
-    );
-
-    console.log("Updated filial:", updatedFilial);
-
-    toast({
-      title: "Успех",
-      description: "Данные филиала успешно обновлены",
-      duration: 5000,
-    });
-
-    isOpen.value = false; // Закрываем форму после успешного обновления
-  } catch (error) {
-    console.error(error);
-
-    toast({
-      title: "Ошибка",
-      description: "Ошибка при обновлении данных филиала",
-      duration: 5000,
-    });
+  if (!filialsData.value.id) {
+    throw new Error("Филиал не имеет ID.");
   }
+
+  const updatedFilial = await CRM_API_INSTANCE.filials.update(filialsData.value.id, {
+    ...filialsData.value,
+  });
+
+  toast({
+    title: "Успех",
+    description: "Филиал успешно обновлен",
+    duration: 5000,
+  });
+  console.log(updatedFilial);
+  console.log(filialsData);
+  listStore.updateList(updatedFilial);
+  isOpen.value = false;
 };
 </script>

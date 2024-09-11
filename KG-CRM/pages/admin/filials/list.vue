@@ -18,7 +18,6 @@
 import { columns } from "@/components/widgets/modules/filials/columns";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
-import { toast } from "@/components/ui/toast";
 import type { IFilial } from "~/composables/interfaces";
 import { CRM_API } from "~/composables/getList";
 

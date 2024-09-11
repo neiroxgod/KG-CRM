@@ -10,7 +10,7 @@
       <!--  -->
       <Separator />
       <form class="mt-2">
-        <FormField v-slot="{ componentField }" name="name">
+        <FormField v-slot="{ componentField }" name="active">
           <FormItem class="w-full mb-2">
             <Checkbox id="terms" v-model:checked="newFilials.active" />
 
@@ -23,7 +23,7 @@
           </FormItem>
         </FormField>
 
-        <FormField v-slot="{ componentField }" name="name">
+        <FormField v-slot="{ componentField }" name="caption">
           <FormItem class="w-full">
             <FormLabel>Название филиала</FormLabel>
             <FormControl>
@@ -86,7 +86,7 @@
         <FormField v-slot="{ componentField }" name="timezone">
           <FormItem class="w-full">
             <FormLabel>Часовой пояс</FormLabel>
-            <Select v-bind="componentField" v-model="selectedTimezone">
+            <Select v-bind="componentField" v-model="newFilials.timezone">
               <SelectTrigger>
                 <SelectValue placeholder="Выберите из списка" />
               </SelectTrigger>
@@ -106,7 +106,7 @@
           </FormItem>
         </FormField>
 
-        <FormField v-slot="{ componentField }" name="link">
+        <FormField v-slot="{ componentField }" name="contractInfo">
           <FormItem class="w-full">
             <FormLabel>Ссылка на договор-оферты</FormLabel>
             <FormControl>
@@ -125,11 +125,7 @@
       </form>
       <SheetFooter>
         <SheetClose as-child class="mt-2">
-          <Button
-            @click="createFilial($event)"
-            class="bg-btnPrimary"
-            form="dialogForm"
-          >
+          <Button @click="createFilial($event)" class="bg-btnPrimary" form="dialogForm">
             Создать филиал
           </Button>
         </SheetClose>
@@ -144,14 +140,11 @@ import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { useToast } from "~/components/ui/toast";
 import { CRM_API } from "~/composables/getList";
-import type { IFilial, IAccount } from "~/composables/interfaces";
+import type { IFilial } from "~/composables/interfaces";
 
 const CRM_API_INSTANCE = new CRM_API();
-const dialogstate = ref(false);
-const userStore = useAuthStore();
+
 const listStore = useListStore();
-const filials = ref<IFilial[]>();
-const account = ref<IAccount[]>();
 
 const formSchema = toTypedSchema(
   z.object({
@@ -184,8 +177,6 @@ const timezones = [
   { value: "Asia/Kamchatka", label: "Камчатка (GMT+12)" },
 ];
 
-const selectedTimezone = ref("");
-
 const newFilials = ref<IFilial>({
   caption: "",
   address: "",
@@ -200,9 +191,7 @@ const newFilials = ref<IFilial>({
 const createFilial = async (event: HTMLElementEventMap["click"]) => {
   if (!newFilials.value) return;
   newFilials.value.active =
-    newFilials.value.active === "indeterminate"
-      ? false
-      : newFilials.value.active;
+    newFilials.value.active === "indeterminate" ? false : newFilials.value.active;
   const createdFilial = await CRM_API_INSTANCE.filials.create({
     ...newFilials.value,
   });
