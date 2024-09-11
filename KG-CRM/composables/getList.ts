@@ -4,7 +4,12 @@ import {
   type ITasks,
 } from "#imports";
 import { useAuthStore } from "#imports";
-import type { IFiles, IUser, IUserWithRelations } from "./interfaces";
+import type {
+  IFiles,
+  ITasksHistory,
+  IUser,
+  IUserWithRelations,
+} from "./interfaces";
 
 export class CRM_API {
   private userStore = useAuthStore();
@@ -308,6 +313,26 @@ class Tasks {
     await this.fetchApi(`/tasks/types/delete/${id}`, {
       method: "DELETE",
     });
+  }
+
+  public async deleteTaskHistory(id: number): Promise<void> {
+    await this.fetchApi(`/tasks/history/delete/${id}`, {
+      method: "DELETE",
+    });
+  }
+
+  public async editTaskHistory(data: ITasksHistory): Promise<ITasksHistory> {
+    return (await this.fetchApi(`/tasks/history/edit`, {
+      method: "PATCH",
+      body: data,
+    })) as ITasksHistory;
+  }
+
+  public async addTaskHistory(data: ITasksHistory): Promise<ITasksHistory> {
+    return (await this.fetchApi(`/tasks/history/add`, {
+      method: "POST",
+      body: data,
+    })) as ITasksHistory;
   }
 }
 

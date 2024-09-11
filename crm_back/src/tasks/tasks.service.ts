@@ -8,6 +8,7 @@ import { TaskTypes } from './tasks-types.model';
 import { UsersService } from 'src/users/users.service';
 import { Op } from 'sequelize';
 import { User } from 'src/users/users.model';
+import { TasksHistory } from './task-history.model';
 
 @Injectable()
 export class TasksService {
@@ -15,6 +16,8 @@ export class TasksService {
     @InjectModel(Tasks) private taskRepository: typeof Tasks,
     @InjectModel(UsersTasks) private usersTasksRepository: typeof UsersTasks,
     @InjectModel(TaskTypes) private taskTypesRepository: typeof TaskTypes,
+    @InjectModel(TasksHistory)
+    private taskHistoryRepository: typeof TasksHistory,
     private usersService: UsersService,
   ) {
     this.createDefaultTaskTypes();
@@ -45,6 +48,38 @@ export class TasksService {
 
     const result = { ...task, userTask };
     return result;
+  }
+
+  async deleteTaskHistory(id: number): Promise<void> {
+    const taskHistory = await this.taskHistoryRepository.destroy({
+      where: { id },
+    });
+  }
+
+  async editTaskHistory(data: any, empl: User) {
+    const { comment, id } = data;
+    const taskHistory = await this.taskHistoryRepository.update(
+      {
+        comment,
+      },
+      {
+        where: {
+          id,
+        },
+      },
+    );
+    return taskHistory;
+  }
+
+  async addTaskHistory(data: any, empl: User) {
+    const { taskId, userId, comment } = data;
+    const taskHistory = await this.taskHistoryRepository.create({
+      taskId,
+      userId,
+      comment,
+    });
+
+    return taskHistory;
   }
 
   async getAllTasks(empl: any) {
