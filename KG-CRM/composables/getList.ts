@@ -7,6 +7,7 @@ import { useAuthStore } from "#imports";
 import type {
   IFiles,
   ITasksHistory,
+  ITasksWithRelations,
   IUser,
   IUserWithRelations,
 } from "./interfaces";
@@ -68,7 +69,7 @@ export class CRM_API {
   /**
    * Returns the Groups instance associated with this CRM_API instance.
    *
-   * @return {Groups} The Users instance.
+   * @return {Groups} The Groups instance.
    */
   get groups(): Groups {
     return this.groupsInstance;
@@ -76,7 +77,7 @@ export class CRM_API {
   /**
    * Returns the Tasks instance associated with this CRM_API instance.
    *
-   * @return {Tasks} The Users instance.
+   * @return {Tasks} The Tasks instance.
    */
   get tasks(): Tasks {
     return this.tasksInstance;
@@ -84,7 +85,7 @@ export class CRM_API {
   /**
    * Returns the Files instance associated with this CRM_API instance.
    *
-   * @return {Files} The Users instance.
+   * @return {Files} The Files instance.
    */
   get files(): Files {
     return this.filesInstance;
@@ -92,7 +93,7 @@ export class CRM_API {
   /**
    * Returns the Roles instance associated with this CRM_API instance.
    *
-   * @return {Roles} The Users instance.
+   * @return {Roles} The Roles instance.
    */
   get roles(): Roles {
     return this.rolesInstance;
@@ -158,10 +159,26 @@ class Employers {
 class Users {
   constructor(private fetchApi: ReturnType<typeof useFetchApi>) {}
 
-  public async getList(): Promise<IIdentityWithRelations[]> {
-    return (await this.fetchApi("/users", {
-      method: "GET",
-    })) as IIdentityWithRelations[];
+  public async getList(
+    withRelations = false
+  ): Promise<IIdentityWithRelations[] | IUserWithRelations[]> {
+    if (withRelations === true) {
+      return (await this.fetchApi("/users", {
+        method: "GET",
+      })) as IIdentityWithRelations[];
+    } else {
+      const list = (await this.fetchApi("/users", {
+        method: "GET",
+      })) as IIdentityWithRelations[];
+
+      const result = list.map((item) => {
+        return {
+          ...item.user,
+        };
+      });
+
+      return result;
+    }
   }
 
   public async getById(id: number): Promise<IIdentityWithRelations> {
@@ -245,17 +262,17 @@ class Tasks {
     })) as ITasks[];
   }
 
-  public async getById(id: number): Promise<ITasks> {
+  public async getById(id: number): Promise<ITasksWithRelations> {
     return (await this.fetchApi(`/tasks/${id}`, {
       method: "GET",
-    })) as ITasks;
+    })) as ITasksWithRelations;
   }
 
-  public async create(data: ITasks): Promise<ITasks> {
+  public async create(data: ITasks): Promise<ITasksWithRelations> {
     return (await this.fetchApi("/tasks", {
       method: "POST",
       body: data,
-    })) as ITasks;
+    })) as ITasksWithRelations;
   }
 
   public async update(id: number, data: ITasks): Promise<ITasks> {

@@ -11,7 +11,7 @@ import Textarea from "../ui/textarea/Textarea.vue";
 
 const props = defineProps<{
   label: string;
-  modelValue: string; //input
+  modelValue: string | undefined; //input
   placeholder: string;
 }>();
 

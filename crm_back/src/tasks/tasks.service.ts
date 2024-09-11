@@ -46,7 +46,7 @@ export class TasksService {
       objType: dto.objType ? dto.objType : 'user', // user/employer
     });
 
-    const result = { ...task, userTask };
+    const result = { ...task.dataValues, userTask };
     return result;
   }
 
@@ -80,6 +80,14 @@ export class TasksService {
     });
 
     return taskHistory;
+  }
+
+  async getTaskById(id: number) {
+    const task = await this.taskRepository.findOne({
+      where: { id },
+      include: { all: true },
+    });
+    return task.dataValues;
   }
 
   async getAllTasks(empl: any) {

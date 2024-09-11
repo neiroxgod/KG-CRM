@@ -44,6 +44,14 @@ export class TasksController {
     return this.tasksService.editTask(taskDto, empl);
   }
 
+  @ApiOperation({ summary: 'Получить задачу по ID' })
+  @ApiResponse({ status: 200, type: [Tasks] })
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  getById(@Param('id') id: number) {
+    return this.tasksService.getTaskById(id);
+  }
+
   @ApiOperation({ summary: 'Список задач' })
   @ApiResponse({ status: 200, type: [Tasks] })
   @UseGuards(JwtAuthGuard)
