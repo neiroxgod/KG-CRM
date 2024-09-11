@@ -167,6 +167,8 @@ const formSchema = toTypedSchema(
   })
 );
 
+const emit = defineEmits(["updateList"]);
+
 const { toast } = useToast();
 const { handleSubmit, errors } = useForm({
   validationSchema: formSchema,
@@ -194,18 +196,20 @@ const updateFilial = async (event: HTMLElementEventMap["click"]) => {
     throw new Error("Филиал не имеет ID.");
   }
 
-  const updatedFilial = await CRM_API_INSTANCE.filials.update(filialsData.value.id, {
-    ...filialsData.value,
-  });
+  const updatedFilial = await CRM_API_INSTANCE.filials.update(
+    filialsData.value.id,
+    {
+      ...filialsData.value,
+    }
+  );
 
   toast({
     title: "Успех",
     description: "Филиал успешно обновлен",
     duration: 5000,
   });
-  console.log(updatedFilial);
-  console.log(filialsData);
-  listStore.updateList(updatedFilial);
+
+  emit("updateList", updatedFilial);
   isOpen.value = false;
 };
 </script>

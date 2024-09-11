@@ -30,11 +30,15 @@ export class FilialsService {
   };
 
   updateFilial = async function (data: UpdateFilialDto): Promise<Object> {
-    const filial = await this.filialRepository.update(data, {
-      where: { id: data.id },
-    });
+    const [affectedCount, updatedFilials] = await this.filialRepository.update(
+      data,
+      {
+        where: { id: data.id },
+        returning: true,
+      },
+    );
 
-    return filial;
+    return updatedFilials[0];
   };
 
   getFilialsList = async function (employer: any): Promise<Object> {

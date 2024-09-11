@@ -1,6 +1,5 @@
 export const useListStore = defineStore("list", () => {
   const listState = ref<any[]>([]);
-
   const addToList = function (item: Object): void {
     listState.value = [...listState.value, item];
   };
@@ -10,10 +9,9 @@ export const useListStore = defineStore("list", () => {
   };
 
   const updateList = (item: any): void => {
-    const index = listState.value.findIndex((el) => el.id === item.id);
-    if (index !== -1) {
-      listState.value[index] = { ...listState.value[index], ...item };
-    }
+    listState.value = listState.value.map((el) =>
+      el.id === item.id ? { ...el, ...item } : el
+    );
   };
 
   return {

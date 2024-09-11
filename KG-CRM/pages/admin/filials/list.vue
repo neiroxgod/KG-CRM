@@ -3,13 +3,18 @@
     <WidgetsModulesFilialsEditSheet
       v-if="modalState.ModalState === true"
       :state="modalState.ModalState"
+      v-on:updateList="updateFilials($event)"
       :filial="modalState.selectedFilial"
     />
     <div class="flex flex-row-reverse">
       <WidgetsModulesFilialsCreateSheet />
     </div>
     <div class="mt-5">
-      <WidgetsModulesTableData :columns="columns" :data="listStore.listState" />
+      <WidgetsModulesTableData
+        v-if="filials"
+        :columns="columns"
+        :data="filials"
+      />
     </div>
   </div>
 </template>
@@ -24,12 +29,16 @@ import { CRM_API } from "~/composables/getList";
 const CRM_API_INSTANCE = new CRM_API();
 
 const filials = ref<IFilial[]>();
-const listStore = useListStore();
 const modalState = useModalStore();
+
+const updateFilials = function (event: IFilial) {
+  filials.value = filials.value?.map((el) =>
+    el.id === event.id ? { ...el, ...event } : el
+  );
+};
 
 onMounted(async () => {
   filials.value = (await CRM_API_INSTANCE.filials.getList()) as IFilial[];
-  listStore.listState = filials.value;
 });
 
 const formSchema = toTypedSchema(
