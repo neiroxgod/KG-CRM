@@ -96,6 +96,9 @@ export class UsersService {
   async addEmployer(dto: CreateUserDto, empl: any) {
     dto.accountId = empl.accountId;
     const employer = await this.userRepository.create(dto);
+
+    console.log(employer);
+
     let role = await this.roleService.getRoleByValue(
       'Администратор',
       employer.accountId,

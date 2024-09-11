@@ -12,6 +12,7 @@ import { Account } from 'src/accounts/accounts.model';
 import { User } from 'src/users/users.model';
 import { UsersTasks } from './users-tasks.model';
 import { TaskTypes } from './tasks-types.model';
+import { TasksHistory } from './task-history.model';
 
 export interface TasksCreatingAttrs {
   text: string;
@@ -105,6 +106,9 @@ export class Tasks extends Model<Tasks, TasksCreatingAttrs> {
 
   @BelongsTo(() => TaskTypes)
   taskTypeObj: TaskTypes;
+
+  @HasMany(() => TasksHistory)
+  taskHistory: TasksHistory[];
 
   @HasMany(() => UsersTasks)
   usersTasks: UsersTasks[];

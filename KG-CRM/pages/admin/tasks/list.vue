@@ -112,13 +112,12 @@
             </Dialog>
           </div>
 
-          <keep-alive>
-            <WidgetsModulesTasksKanban
-              class="overflow-auto h-[60vh]"
-              v-if="taskTypes"
-              :task-types="taskTypes"
-            />
-          </keep-alive>
+          <WidgetsModulesTasksKanban
+            class="overflow-auto h-[80vh]"
+            v-if="taskTypes"
+            @update-tasks="updateTasks($event)"
+            :task-types="taskTypes"
+          />
         </TabsContent>
       </Tabs>
     </div>
@@ -131,7 +130,7 @@ import type { ITasksWithRelations } from "~/composables/interfaces";
 const CRM_API_INSTANCE = new CRM_API();
 const users = ref<IIdentityWithRelations[]>();
 const usersWithoutRelations = ref<IUser[]>();
-const taskTypes = ref<ITaskTypesWithRelations[]>();
+const taskTypes = reactive<ITaskTypesWithRelations[]>([]);
 const listStore = useListStore();
 const filters = ref({
   userId: 0,
@@ -148,6 +147,33 @@ const newTask = ref<ITasks>({
   timedeadline: "",
 });
 
+const updateTasks = ({
+  taskTypeIndex,
+  tasks,
+}: {
+  taskTypeIndex: number;
+  tasks: ITasksWithRelations[];
+}) => {
+  // Найдем индекс нужного taskType
+  const index = taskTypes.findIndex(
+    (taskType) => taskType.id === taskTypeIndex
+  );
+
+  if (index !== -1) {
+    // Создаем новый массив задач, объединяя существующие и новые
+    const updatedTasks = [
+      ...taskTypes[index].tasks,
+      ...(Array.isArray(tasks) ? tasks : [tasks]),
+    ];
+
+    // Обновляем элемент, сохраняя существующие задачи и добавляя новые
+    taskTypes[index] = {
+      ...taskTypes[index],
+      tasks: updatedTasks,
+    };
+  }
+};
+
 onMounted(async () => {
   listStore.listState =
     (await CRM_API_INSTANCE.tasks.getList()) as ITasksWithRelations[];
@@ -158,8 +184,11 @@ onMounted(async () => {
     (user: IIdentityWithRelations) => user.user
   );
 
-  taskTypes.value =
-    (await CRM_API_INSTANCE.tasks.getAllTaskTypes()) as ITaskTypesWithRelations[];
+  taskTypes.splice(
+    0,
+    taskTypes.length,
+    ...(await CRM_API_INSTANCE.tasks.getAllTaskTypes())
+  );
 });
 
 const createTask = async (event: HTMLElementEventMap["click"]) => {

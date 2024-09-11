@@ -65,18 +65,42 @@
                 </DialogHeader>
                 <Separator />
                 <div class="mt-2 flex flex-wrap gap-4">
-                  <SharedInputWithLabel label="Название задачи" />
-                  <SharedTextareaWithLabel label="Описание задачи" />
-                  <SharedSelectWithLabel label="Тип задачи" />
-                  <SharedSelectWithLabel label="Ответственный сотрудник" />
-                  <SharedSelectWithLabel label="Цель задачи" />
+                  <SharedInputWithLabel
+                    v-model:model-value="newTask.text"
+                    placeholder="Например: 'Собрать подписи с родителей.'"
+                    label="Название задачи"
+                  />
+                  <SharedTextareaWithLabel
+                    v-model:model-value="newTask.result"
+                    placeholder="укажите подробное описание задачи"
+                    label="Описание задачи"
+                  />
+                  <SharedSelectWithLabel
+                    :items="taskTypes"
+                    v-model:model-value="newTask.taskType"
+                    label="Тип задачи"
+                  />
+                  <SharedSelectWithLabel
+                    :items="employers"
+                    v-model:model-value="newTask.responsibleUserId"
+                    label="Ответственный сотрудник"
+                  />
+                  <SharedSelectWithLabel
+                    :items="users"
+                    v-model:model-value="newTask.targetUserId"
+                    label="Цель задачи"
+                  />
 
                   <Label> Срок до </Label>
-                  <SharedDatePicker />
+                  <SharedDatePicker
+                    v-model:model-value="newTask.timedeadline"
+                  />
                 </div>
                 <Separator />
                 <DialogFooter>
-                  <Button class="bg-btnPrimary"> Создать </Button>
+                  <Button @click="addTask()" class="bg-btnPrimary">
+                    Создать
+                  </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -145,7 +169,10 @@
                 }}
               </Badge>
             </div>
-            <div class="flex align-center items-center gap-1">
+            <div
+              v-if="task.usersTasks"
+              class="flex align-center items-center gap-1"
+            >
               <Icon class="w-4 h-4" name="material-symbols:person-outline" />
               {{ task.usersTasks.length }}
             </div>
@@ -153,6 +180,57 @@
         </div>
       </div>
     </div>
+
+    <Dialog :open="isDialogOpen" @update:open="isDialogOpen = $event">
+      <DialogContent class="lg:max-w-[840px] overflow-y-auto sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Редактировать задачу</DialogTitle>
+        </DialogHeader>
+        <div v-if="editingTask">
+          <!-- Форма редактирования задачи -->
+          <Separator />
+          <div class="mt-2 flex flex-wrap gap-4">
+            <SharedInputWithLabel
+              v-model:model-value="editingTask.text"
+              placeholder="Например: 'Собрать подписи с родителей.'"
+              label="Название задачи"
+            />
+            <SharedTextareaWithLabel
+              v-model:model-value="editingTask.result"
+              placeholder="укажите подробное описание задачи"
+              label="Описание задачи"
+            />
+            <SharedSelectWithLabel
+              :items="taskTypes"
+              v-model:model-value="editingTask.taskType"
+              label="Тип задачи"
+            />
+            <SharedSelectWithLabel
+              :items="employers"
+              v-model:model-value="editingTask.responsibleUserId"
+              label="Ответственный сотрудник"
+            />
+            <SharedSelectWithLabel
+              :items="users"
+              v-model:model-value="editingTask.targetUserId"
+              label="Цель задачи"
+            />
+
+            <Label> Срок до </Label>
+            <SharedDatePicker v-model:model-value="editingTask.timedeadline" />
+          </div>
+          <Separator class="mt-5" />
+
+          <Separator class="mt-5" />
+        </div>
+        <DialogFooter>
+          <Button @click="saveEditedTask">Сохранить</Button>
+          <Button @click="isDialogOpen = false" variant="secondary"
+            >Отмена</Button
+          >
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
 
@@ -167,23 +245,43 @@ const props = defineProps<{
   taskTypes: ITaskTypesWithRelations[];
 }>();
 
+const emit = defineEmits(["updateTasks"]);
+
 const newTask = ref({
   text: "",
-  timedeadline: null,
-  taskTypeId: null,
-  userId: null,
+  result: "",
+  responsibleUserId: 0,
+  targetUserId: 0,
+  taskType: 0,
+  timedeadline: "",
 });
-
-let draggedTask: any = null;
-let draggedTaskIndex: number = -1;
-let draggedTaskType: any = null;
-let initialyDragElement: Element | null = null;
-
+const isDialogOpen = ref(false);
+const editingTask = ref<ITasksWithRelations | null>();
 const CRM_API_INSTANCE = new CRM_API();
 const { toast } = useToast();
+const employers = await CRM_API_INSTANCE.employers.getList();
+const users = await CRM_API_INSTANCE.users.getList();
+console.log(users);
 
 const editTask = async (id: number) => {
-  console.log(id);
+  const TaskData = await CRM_API_INSTANCE.tasks.getById(id);
+
+  editingTask.value = TaskData;
+  isDialogOpen.value = true;
+  console.log(TaskData);
+};
+
+const saveEditedTask = async () => {
+  if (editingTask.value) {
+    await CRM_API_INSTANCE.tasks.update(
+      editingTask.value.id,
+      editingTask.value
+    );
+    isDialogOpen.value = false;
+    editingTask.value = null;
+    // Обновите список задач или выполните другие необходимые действия
+    emit("updateTasks");
+  }
 };
 
 const deleteTask = async (id: number) => {
@@ -196,6 +294,27 @@ const deleteTask = async (id: number) => {
     duration: 1000,
   });
 };
+
+const addTask = async () => {
+  console.log(newTask.value);
+  const response = await CRM_API_INSTANCE.tasks.create(newTask.value);
+  console.log(response);
+  if (response) {
+    emit("updateTasks", {
+      taskTypeIndex: newTask.value.taskType,
+      tasks: response,
+    });
+  } else {
+    console.log("error");
+  }
+};
+
+// Drag and Drop
+
+let draggedTask: any = null;
+let draggedTaskIndex: number = -1;
+let draggedTaskType: any = null;
+let initialyDragElement: Element | null = null;
 
 const handleDragStart = (
   task: any,
