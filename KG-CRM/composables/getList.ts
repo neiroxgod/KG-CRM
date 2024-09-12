@@ -263,7 +263,7 @@ class Tasks {
   }
 
   public async getById(id: number): Promise<ITasksWithRelations> {
-    return (await this.fetchApi(`/tasks/${id}`, {
+    return (await this.fetchApi(`/tasks/get/${id}`, {
       method: "GET",
     })) as ITasksWithRelations;
   }
@@ -295,7 +295,7 @@ class Tasks {
   }
 
   public async getAllTaskTypes(): Promise<ITaskTypesWithRelations[]> {
-    return (await this.fetchApi("/tasks/types/", {
+    return (await this.fetchApi("/tasks/types", {
       method: "GET",
     })) as ITaskTypesWithRelations[];
   }

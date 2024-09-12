@@ -39,7 +39,9 @@
           </div>
           <SheetFooter>
             <SheetClose as-child>
-              <Button @click="createTask($event)"> Создать </Button>
+              <Button variant="outline" @click="createTask($event)">
+                Создать
+              </Button>
             </SheetClose>
           </SheetFooter>
         </SheetContent>

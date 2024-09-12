@@ -19,9 +19,7 @@ export class TasksService {
     @InjectModel(TasksHistory)
     private taskHistoryRepository: typeof TasksHistory,
     private usersService: UsersService,
-  ) {
-    this.createDefaultTaskTypes();
-  }
+  ) {}
 
   async createTask(dto: CreateTaskDto, empl: any) {
     dto.accountId = empl.accountId;
@@ -46,7 +44,10 @@ export class TasksService {
       objType: dto.objType ? dto.objType : 'user', // user/employer
     });
 
-    const result = { ...task.dataValues, userTask };
+    const result = await this.taskRepository.findByPk(task.id, {
+      include: [{ all: true }],
+    });
+
     return result;
   }
 
@@ -134,7 +135,7 @@ export class TasksService {
   }
 
   async getTaskTypes(user: User) {
-    const taskTypes = await this.taskTypesRepository.findAll({
+    const types = await this.taskTypesRepository.findAll({
       where: {
         [Op.or]: [{ accountId: null }, { accountId: user.accountId }],
       },
@@ -161,7 +162,7 @@ export class TasksService {
         },
       ],
     });
-    return taskTypes;
+    return types;
   }
 
   async getTaskType(id: number) {

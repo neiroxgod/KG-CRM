@@ -2,12 +2,12 @@
   <div
     v-for="task in tasks"
     :key="task.id"
-    class="border-2 mt-2 w-full rounded-md bg-white hover:bg-slate-50 transition-all duration-300"
+    class="border-2 mt-2 w-full rounded-md bg-white dark:bg-slate-900 transition-all duration-300"
   >
     <div v-if="task.timedeadline">
       <div class="flex items-center justify-between">
         <div class="flex items-center">
-          <div class="w-16 mx-5 p-2 text-center font-inter text-slate-600">
+          <div class="w-32 mx-5 p-2 text-center font-inter text-slate-600">
             <div class="text-md font-light">
               {{
                 new Date(task.timedeadline).toLocaleString("ru-RU", {
@@ -107,7 +107,7 @@
         <Label> Срок до </Label>
         <SharedDatePicker v-model:model-value="task.timedeadline" />
         <!-- Добавьте другие поля для редактирования -->
-        <Button @click="saveTask(task.id)">Сохранить</Button>
+        <Button variant="outline" @click="saveTask(task.id)">Сохранить</Button>
       </div>
     </div>
   </div>

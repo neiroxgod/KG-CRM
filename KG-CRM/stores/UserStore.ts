@@ -2,7 +2,7 @@ export const useAuthStore = defineStore("auth", () => {
   const token = ref<string | null>(null);
   const user = ref<IIdentityWithRelations | null>(null);
   const loading = ref<Boolean>(true);
-
+  let menuState = ref<Boolean>(false);
   function setToken(newToken: string): void {
     token.value = newToken;
     localStorage.setItem("token", newToken);
@@ -40,6 +40,7 @@ export const useAuthStore = defineStore("auth", () => {
     token,
     user,
     loading,
+    menuState,
     setToken,
     setUser,
     setLoading,

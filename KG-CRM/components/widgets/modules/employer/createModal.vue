@@ -84,12 +84,7 @@
         </div>
         <Separator />
         <DialogFooter>
-          <Button
-            @click="onSubmit"
-            type="submit"
-            class="bg-btnPrimary"
-            form="dialogForm"
-          >
+          <Button @click="onSubmit" type="submit" class="" form="dialogForm">
             Добавить
           </Button>
         </DialogFooter>

@@ -89,11 +89,11 @@ const rowData = ref();
 </script>
 
 <template>
-  <div>
-    <div class="flex items-center py-4">
+  <div class="dark:bg-dark-foreground">
+    <div class="flex items-center py-4 dark:text-white">
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
-          <Button variant="outline" class="ml-auto">
+          <Button variant="outline" class="ml-auto" dark:variant="outline-dark">
             Columns
             <ChevronDown class="w-4 h-4 ml-2" />
           </Button>
@@ -117,12 +117,15 @@ const rowData = ref();
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-    <div class="border rounded-md">
-      <Table>
+    <div
+      class="bg-white dark:bg-zinc-950 rounded-md border dark:border-dark-border-2"
+    >
+      <Table class="dark:bg-dark-elevation-1">
         <TableHeader>
           <TableRow
             v-for="headerGroup in table.getHeaderGroups()"
             :key="headerGroup.id"
+            class="dark:bg-dark-elevation-1"
           >
             <TableHead v-for="header in headerGroup.headers" :key="header.id">
               <FlexRender
@@ -138,6 +141,7 @@ const rowData = ref();
             <template v-for="row in table.getRowModel().rows" :key="row.id">
               <TableRow
                 :data-state="row.getIsSelected() ? 'selected' : undefined"
+                class="dark:bg-dark-background"
               >
                 <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
                   <FlexRender
@@ -146,7 +150,10 @@ const rowData = ref();
                   />
                 </TableCell>
               </TableRow>
-              <TableRow v-if="row.getIsExpanded()">
+              <TableRow
+                v-if="row.getIsExpanded()"
+                class="dark:bg-dark-background"
+              >
                 <TableCell :colspan="row.getAllCells().length">
                   {{ JSON.stringify(row.original) }}
                 </TableCell>
@@ -154,7 +161,7 @@ const rowData = ref();
             </template>
           </template>
           <template v-else>
-            <TableRow>
+            <TableRow class="dark:bg-dark-background">
               <TableCell :colspan="columns.length" class="h-24 text-center">
                 Нет результатов
               </TableCell>
@@ -163,8 +170,8 @@ const rowData = ref();
         </TableBody>
       </Table>
     </div>
-    <div class="flex items-center justify-end py-4 space-x-2">
-      <div class="flex-1 text-sm text-muted-foreground">
+    <div class="flex items-center justify-end py-4 space-x-2 dark:text-white">
+      <div class="flex-1 text-sm">
         {{ table.getFilteredSelectedRowModel().rows.length }} of
         {{ table.getFilteredRowModel().rows.length }} row(s) selected.
       </div>
@@ -174,6 +181,7 @@ const rowData = ref();
           size="sm"
           :disabled="!table.getCanPreviousPage()"
           @click="table.previousPage()"
+          dark:variant="outline-dark"
         >
           Previous
         </Button>
@@ -182,6 +190,7 @@ const rowData = ref();
           size="sm"
           :disabled="!table.getCanNextPage()"
           @click="table.nextPage()"
+          dark:variant="outline-dark"
         >
           Next
         </Button>
