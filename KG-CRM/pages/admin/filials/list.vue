@@ -3,8 +3,8 @@
     <WidgetsModulesFilialsEditSheet
       v-if="modalState.selectedFilial"
       :state="modalState.ModalState"
-      v-on:updateList="updateFilials($event)"
       :filial="modalState.selectedFilial"
+      v-on:updateList="updateFilials($event)"
     />
     <div class="flex flex-row-reverse">
       <WidgetsModulesFilialsCreateSheet v-on:updateList="createFilials($event)" />
@@ -34,10 +34,11 @@ const updateFilials = function (event: IFilial) {
 const createFilials = function (newFilial: IFilial) {
   filials.value = [...(filials.value || []), newFilial];
 };
-// onMounted(() => {
-//   modalState.ModalState = false;
-//   modalState.clearSelectedFilial();
-// });
+
+onMounted(() => {
+  modalState.clearSelectedFilial();
+});
+
 onMounted(async () => {
   filials.value = (await CRM_API_INSTANCE.filials.getList()) as IFilial[];
 });

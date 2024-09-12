@@ -19,10 +19,13 @@ export const useModalStore = defineStore("modal", {
   actions: {
     setSelectedFilial(filial: IFilial) {
       this.selectedFilial = filial;
-      this.ModalState = !this.ModalState;
+      this.ModalState = true;
+      console.log(this.ModalState);
     },
     clearSelectedFilial() {
       this.selectedFilial = null;
+      this.ModalState = false;
+      console.log(this.ModalState);
     },
   },
 });

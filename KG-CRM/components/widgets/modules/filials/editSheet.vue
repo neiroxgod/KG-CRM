@@ -5,7 +5,6 @@
         <SheetHeader class="mb-2">
           <SheetTitle>Редактирование филиала</SheetTitle>
         </SheetHeader>
-        <!--  -->
         <Separator />
         <form class="mt-2" @submit.prevent="onSubmit">
           <FormField v-slot="{ componentField }" name="active">
@@ -146,6 +145,7 @@ import type { IFilial } from "~/composables/interfaces";
 import { CRM_API } from "~/composables/getList";
 
 const listStore = useListStore();
+const modalStore = useModalStore();
 const CRM_API_INSTANCE = new CRM_API();
 
 const props = defineProps<{

@@ -45,9 +45,7 @@ const editItem = function () {
   // const ModalStore = useModalStore(); //Убрал эту логику твою с редактированием филиалов, оставь просто по клику на фио редактирование, либо делай редактирование разделом через [id].vue
   // ModalStore.ChangeModalState();
   // console.log(ModalStore.ModalState);
-  navigateTo(
-    "/admin/" + getMainRouteSegment(route.fullPath) + "/" + props.item.id
-  );
+  navigateTo("/admin/" + getMainRouteSegment(route.fullPath) + "/" + props.item.id);
 };
 </script>
 
@@ -62,9 +60,7 @@ const editItem = function () {
     <DropdownMenuContent align="end">
       <DropdownMenuItem @click="editItem()"> Редактировать </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem @click="deleteItem" class="text-red-500">
-        Удалить
-      </DropdownMenuItem>
+      <DropdownMenuItem @click="deleteItem" class="text-red-500"> Удалить </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 </template>
