@@ -1,20 +1,16 @@
 <template>
   <div class="p-5">
     <WidgetsModulesFilialsEditSheet
-      v-if="modalState.ModalState === true"
+      v-if="modalState.selectedFilial"
       :state="modalState.ModalState"
       v-on:updateList="updateFilials($event)"
       :filial="modalState.selectedFilial"
     />
     <div class="flex flex-row-reverse">
-      <WidgetsModulesFilialsCreateSheet />
+      <WidgetsModulesFilialsCreateSheet v-on:updateList="createFilials($event)" />
     </div>
     <div class="mt-5">
-      <WidgetsModulesTableData
-        v-if="filials"
-        :columns="columns"
-        :data="filials"
-      />
+      <WidgetsModulesTableData v-if="filials" :columns="columns" :data="filials" />
     </div>
   </div>
 </template>
@@ -32,11 +28,16 @@ const filials = ref<IFilial[]>();
 const modalState = useModalStore();
 
 const updateFilials = function (event: IFilial) {
-  filials.value = filials.value?.map((el) =>
-    el.id === event.id ? { ...el, ...event } : el
-  );
+  filials.value = filials.value?.map((el) => (el.id === event.id ? { ...el, ...event } : el));
 };
 
+const createFilials = function (newFilial: IFilial) {
+  filials.value = [...(filials.value || []), newFilial];
+};
+// onMounted(() => {
+//   modalState.ModalState = false;
+//   modalState.clearSelectedFilial();
+// });
 onMounted(async () => {
   filials.value = (await CRM_API_INSTANCE.filials.getList()) as IFilial[];
 });

@@ -156,6 +156,8 @@ const formSchema = toTypedSchema(
   })
 );
 
+const emit = defineEmits(["updateList"]);
+
 const { toast } = useToast();
 
 const { handleSubmit, errors } = useForm({
@@ -195,6 +197,6 @@ const createFilial = async (event: HTMLElementEventMap["click"]) => {
   const createdFilial = await CRM_API_INSTANCE.filials.create({
     ...newFilials.value,
   });
-  listStore.listState = [...listStore.listState, createdFilial];
+  emit("updateList", createdFilial);
 };
 </script>

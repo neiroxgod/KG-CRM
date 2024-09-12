@@ -14,7 +14,7 @@
 export const useModalStore = defineStore("modal", {
   state: () => ({
     ModalState: false,
-    selectedFilial: null as IFilial | null, // Добавляем свойство для выбранного филиала
+    selectedFilial: null as IFilial | null,
   }),
   actions: {
     setSelectedFilial(filial: IFilial) {
@@ -24,6 +24,5 @@ export const useModalStore = defineStore("modal", {
     clearSelectedFilial() {
       this.selectedFilial = null;
     },
-    // Другие действия
   },
 });

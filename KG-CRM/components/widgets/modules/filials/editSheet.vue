@@ -196,12 +196,9 @@ const updateFilial = async (event: HTMLElementEventMap["click"]) => {
     throw new Error("Филиал не имеет ID.");
   }
 
-  const updatedFilial = await CRM_API_INSTANCE.filials.update(
-    filialsData.value.id,
-    {
-      ...filialsData.value,
-    }
-  );
+  const updatedFilial = await CRM_API_INSTANCE.filials.update(filialsData.value.id, {
+    ...filialsData.value,
+  });
 
   toast({
     title: "Успех",
