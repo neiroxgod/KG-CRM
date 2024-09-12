@@ -1,5 +1,5 @@
 <template>
-  <div class="p-5">
+  <div>
     <Sheet v-model:open="isOpen">
       <SheetContent ref="target">
         <SheetHeader class="mb-2">

@@ -6,15 +6,23 @@
     <SharedNuxtLoadingBar v-if="userStore.loading" />
     <!-- App -->
 
-    <div v-else-if="userStore.user" class="flex">
-      <div class="w-[280px]">
-        <NuxtLayout name="sidebar" />
+    <div v-else-if="userStore.user">
+      <div class="z-10 fixed top-0 left-0 right-0 h-[58px] w-full">
+        <NuxtLayout name="navbar" />
       </div>
-      <div class="flex-col w-full">
-        <div class="navbar">
-          <NuxtLayout name="navbar" />
+
+      <div class="flex mt-[58px]">
+        <div
+          class="fixed shadow-md left-0 h-screen transition-width duration-300"
+          :style="{ width: userStore.menuState ? '280px' : '65px' }"
+        >
+          <NuxtLayout name="sidebar" />
         </div>
-        <div class="content">
+
+        <div
+          class="bg-slate-100 dark:bg-slate-800 w-full min-h-screen"
+          :style="{ 'margin-left': userStore.menuState ? '280px' : '65px' }"
+        >
           <NuxtPage />
         </div>
       </div>

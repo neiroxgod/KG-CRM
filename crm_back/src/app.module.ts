@@ -57,6 +57,7 @@ import { TasksHistory } from './tasks/task-history.model';
       ],
       autoLoadModels: true,
       synchronize: true,
+      logging: console.log,
       // sync: { force: true },
     }),
     UsersModule,

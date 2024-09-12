@@ -47,7 +47,7 @@ export class TasksController {
   @ApiOperation({ summary: 'Получить задачу по ID' })
   @ApiResponse({ status: 200, type: [Tasks] })
   @UseGuards(JwtAuthGuard)
-  @Get(':id')
+  @Get('get/:id')
   getById(@Param('id') id: number) {
     return this.tasksService.getTaskById(id);
   }
@@ -104,8 +104,8 @@ export class TasksController {
   @ApiResponse({ status: 200, type: [TaskTypes] })
   @UseGuards(JwtAuthGuard)
   @Get('/types')
-  getAllTaskTypes(@GetUser() user: User) {
-    return this.tasksService.getTaskTypes(user);
+  getAllTaskTypes(@GetUser() empl: any) {
+    return this.tasksService.getTaskTypes(empl);
   }
 
   @ApiOperation({ summary: 'Получить тип задачи по id' })

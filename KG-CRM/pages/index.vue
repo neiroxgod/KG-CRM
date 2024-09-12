@@ -68,7 +68,7 @@ const reportStats = ref([
 
     <div class="mt-5 flex justify-between">
       <WidgetsDashboardItem
-        class="mr-5"
+        class="mr-5 dark:bg-slate-950"
         v-for="stat in reportStats"
         :icon="stat.icon"
         :label="stat.label"
@@ -87,7 +87,7 @@ const reportStats = ref([
     </div>
 
     <div class="flex mt-5">
-      <WidgetsDashboardChartArea class="mr-5">
+      <WidgetsDashboardChartArea class="mr-5 dark:bg-slate-950">
         <div class="flex items-center mb-2">
           <Icon
             class="mr-1 h-5 w-5 bg-slate-400"
@@ -99,7 +99,7 @@ const reportStats = ref([
           235 000 Р
         </div>
       </WidgetsDashboardChartArea>
-      <WidgetsDashboardChartArea>
+      <WidgetsDashboardChartArea class="dark:bg-slate-950">
         <div class="flex items-center mb-2">
           <Icon
             class="mr-1 h-5 w-5 bg-slate-400"
@@ -114,7 +114,7 @@ const reportStats = ref([
     </div>
 
     <div class="mt-5 flex">
-      <WidgetsDashboardChartLine class="mr-5">
+      <WidgetsDashboardChartLine class="mr-5 dark:bg-slate-950">
         <div class="flex items-center mb-2">
           <Icon
             class="mr-1 h-5 w-5 bg-slate-400"
@@ -126,7 +126,7 @@ const reportStats = ref([
           235 000 Р
         </div>
       </WidgetsDashboardChartLine>
-      <WidgetsDashboardChartLine>
+      <WidgetsDashboardChartLine class="dark:bg-slate-950">
         <div class="flex items-center mb-2">
           <Icon
             class="mr-1 h-5 w-5 bg-slate-400"
