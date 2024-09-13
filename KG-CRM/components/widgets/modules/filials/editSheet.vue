@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Sheet v-model:open="isOpen">
+    <Sheet v-model:open="modalStore.ModalState">
       <SheetContent ref="target">
         <SheetHeader class="mb-2">
           <SheetTitle>Редактирование филиала</SheetTitle>
@@ -207,6 +207,6 @@ const updateFilial = async (event: HTMLElementEventMap["click"]) => {
   });
 
   emit("updateList", updatedFilial);
-  isOpen.value = false;
+  modalStore.clearSelectedFilial();
 };
 </script>

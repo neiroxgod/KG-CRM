@@ -20,6 +20,7 @@ const route = useRoute();
 const userStore = useAuthStore();
 const listStore = useListStore();
 const { toast } = useToast();
+const emit = defineEmits(["deleteItem", "editItem"]);
 
 function getMainRouteSegment(path: string): string | undefined {
   const segments = path.split("/admin")[1]?.split("/");
@@ -27,18 +28,18 @@ function getMainRouteSegment(path: string): string | undefined {
 }
 
 const deleteItem = async function () {
-  let path = getMainRouteSegment(route.fullPath);
-  if (path == "employers") path = "users"; // !!! НЕ ВЫНОСИТЬ В getMainRouteSegment так как используется ниже с employers !!! Нет эндпоинта employers/delete, так как users/employers смежные сущности
-  const fetchApi = useFetchApi(userStore.token);
-  await fetchApi("/" + path + "/delete/" + props.item.id, {
-    method: "DELETE",
-  });
-
-  listStore.removeFromList(props.item.id);
-  toast({
-    description: "Запись удалена!",
-    duration: 3000,
-  });
+  // let path = getMainRouteSegment(route.fullPath);
+  // if (path == "employers") path = "users"; // !!! НЕ ВЫНОСИТЬ В getMainRouteSegment так как используется ниже с employers !!! Нет эндпоинта employers/delete, так как users/employers смежные сущности
+  // const fetchApi = useFetchApi(userStore.token);
+  // await fetchApi("/" + path + "/delete/" + props.item.id, {
+  //   method: "DELETE",
+  // });
+  emit("deleteItem", props.item.id);
+  // listStore.removeFromList(props.item.id);
+  // toast({
+  //   description: "Запись удалена!",
+  //   duration: 3000,
+  // });
 };
 
 const editItem = function () {

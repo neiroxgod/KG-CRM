@@ -108,6 +108,9 @@ export const columns: ColumnDef<any>[] = [
         h(DropdownAction, {
           item,
           onExpand: row.toggleExpanded,
+          onDeleteItem: (id) => {
+            console.log(id);
+          },
         })
       );
     },

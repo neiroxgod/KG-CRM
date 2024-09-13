@@ -35,10 +35,6 @@ const createFilials = function (newFilial: IFilial) {
   filials.value = [...(filials.value || []), newFilial];
 };
 
-onMounted(() => {
-  modalState.clearSelectedFilial();
-});
-
 onMounted(async () => {
   filials.value = (await CRM_API_INSTANCE.filials.getList()) as IFilial[];
 });
