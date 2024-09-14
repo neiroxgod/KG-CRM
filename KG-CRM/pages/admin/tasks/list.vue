@@ -2,75 +2,121 @@
   <div>
     <div class="w-full p-5 h-[80vh]">
       <div
-        class="flex justify-between items-center content-center align-middle"
+        class="flex justify-end gap-4 items-center content-center align-middle"
       >
-        <div class="flex gap-5 w-2/4">
-          <SharedSelectWithLabel
-            v-if="usersWithoutRelations"
-            v-model:model-value="filters.userId"
-            label="Ответственный сотрудник"
-            :items="usersWithoutRelations"
-          />
-
-          <SharedSelectWithLabel
-            v-if="taskTypes"
-            v-model:model-value="filters.taskType"
-            label="Тип задачи"
-            :items="taskTypes"
-          />
+        <!-- ФИЛЬТРЫ задач -->
+        <div class="font-inter bg-white dark:bg-slate-950 px-5 py-2 rounded-lg">
+          Найдено: {{ listStore.listState.length }}
         </div>
-        <div class="action">
-          <Sheet>
-            <SheetTrigger as-child>
-              <Button variant="outline"> Создать </Button>
-            </SheetTrigger>
-            <SheetContent>
-              <SheetHeader>
-                <SheetTitle>Создать задачу</SheetTitle>
-                <SheetDescription>
-                  Опишите задачу, выберите ответственного сотрудника и объект
-                  задачи при необходимости, затем нажмите "Создать"
-                </SheetDescription>
-              </SheetHeader>
-              <div class="my-5" v-if="usersWithoutRelations">
-                <SharedTextareaWithLabel
-                  v-model:model-value="newTask.text"
-                  label="Текст задачи"
-                  placeholder="Например: 'Собрать подписи с родителей.'"
-                />
 
-                <SharedSelectWithLabel
-                  v-if="taskTypes"
-                  v-model:model-value="newTask.taskType"
-                  :items="taskTypes"
-                  label="Тип задачи"
-                />
+        <Popover>
+          <PopoverTrigger as-child>
+            <Button variant="outline"
+              ><Icon class="h-5 w-5" name="material-symbols:settings"></Icon
+            ></Button>
+          </PopoverTrigger>
+          <PopoverContent class="w-full">
+            <div class="text-2xl font-inter">Фильтры</div>
+            <div
+              class="mt-2 text-sm font-inter w-3/4 font-light dark:font-thin"
+            >
+              Настройте фильтры как вам удобно, если захотите сбросить фильтр
+              нажмите на кнопку сброса внизу.
+            </div>
+            <Separator orientation="horizontal" class="mt-2" />
+            <div class="flex gap-2 p-2">
+              <SharedSelectWithLabel
+                v-if="usersWithoutRelations"
+                v-model:model-value="filters.userId"
+                label="Ответственный сотрудник"
+                :items="usersWithoutRelations"
+              />
 
-                <SharedSelectWithLabel
-                  v-model:model-value="newTask.responsibleUserId"
-                  :items="usersWithoutRelations"
-                  label="Ответственный сотрудник"
-                />
+              <SharedSelectWithLabel
+                v-if="usersWithoutRelations"
+                v-model:model-value="filters.userId"
+                label="Создал задачу"
+                :items="usersWithoutRelations"
+              />
+            </div>
+            <div class="flex gap-2 p-2">
+              <SharedSelectWithLabel
+                v-if="usersWithoutRelations"
+                v-model:model-value="filters.userId"
+                label="Объект задачи"
+                :items="usersWithoutRelations"
+              />
 
-                <SharedSelectWithLabel
-                  v-model:model-value="newTask.targetUserId"
-                  :items="usersWithoutRelations"
-                  label="Объект задачи"
-                />
+              <SharedSelectWithLabel
+                v-if="taskTypes"
+                v-model:model-value="filters.taskType"
+                label="Тип задачи"
+                :items="taskTypes"
+              />
+            </div>
+            <div class="flex gap-2 p-2">
+              <SharedSelectWithLabel
+                v-if="taskTypes"
+                v-model:model-value="filters.taskType"
+                label="Статус задачи"
+                :items="taskTypes"
+              />
+            </div>
+            <div class="flex justify-end p-2">
+              <Button variant="outline">Сбросить</Button>
+            </div>
+          </PopoverContent>
+        </Popover>
+        <Sheet>
+          <SheetTrigger as-child>
+            <Button variant="outline"> Создать </Button>
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>Создать задачу</SheetTitle>
+              <SheetDescription>
+                Опишите задачу, выберите ответственного сотрудника и объект
+                задачи при необходимости, затем нажмите "Создать"
+              </SheetDescription>
+            </SheetHeader>
+            <div class="my-5" v-if="usersWithoutRelations">
+              <SharedTextareaWithLabel
+                v-model:model-value="newTask.text"
+                label="Текст задачи"
+                placeholder="Например: 'Собрать подписи с родителей.'"
+              />
 
-                <Label> Срок до </Label>
-                <SharedDatePicker v-model:model-value="newTask.timedeadline" />
-              </div>
-              <SheetFooter>
-                <SheetClose as-child>
-                  <Button variant="outline" @click="createTask($event)">
-                    Создать
-                  </Button>
-                </SheetClose>
-              </SheetFooter>
-            </SheetContent>
-          </Sheet>
-        </div>
+              <SharedSelectWithLabel
+                v-if="taskTypes"
+                v-model:model-value="newTask.taskType"
+                :items="taskTypes"
+                label="Тип задачи"
+              />
+
+              <SharedSelectWithLabel
+                v-model:model-value="newTask.responsibleUserId"
+                :items="usersWithoutRelations"
+                label="Ответственный сотрудник"
+              />
+
+              <SharedSelectWithLabel
+                v-model:model-value="newTask.targetUserId"
+                :items="usersWithoutRelations"
+                label="Объект задачи"
+              />
+
+              <Label> Срок до </Label>
+              <SharedDatePicker v-model:model-value="newTask.timedeadline" />
+            </div>
+            <SheetFooter>
+              <SheetClose as-child>
+                <Button variant="outline" @click="createTask($event)">
+                  Создать
+                </Button>
+              </SheetClose>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
       </div>
 
       <WidgetsModulesTasksList :tasks="listStore.listState" />
@@ -173,34 +219,4 @@ const createTask = async (event: HTMLElementEventMap["click"]) => {
 
   listStore.listState = [...listStore.listState, createdTask];
 };
-
-watch(
-  () => filters.value.taskType,
-  (value) => {
-    if (value) {
-      // Фильтруем исходный массив allTasks
-      listStore.listState = allTasks.value.filter(
-        (task) => task.taskType === value
-      );
-    } else {
-      // Если фильтр сброшен, возвращаем все задачи
-      listStore.listState = [...allTasks.value];
-    }
-  }
-);
-
-watch(
-  () => filters.value.userId,
-  (value) => {
-    if (value) {
-      // Фильтруем исходный массив allTasks
-      listStore.listState = allTasks.value.filter(
-        (task) => task.responsibleUserId === value
-      );
-    } else {
-      // Если фильтр сброшен, возвращаем все задачи
-      listStore.listState = [...allTasks.value];
-    }
-  }
-);
 </script>
