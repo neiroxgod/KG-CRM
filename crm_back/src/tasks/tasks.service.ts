@@ -6,7 +6,7 @@ import { EditTaskDto } from './dto/edit-task.dto';
 import { UsersTasks } from './users-tasks.model';
 import { TaskTypes } from './tasks-types.model';
 import { UsersService } from 'src/users/users.service';
-import { Op } from 'sequelize';
+import { Op, where } from 'sequelize';
 import { User } from 'src/users/users.model';
 import { TasksHistory } from './task-history.model';
 
@@ -91,15 +91,85 @@ export class TasksService {
     return task.dataValues;
   }
 
-  async getAllTasks(empl: any) {
-    //usersTasksRepository maybe?
-    const tasks = await this.taskRepository.findAll({
-      where: {
-        accountId: empl.accountId,
-      },
-      include: { all: true },
+  async getAllTasks(
+    empl: any,
+    filters: {
+      responsibleUserId?: number;
+      userId?: number;
+      targetUserId?: number;
+      taskType?: number;
+      status?: number;
+    },
+    page: number = 1,
+    limit: number = 5,
+  ) {
+    const offset = (page - 1) * limit;
+
+    const whereClause: any = {
+      accountId: empl.accountId,
+    };
+
+    if (filters.userId) whereClause.userId = filters.userId;
+    if (filters.targetUserId) whereClause.targetUserId = filters.targetUserId;
+    if (filters.taskType) whereClause.taskType = filters.taskType;
+
+    if (filters.status) {
+      const now = new Date();
+      switch (filters.status) {
+        case 3:
+          whereClause.dueDate = { [Op.lt]: now };
+          break;
+        case 1:
+          whereClause.dueDate = { [Op.gt]: now };
+          break;
+        case 2:
+          whereClause.result = { [Op.ne]: null };
+          break;
+      }
+    }
+    console.log(filters.status);
+    console.log(whereClause);
+
+    const { count, rows: tasks } = await this.taskRepository.findAndCountAll({
+      where: whereClause,
+      include: [
+        {
+          model: UsersTasks,
+          as: 'usersTasks',
+          where: filters.responsibleUserId
+            ? { userId: filters.responsibleUserId }
+            : {},
+          required: !!filters.responsibleUserId,
+          include: [
+            {
+              model: User,
+              as: 'user',
+            },
+          ],
+        },
+        {
+          model: User,
+          as: 'user',
+        },
+        {
+          model: TaskTypes,
+          as: 'taskTypeObj',
+        },
+        {
+          model: TasksHistory,
+          as: 'taskHistory',
+        },
+      ],
+      order: [['result', 'DESC']],
+      limit,
+      offset,
     });
-    return tasks;
+    return {
+      tasks,
+      totalCount: count,
+      currentPage: page,
+      totalPages: Math.ceil(count / limit),
+    };
   }
 
   async editTask(dto: EditTaskDto, empl: any) {

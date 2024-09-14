@@ -256,8 +256,35 @@ class Groups {
 class Tasks {
   constructor(private fetchApi: ReturnType<typeof useFetchApi>) {}
 
-  public async getList(): Promise<ITasks[]> {
-    return (await this.fetchApi("/tasks", {
+  public async getList(
+    page: number = 1,
+    limit: number = 5,
+    filters?: any
+  ): Promise<ITasks[]> {
+    let query = `?page=${page}&limit=${limit}`;
+    if (filters) {
+      if (filters.responsibleUserId) {
+        query += `&responsible_employer_id=${filters.responsibleUserId}`;
+      }
+
+      if (filters.userId) {
+        query += `&userId=${filters.userId}`;
+      }
+
+      if (filters.targetUserId) {
+        query += `&targetUserId=${filters.targetUserId}`;
+      }
+
+      if (filters.taskType) {
+        query += `&taskType=${filters.taskType}`;
+      }
+
+      if (filters.status) {
+        query += `&status=${filters.status}`;
+      }
+    }
+
+    return (await this.fetchApi("/tasks/all" + query, {
       method: "GET",
     })) as ITasks[];
   }

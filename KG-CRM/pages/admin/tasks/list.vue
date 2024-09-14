@@ -27,7 +27,7 @@
             <div class="flex gap-2 p-2">
               <SharedSelectWithLabel
                 v-if="usersWithoutRelations"
-                v-model:model-value="filters.userId"
+                v-model:model-value="filters.responsibleUserId"
                 label="Ответственный сотрудник"
                 :items="usersWithoutRelations"
               />
@@ -42,7 +42,7 @@
             <div class="flex gap-2 p-2">
               <SharedSelectWithLabel
                 v-if="usersWithoutRelations"
-                v-model:model-value="filters.userId"
+                v-model:model-value="filters.targetUserId"
                 label="Объект задачи"
                 :items="usersWithoutRelations"
               />
@@ -57,13 +57,13 @@
             <div class="flex gap-2 p-2">
               <SharedSelectWithLabel
                 v-if="taskTypes"
-                v-model:model-value="filters.taskType"
+                v-model:model-value="filters.status"
                 label="Статус задачи"
-                :items="taskTypes"
+                :items="statuses"
               />
             </div>
             <div class="flex justify-end p-2">
-              <Button variant="outline">Сбросить</Button>
+              <Button @click="resetFilters" variant="outline">Сбросить</Button>
             </div>
           </PopoverContent>
         </Popover>
@@ -120,14 +120,22 @@
       </div>
 
       <WidgetsModulesTasksList :tasks="listStore.listState" />
+      <div class="flex justify-end mt-2">
+        <WidgetsPagination
+          @change-page="handlePageChange"
+          :total-items="totalCount"
+          :current-page="currentPage"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { CRM_API } from "~/composables/getList";
-import type { ITasksWithRelations } from "~/composables/interfaces";
+import type { ITasks, ITasksWithRelations } from "~/composables/interfaces";
 import { useToast } from "~/components/ui/toast";
+
 const CRM_API_INSTANCE = new CRM_API();
 const users = ref<IIdentityWithRelations[]>();
 const usersWithoutRelations = ref<IUser[]>();
@@ -136,10 +144,36 @@ const listStore = useListStore();
 const allTasks = ref<ITasksWithRelations[]>([]);
 const filters = ref({
   userId: 0,
+  responsibleUserId: 0,
+  targetUserId: 0,
   taskType: 0,
+  status: "",
 });
 
+const statuses = [
+  {
+    id: 1,
+    name: "В работе",
+  },
+  {
+    id: 2,
+    name: "Завершено",
+  },
+  {
+    id: 3,
+    name: "Просрочено",
+  },
+];
+
 const { toast } = useToast();
+
+watch(
+  filters,
+  () => {
+    reloadTasks();
+  },
+  { deep: true }
+);
 
 const newTask = ref<ITasks>({
   text: "",
@@ -150,6 +184,37 @@ const newTask = ref<ITasks>({
   timefinish: "",
   timedeadline: "",
 });
+
+const totalPages = ref(0);
+const currentPage = ref(1);
+const totalCount = ref(0);
+
+const handlePageChange = (page: number) => {
+  currentPage.value = page;
+
+  reloadTasks();
+};
+
+const reloadTasks = async () => {
+  const data = await CRM_API_INSTANCE.tasks.getList(
+    currentPage.value,
+    5,
+    filters.value
+  );
+  totalPages.value = data.totalPages;
+  totalCount.value = data.totalCount;
+  listStore.listState = [...data.tasks];
+};
+
+const resetFilters = () => {
+  filters.value = {
+    userId: 0,
+    responsibleUserId: 0,
+    targetUserId: 0,
+    taskType: 0,
+    status: "",
+  };
+};
 
 const updateTasksTypes = ({
   taskTypeIndex,
@@ -182,7 +247,10 @@ onMounted(async () => {
   allTasks.value =
     (await CRM_API_INSTANCE.tasks.getList()) as ITasksWithRelations[];
 
-  listStore.listState = [...allTasks.value];
+  listStore.listState = [...allTasks.value.tasks];
+  currentPage.value = allTasks.value.currentPage;
+  totalPages.value = allTasks.value.totalPages;
+  totalCount.value = allTasks.value.totalCount;
 
   users.value = (await CRM_API_INSTANCE.employers.getList(
     true

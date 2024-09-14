@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -52,14 +53,6 @@ export class TasksController {
     return this.tasksService.getTaskById(id);
   }
 
-  @ApiOperation({ summary: 'Список задач' })
-  @ApiResponse({ status: 200, type: [Tasks] })
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  getAll(@GetUser() empl: any) {
-    return this.tasksService.getAllTasks(empl);
-  }
-
   @ApiOperation({ summary: 'Получить задачи по ученику' })
   @ApiResponse({ status: 200, type: Tasks })
   @UseGuards(JwtAuthGuard)
@@ -96,8 +89,25 @@ export class TasksController {
   @ApiResponse({ status: 200, type: [Tasks] })
   @UseGuards(JwtAuthGuard)
   @Get('/all')
-  getAllTasks(@GetUser() empl: any) {
-    return this.tasksService.getAllTasks(empl);
+  getAllTasks(
+    @GetUser() empl: any,
+    @Query('responsibleUserId') responsibleUserId?: number,
+    @Query('userId') userId?: number,
+    @Query('targetUserId') targetUserId?: number,
+    @Query('taskType') taskType?: number,
+    @Query('status') status?: number,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 5,
+  ) {
+    const filters = {
+      responsibleUserId: responsibleUserId ? +responsibleUserId : undefined,
+      userId: userId ? +userId : undefined,
+      targetUserId: targetUserId ? +targetUserId : undefined,
+      taskType,
+      status,
+    };
+
+    return this.tasksService.getAllTasks(empl, filters, +page, +limit);
   }
 
   @ApiOperation({ summary: 'Список типов задач' })
