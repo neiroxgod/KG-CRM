@@ -1,21 +1,42 @@
 <template>
   <div class="p-5">
-    <WidgetsModulesFilialsEditSheet
-      v-if="modalState.ModalState === true"
-      :state="modalState.ModalState"
-      v-on:updateList="updateFilials($event)"
-      :filial="modalState.selectedFilial"
-    />
-    <div class="flex flex-row-reverse">
-      <WidgetsModulesFilialsCreateSheet />
-    </div>
-    <div class="mt-5">
-      <WidgetsModulesTableData
-        v-if="filials"
-        :columns="columns"
-        :data="filials"
-      />
-    </div>
+    <Tabs default-value="filials">
+      <div class="flex justify-between items-center">
+        <TabsList class="gap-10">
+          <TabsTrigger value="filials"> Филиалы </TabsTrigger>
+          <TabsTrigger value="audiences"> Аудитории </TabsTrigger>
+        </TabsList>
+        <TabsContent value="filials" class="flex items-center">
+          <WidgetsModulesFilialsCreateSheet v-on:updateList="createFilials($event)" />
+        </TabsContent>
+        <TabsContent value="audiences">
+          <WidgetsModulesAudiencesCreateSheet v-on:updateList="createFilials($event)" />
+        </TabsContent>
+      </div>
+      <TabsContent value="filials">
+        <WidgetsModulesFilialsEditSheet
+          v-if="modalState.selectedFilial"
+          :state="modalState.ModalState"
+          :filial="modalState.selectedFilial"
+          v-on:updateList="updateFilials($event)"
+        />
+
+        <div class="mt-5">
+          <WidgetsModulesTableData v-if="filials" :columns="columns" :data="filials" />
+        </div>
+      </TabsContent>
+      <TabsContent value="audiences">
+        <WidgetsModulesAudiencesEditSheet
+          v-if="modalState.selectedFilial"
+          :state="modalState.ModalState"
+          :filial="modalState.selectedFilial"
+          v-on:updateList="updateFilials($event)"
+        />
+        <div class="mt-5">
+          <WidgetsModulesTableData v-if="filials" :columns="columns" :data="filials" />
+        </div>
+      </TabsContent>
+    </Tabs>
   </div>
 </template>
 
@@ -27,14 +48,15 @@ import type { IFilial } from "~/composables/interfaces";
 import { CRM_API } from "~/composables/getList";
 
 const CRM_API_INSTANCE = new CRM_API();
-
 const filials = ref<IFilial[]>();
 const modalState = useModalStore();
 
 const updateFilials = function (event: IFilial) {
-  filials.value = filials.value?.map((el) =>
-    el.id === event.id ? { ...el, ...event } : el
-  );
+  filials.value = filials.value?.map((el) => (el.id === event.id ? { ...el, ...event } : el));
+};
+
+const createFilials = function (newFilial: IFilial) {
+  filials.value = [...(filials.value || []), newFilial];
 };
 
 onMounted(async () => {

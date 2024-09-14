@@ -125,13 +125,7 @@
       </form>
       <SheetFooter>
         <SheetClose as-child class="mt-2">
-          <Button
-            @click="createFilial($event)"
-            variant="outline"
-            form="dialogForm"
-          >
-            Создать филиал
-          </Button>
+          <Button @click="createFilial($event)" variant="outline" form="dialogForm"> Создать филиал </Button>
         </SheetClose>
       </SheetFooter>
     </SheetContent>
@@ -196,10 +190,7 @@ const newFilials = ref<IFilial>({
 
 const createFilial = async (event: HTMLElementEventMap["click"]) => {
   if (!newFilials.value) return;
-  newFilials.value.active =
-    newFilials.value.active === "indeterminate"
-      ? false
-      : newFilials.value.active;
+  newFilials.value.active = newFilials.value.active === "indeterminate" ? false : newFilials.value.active;
   const createdFilial = await CRM_API_INSTANCE.filials.create({
     ...newFilials.value,
   });

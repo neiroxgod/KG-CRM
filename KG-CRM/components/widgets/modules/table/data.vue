@@ -1,11 +1,5 @@
 <script setup lang="ts" generic="TData, TValue">
-import type {
-  ColumnDef,
-  SortingState,
-  ColumnFiltersState,
-  VisibilityState,
-  ExpandedState,
-} from "@tanstack/vue-table";
+import type { ColumnDef, SortingState, ColumnFiltersState, VisibilityState, ExpandedState } from "@tanstack/vue-table";
 import {
   FlexRender,
   getCoreRowModel,
@@ -25,14 +19,7 @@ import {
 
 import { valueUpdater } from "@/lib/utils";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 import { ChevronDown } from "lucide-vue-next";
 const sorting = ref<SortingState>([]);
@@ -40,6 +27,11 @@ const columnFilters = ref<ColumnFiltersState>([]);
 const columnVisibility = ref<VisibilityState>({});
 const rowSelection = ref({});
 const expanded = ref<ExpandedState>({});
+const emit = defineEmits(["deleteItem", "editItem"]);
+
+const onDeleteItem = (id: number) => {
+  emit("deleteItem", id);
+};
 
 const props = defineProps<{
   columns: ColumnDef<TData, TValue>[];
@@ -59,12 +51,9 @@ const table = useVueTable({
   getExpandedRowModel: getExpandedRowModel(),
   getFilteredRowModel: getFilteredRowModel(),
   onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
-  onColumnFiltersChange: (updaterOrValue) =>
-    valueUpdater(updaterOrValue, columnFilters),
-  onColumnVisibilityChange: (updaterOrValue) =>
-    valueUpdater(updaterOrValue, columnVisibility),
-  onRowSelectionChange: (updaterOrValue) =>
-    valueUpdater(updaterOrValue, rowSelection),
+  onColumnFiltersChange: (updaterOrValue) => valueUpdater(updaterOrValue, columnFilters),
+  onColumnVisibilityChange: (updaterOrValue) => valueUpdater(updaterOrValue, columnVisibility),
+  onRowSelectionChange: (updaterOrValue) => valueUpdater(updaterOrValue, rowSelection),
   onExpandedChange: (updaterOrValue) => valueUpdater(updaterOrValue, expanded),
   state: {
     get sorting() {
@@ -90,36 +79,7 @@ const rowData = ref();
 
 <template>
   <div class="dark:bg-dark-foreground">
-    <div class="flex items-center py-4 dark:text-white">
-      <DropdownMenu>
-        <DropdownMenuTrigger as-child>
-          <Button variant="outline" class="ml-auto" dark:variant="outline-dark">
-            Columns
-            <ChevronDown class="w-4 h-4 ml-2" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuCheckboxItem
-            v-for="column in table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())"
-            :key="column.id"
-            class="capitalize"
-            :checked="column.getIsVisible()"
-            @update:checked="
-              (value) => {
-                column.toggleVisibility(!!value);
-              }
-            "
-          >
-            {{ column.id }}
-          </DropdownMenuCheckboxItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-    <div
-      class="bg-white dark:bg-zinc-950 rounded-md border dark:border-dark-border-2"
-    >
+    <div class="bg-white dark:bg-zinc-950 rounded-md border dark:border-dark-border-2">
       <Table class="dark:bg-dark-elevation-1">
         <TableHeader>
           <TableRow
@@ -127,33 +87,47 @@ const rowData = ref();
             :key="headerGroup.id"
             class="dark:bg-dark-elevation-1"
           >
-            <TableHead v-for="header in headerGroup.headers" :key="header.id">
-              <FlexRender
-                v-if="!header.isPlaceholder"
-                :render="header.column.columnDef.header"
-                :props="header.getContext()"
-              />
+            <TableHead v-for="(header, index) in headerGroup.headers" :key="header.id">
+              <template v-if="index < headerGroup.headers.length - 1">
+                <FlexRender
+                  v-if="!header.isPlaceholder"
+                  :render="header.column.columnDef.header"
+                  :props="header.getContext()"
+                  class="p-0"
+                />
+              </template>
+              <template v-else>
+                <DropdownMenu class="flex items-center py-4 dark:text-white">
+                  <DropdownMenuTrigger as-child class="px-2 py-2">
+                    <Button variant="outline" class="ml-auto" dark:variant="outline-dark">
+                      <ChevronDown class="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuCheckboxItem
+                      v-for="column in table.getAllColumns().filter((column) => column.getCanHide())"
+                      :key="column.id"
+                      class="capitalize"
+                      :checked="column.getIsVisible()"
+                      @update:checked="(value) => column.toggleVisibility(!!value)"
+                    >
+                      {{ column.id }}
+                    </DropdownMenuCheckboxItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </template>
             </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           <template v-if="table.getRowModel().rows?.length">
             <template v-for="row in table.getRowModel().rows" :key="row.id">
-              <TableRow
-                :data-state="row.getIsSelected() ? 'selected' : undefined"
-                class="dark:bg-dark-background"
-              >
+              <TableRow :data-state="row.getIsSelected() ? 'selected' : undefined" class="dark:bg-dark-background">
                 <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
-                  <FlexRender
-                    :render="cell.column.columnDef.cell"
-                    :props="cell.getContext()"
-                  />
+                  <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                 </TableCell>
               </TableRow>
-              <TableRow
-                v-if="row.getIsExpanded()"
-                class="dark:bg-dark-background"
-              >
+              <TableRow v-if="row.getIsExpanded()" class="dark:bg-dark-background">
                 <TableCell :colspan="row.getAllCells().length">
                   {{ JSON.stringify(row.original) }}
                 </TableCell>
@@ -162,9 +136,7 @@ const rowData = ref();
           </template>
           <template v-else>
             <TableRow class="dark:bg-dark-background">
-              <TableCell :colspan="columns.length" class="h-24 text-center">
-                Нет результатов
-              </TableCell>
+              <TableCell :colspan="columns.length" class="h-24 text-center"> Нет результатов </TableCell>
             </TableRow>
           </template>
         </TableBody>
@@ -172,8 +144,8 @@ const rowData = ref();
     </div>
     <div class="flex items-center justify-end py-4 space-x-2 dark:text-white">
       <div class="flex-1 text-sm">
-        {{ table.getFilteredSelectedRowModel().rows.length }} of
-        {{ table.getFilteredRowModel().rows.length }} row(s) selected.
+        {{ table.getFilteredSelectedRowModel().rows.length }} of {{ table.getFilteredRowModel().rows.length }} row(s)
+        selected.
       </div>
       <div class="space-x-2">
         <Button

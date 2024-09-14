@@ -14,16 +14,18 @@
 export const useModalStore = defineStore("modal", {
   state: () => ({
     ModalState: false,
-    selectedFilial: null as IFilial | null, // Добавляем свойство для выбранного филиала
+    selectedFilial: null as IFilial | null,
   }),
   actions: {
     setSelectedFilial(filial: IFilial) {
       this.selectedFilial = filial;
-      this.ModalState = !this.ModalState;
+      this.ModalState = true;
+      console.log(this.ModalState);
     },
     clearSelectedFilial() {
       this.selectedFilial = null;
+      this.ModalState = false;
+      console.log(this.ModalState);
     },
-    // Другие действия
   },
 });

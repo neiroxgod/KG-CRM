@@ -4,7 +4,7 @@ import { ArrowUpDown, ChevronDown } from "lucide-vue-next";
 import DropdownAction from "@/components/widgets/modules/table/dropdown.vue";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import UserRow from "../filials/userRow.vue";
+import UserRow from "../audiences/userRow.vue";
 
 enum status {
   "pending",

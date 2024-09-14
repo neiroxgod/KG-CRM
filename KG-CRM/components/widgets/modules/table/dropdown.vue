@@ -20,6 +20,7 @@ const route = useRoute();
 const userStore = useAuthStore();
 const listStore = useListStore();
 const { toast } = useToast();
+const emit = defineEmits(["deleteItem", "editItem"]);
 
 function getMainRouteSegment(path: string): string | undefined {
   const segments = path.split("/admin")[1]?.split("/");
@@ -27,27 +28,25 @@ function getMainRouteSegment(path: string): string | undefined {
 }
 
 const deleteItem = async function () {
-  let path = getMainRouteSegment(route.fullPath);
-  if (path == "employers") path = "users"; // !!! НЕ ВЫНОСИТЬ В getMainRouteSegment так как используется ниже с employers !!! Нет эндпоинта employers/delete, так как users/employers смежные сущности
-  const fetchApi = useFetchApi(userStore.token);
-  await fetchApi("/" + path + "/delete/" + props.item.id, {
-    method: "DELETE",
-  });
-
-  listStore.removeFromList(props.item.id);
-  toast({
-    description: "Запись удалена!",
-    duration: 3000,
-  });
+  // let path = getMainRouteSegment(route.fullPath);
+  // if (path == "employers") path = "users"; // !!! НЕ ВЫНОСИТЬ В getMainRouteSegment так как используется ниже с employers !!! Нет эндпоинта employers/delete, так как users/employers смежные сущности
+  // const fetchApi = useFetchApi(userStore.token);
+  // await fetchApi("/" + path + "/delete/" + props.item.id, {
+  //   method: "DELETE",
+  // });
+  emit("deleteItem", props.item.id);
+  // listStore.removeFromList(props.item.id);
+  // toast({
+  //   description: "Запись удалена!",
+  //   duration: 3000,
+  // });
 };
 
 const editItem = function () {
   // const ModalStore = useModalStore(); //Убрал эту логику твою с редактированием филиалов, оставь просто по клику на фио редактирование, либо делай редактирование разделом через [id].vue
   // ModalStore.ChangeModalState();
   // console.log(ModalStore.ModalState);
-  navigateTo(
-    "/admin/" + getMainRouteSegment(route.fullPath) + "/" + props.item.id
-  );
+  navigateTo("/admin/" + getMainRouteSegment(route.fullPath) + "/" + props.item.id);
 };
 </script>
 
@@ -62,9 +61,7 @@ const editItem = function () {
     <DropdownMenuContent align="end">
       <DropdownMenuItem @click="editItem()"> Редактировать </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem @click="deleteItem" class="text-red-500">
-        Удалить
-      </DropdownMenuItem>
+      <DropdownMenuItem @click="deleteItem" class="text-red-500"> Удалить </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 </template>

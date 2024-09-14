@@ -38,12 +38,7 @@
             <FormItem class="w-full">
               <FormLabel>Город</FormLabel>
               <FormControl>
-                <Input
-                  v-model="filialsData.city"
-                  type="text"
-                  placeholder="Название города"
-                  v-bind="componentField"
-                />
+                <Input v-model="filialsData.city" type="text" placeholder="Название города" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -53,12 +48,7 @@
             <FormItem class="w-full">
               <FormLabel>Адрес</FormLabel>
               <FormControl>
-                <Input
-                  v-model="filialsData.address"
-                  type="text"
-                  placeholder="Камышина 12"
-                  v-bind="componentField"
-                />
+                <Input v-model="filialsData.address" type="text" placeholder="Камышина 12" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -88,11 +78,7 @@
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem
-                      v-for="timezone in timezones"
-                      :key="timezone.value"
-                      :value="timezone.value"
-                    >
+                    <SelectItem v-for="timezone in timezones" :key="timezone.value" :value="timezone.value">
                       {{ timezone.label }}
                     </SelectItem>
                   </SelectGroup>
@@ -120,12 +106,7 @@
         </form>
         <SheetFooter>
           <SheetClose as-child class="mt-2">
-            <Button
-              @click="updateFilial($event)"
-              type="submit"
-              class="bg-btnPrimary"
-              form="dialogForm"
-            >
+            <Button @click="updateFilial($event)" type="submit" class="bg-btnPrimary" form="dialogForm">
               Сохранить изменения
             </Button>
           </SheetClose>
