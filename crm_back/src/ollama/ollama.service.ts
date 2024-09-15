@@ -63,7 +63,7 @@ export class OllamaService {
     });
   }
 
-  async askOllama(userRequest: string, useContext = false) {
+  async askOllama(userRequest: string, useContext = true) {
     if (useContext) {
       console.log(this.chain);
       if (!this.chain) {

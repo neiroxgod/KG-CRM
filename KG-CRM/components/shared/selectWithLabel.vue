@@ -1,9 +1,17 @@
 <template>
   <div class="mt-2 w-full">
-    <Label>{{ label }}</Label>
+    <Label v-if="label !== '' && typeof label !== undefined">
+      {{ label }}</Label
+    >
     <Select class="w-full" v-model="data">
       <SelectTrigger>
-        <SelectValue :placeholder="label" />
+        <SelectValue
+          :placeholder="
+            label !== '' && typeof label !== undefined
+              ? label
+              : 'Выберите значение'
+          "
+        />
       </SelectTrigger>
       <SelectContent class="w-full">
         <SelectGroup>
@@ -31,8 +39,8 @@
 import { useVModel } from "@vueuse/core";
 
 const props = defineProps<{
-  label: string;
-  modelValue: string | undefined; //input
+  label?: string | "" | undefined;
+  modelValue: string | number | undefined; //input
   items: Array<any>;
 }>();
 

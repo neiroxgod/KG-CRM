@@ -143,3 +143,18 @@ export interface IEmployer {
   username: string;
   [key: string]: string | number;
 }
+
+export interface IBrunch {
+  id?: number;
+  filialId: number;
+  active: boolean;
+  caption: string;
+  capacity: number;
+}
+
+export interface IBrunchWithRelations extends IBrunch {
+  filial: IFilial;
+  // groups: IGroup[];
+  // incomes: ITasksWithRelations[];
+  // expenditures: ITasksWithRelations[];
+}

@@ -9,7 +9,10 @@
         <form class="mt-2" @submit.prevent="onSubmit">
           <FormField v-slot="{ componentField }" name="active">
             <FormItem class="w-full mb-2">
-              <Checkbox v-model="filialsData.active" id="terms" />
+              <Checkbox
+                v-model:model-value="modalStore.selected.active"
+                id="terms"
+              />
               <label
                 for="terms"
                 class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -24,7 +27,7 @@
               <FormLabel>Название филиала</FormLabel>
               <FormControl>
                 <Input
-                  v-model="filialsData.caption"
+                  v-model:model-value="modalStore.selected.caption"
                   type="text"
                   placeholder="Наименование филиала"
                   v-bind="componentField"
@@ -39,7 +42,7 @@
               <FormLabel>Город</FormLabel>
               <FormControl>
                 <Input
-                  v-model="filialsData.city"
+                  v-model:model-value="modalStore.selected.city"
                   type="text"
                   placeholder="Название города"
                   v-bind="componentField"
@@ -54,7 +57,7 @@
               <FormLabel>Адрес</FormLabel>
               <FormControl>
                 <Input
-                  v-model="filialsData.address"
+                  v-model:model-value="modalStore.selected.address"
                   type="text"
                   placeholder="Камышина 12"
                   v-bind="componentField"
@@ -69,7 +72,7 @@
               <FormLabel>Телефон</FormLabel>
               <FormControl>
                 <Input
-                  v-model="filialsData.phone"
+                  v-model:model-value="modalStore.selected.phone"
                   type="phone"
                   placeholder="+7 999 999 99 99"
                   v-bind="componentField"
@@ -82,7 +85,10 @@
           <FormField v-slot="{ componentField }" name="timezone">
             <FormItem class="w-full">
               <FormLabel>Часовой пояс</FormLabel>
-              <Select v-bind="componentField" v-model="filialsData.timezone">
+              <Select
+                v-bind="componentField"
+                v-model:model-value="modalStore.selected.timezone"
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Выберите из списка" />
                 </SelectTrigger>
@@ -106,7 +112,7 @@
               <FormLabel>Ссылка на договор-оферты</FormLabel>
               <FormControl>
                 <Input
-                  v-model="filialsData.contractInfo"
+                  v-model:model-value="modalStore.selected.contractInfo"
                   type="text"
                   placeholder="Добавьте ссылку"
                   v-bind="componentField"
@@ -150,12 +156,11 @@ const CRM_API_INSTANCE = new CRM_API();
 
 const props = defineProps<{
   state: boolean | undefined;
-  filial: IFilial;
 }>();
 
 // Локальное состояние для открытия/закрытия формы
 const isOpen = ref(props.state || false);
-
+console.log(modalStore.selected);
 const formSchema = toTypedSchema(
   z.object({
     caption: z.string().min(2, "Введите название филиала"),
@@ -189,16 +194,17 @@ const timezones = [
   { value: "Asia/Kamchatka", label: "Камчатка (GMT+12)" },
 ];
 
-const filialsData = ref<IFilial>({ ...props.filial });
-
 const updateFilial = async (event: HTMLElementEventMap["click"]) => {
-  if (!filialsData.value.id) {
+  if (!modalStore.selected.id) {
     throw new Error("Филиал не имеет ID.");
   }
 
-  const updatedFilial = await CRM_API_INSTANCE.filials.update(filialsData.value.id, {
-    ...filialsData.value,
-  });
+  const updatedFilial = await CRM_API_INSTANCE.filials.update(
+    modalStore.selected.id,
+    {
+      ...modalStore.selected,
+    }
+  );
 
   toast({
     title: "Успех",
@@ -207,6 +213,6 @@ const updateFilial = async (event: HTMLElementEventMap["click"]) => {
   });
 
   emit("updateList", updatedFilial);
-  modalStore.clearSelectedFilial();
+  modalStore.clearSelected();
 };
 </script>

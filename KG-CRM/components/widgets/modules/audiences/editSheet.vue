@@ -9,7 +9,11 @@
         <form class="mt-2" @submit.prevent="onSubmit">
           <FormField v-slot="{ componentField }" name="active">
             <FormItem class="w-full mb-2">
-              <Checkbox v-model="filialsData.active" id="terms" />
+              <Checkbox
+                id="terms"
+                v-model:checked="modalStore.selected.active"
+              />
+
               <label
                 for="terms"
                 class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -21,82 +25,47 @@
 
           <FormField v-slot="{ componentField }" name="caption">
             <FormItem class="w-full">
-              <FormLabel>Название филиала</FormLabel>
+              <FormLabel>Название аудитории</FormLabel>
               <FormControl>
                 <Input
-                  v-model="filialsData.caption"
                   type="text"
                   placeholder="Наименование филиала"
                   v-bind="componentField"
+                  v-model:model-value="modalStore.selected.caption"
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="city">
+          <FormField v-slot="{ componentField }" name="filialId">
             <FormItem class="w-full">
-              <FormLabel>Город</FormLabel>
+              <FormLabel>Филиал аудитории</FormLabel>
               <FormControl>
-                <Input v-model="filialsData.city" type="text" placeholder="Название города" v-bind="componentField" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-
-          <FormField v-slot="{ componentField }" name="adress">
-            <FormItem class="w-full">
-              <FormLabel>Адрес</FormLabel>
-              <FormControl>
-                <Input v-model="filialsData.address" type="text" placeholder="Камышина 12" v-bind="componentField" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-
-          <FormField v-slot="{ componentField }" name="phone">
-            <FormItem class="w-full">
-              <FormLabel>Телефон</FormLabel>
-              <FormControl>
-                <Input
-                  v-model="filialsData.phone"
-                  type="phone"
-                  placeholder="+7 999 999 99 99"
-                  v-bind="componentField"
+                <SharedSelectWithLabel
+                  :items="filials!"
+                  v-model:model-value="modalStore.selected.filialId"
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="timezone">
+          <FormField v-slot="{ componentField }" name="capacity">
             <FormItem class="w-full">
-              <FormLabel>Часовой пояс</FormLabel>
-              <Select v-bind="componentField" v-model="filialsData.timezone">
-                <SelectTrigger>
-                  <SelectValue placeholder="Выберите из списка" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem v-for="timezone in timezones" :key="timezone.value" :value="timezone.value">
-                      {{ timezone.label }}
-                    </SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </FormItem>
-          </FormField>
-
-          <FormField v-slot="{ componentField }" name="contractInfo">
-            <FormItem class="w-full">
-              <FormLabel>Ссылка на договор-оферты</FormLabel>
+              <FormLabel>Вместимость аудитории</FormLabel>
               <FormControl>
-                <Input
-                  v-model="filialsData.contractInfo"
-                  type="text"
-                  placeholder="Добавьте ссылку"
-                  v-bind="componentField"
-                />
+                <NumberField
+                  v-model:model-value="modalStore.selected.capacity"
+                  :default-value="0"
+                  :min="0"
+                >
+                  <NumberFieldContent>
+                    <NumberFieldDecrement />
+                    <NumberFieldInput />
+                    <NumberFieldIncrement />
+                  </NumberFieldContent>
+                </NumberField>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -106,7 +75,12 @@
         </form>
         <SheetFooter>
           <SheetClose as-child class="mt-2">
-            <Button @click="updateFilial($event)" type="submit" class="bg-btnPrimary" form="dialogForm">
+            <Button
+              @click="updateBrunch($event)"
+              type="submit"
+              class="bg-btnPrimary"
+              form="dialogForm"
+            >
               Сохранить изменения
             </Button>
           </SheetClose>
@@ -122,8 +96,15 @@ import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { useToast } from "~/components/ui/toast";
-import type { IFilial } from "~/composables/interfaces";
+import type { IBrunch, IFilial } from "~/composables/interfaces";
 import { CRM_API } from "~/composables/getList";
+import {
+  NumberField,
+  NumberFieldContent,
+  NumberFieldDecrement,
+  NumberFieldIncrement,
+  NumberFieldInput,
+} from "@/components/ui/number-field";
 
 const listStore = useListStore();
 const modalStore = useModalStore();
@@ -131,63 +112,45 @@ const CRM_API_INSTANCE = new CRM_API();
 
 const props = defineProps<{
   state: boolean | undefined;
-  filial: IFilial;
 }>();
 
+console.log(modalStore.selected);
 // Локальное состояние для открытия/закрытия формы
 const isOpen = ref(props.state || false);
 
 const formSchema = toTypedSchema(
   z.object({
-    caption: z.string().min(2, "Введите название филиала"),
-    city: z.string().min(2, "Введите название города"),
-    address: z.string().min(5, "Введите адрес"),
-    phone: z.string().min(10, "Введите телефон"),
-    timezone: z.string().min(1, "Выберите часовой пояс"),
-    contractInfo: z.string().url("Введите корректную ссылку"),
+    active: z.boolean(),
+    caption: z.string().min(1, "Укажите название аудитории"),
+    filialId: z.number().min(1, "Укажите филиал"),
+    capacity: z.number().min(0, "Укажите вместимость аудитории"),
   })
 );
 
 const emit = defineEmits(["updateList"]);
-
+const filials = ref<IFilial[]>([]);
 const { toast } = useToast();
 const { handleSubmit, errors } = useForm({
   validationSchema: formSchema,
 });
 
-const timezones = [
-  { value: "Europe/Kaliningrad", label: "Калининград (GMT+2)" },
-  { value: "Europe/Moscow", label: "Москва (GMT+3)" },
-  { value: "Europe/Samara", label: "Самара (GMT+4)" },
-  { value: "Asia/Yekaterinburg", label: "Екатеринбург (GMT+5)" },
-  { value: "Asia/Omsk", label: "Омск (GMT+6)" },
-  { value: "Asia/Novosibirsk", label: "Новосибирск (GMT+7)" },
-  { value: "Asia/Krasnoyarsk", label: "Красноярск (GMT+7)" },
-  { value: "Asia/Irkutsk", label: "Иркутск (GMT+8)" },
-  { value: "Asia/Yakutsk", label: "Якутск (GMT+9)" },
-  { value: "Asia/Vladivostok", label: "Владивосток (GMT+10)" },
-  { value: "Asia/Magadan", label: "Магадан (GMT+11)" },
-  { value: "Asia/Kamchatka", label: "Камчатка (GMT+12)" },
-];
+const updateBrunch = async (event: HTMLElementEventMap["click"]) => {
+  const updatedBrunch = await CRM_API_INSTANCE.brunches.update(
+    modalStore.selected
+  );
 
-const filialsData = ref<IFilial>({ ...props.filial });
-
-const updateFilial = async (event: HTMLElementEventMap["click"]) => {
-  if (!filialsData.value.id) {
-    throw new Error("Филиал не имеет ID.");
-  }
-
-  const updatedFilial = await CRM_API_INSTANCE.filials.update(filialsData.value.id, {
-    ...filialsData.value,
-  });
+  listStore.updateList(updatedBrunch);
 
   toast({
     title: "Успех",
-    description: "Филиал успешно обновлен",
+    description: "Аудитория успешно обновлена",
     duration: 5000,
   });
 
-  emit("updateList", updatedFilial);
-  modalStore.clearSelectedFilial();
+  modalStore.clearSelected();
 };
+
+onBeforeMount(async () => {
+  filials.value = await CRM_API_INSTANCE.filials.getList();
+});
 </script>

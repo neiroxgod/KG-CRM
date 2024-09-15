@@ -11,6 +11,8 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 import { Account } from 'src/accounts/accounts.model';
+import { Brunch } from 'src/brunches/brunches.model';
+import { Filial } from 'src/filials/filials.model';
 
 interface GroupCreatinAttrs {
   accountId?: number;
@@ -47,10 +49,18 @@ export class Group extends Model<Group, GroupCreatinAttrs> {
   accountId: number;
 
   @ApiProperty({ example: '1', description: 'Идентификатор филиала' })
+  @ForeignKey(() => Filial)
   @Column({
     type: DataType.INTEGER,
   })
   filialId: number;
+
+  @ApiProperty({ example: '1', description: 'Идентификатор аудитории' })
+  @ForeignKey(() => Brunch)
+  @Column({
+    type: DataType.INTEGER,
+  })
+  brunchId: number;
 
   @ApiProperty({ example: 'Группа 14', description: 'Название группы' })
   @Column({
@@ -150,4 +160,10 @@ export class Group extends Model<Group, GroupCreatinAttrs> {
 
   @BelongsTo(() => Account)
   account: Account;
+
+  @BelongsTo(() => Filial)
+  filial: Filial;
+
+  @BelongsTo(() => Brunch)
+  brunch: Brunch;
 }

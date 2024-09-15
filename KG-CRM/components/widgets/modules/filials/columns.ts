@@ -19,7 +19,8 @@ export const columns: ColumnDef<any>[] = [
     header: ({ table }) =>
       h(Checkbox, {
         checked: table.getIsAllPageRowsSelected(),
-        "onUpdate:checked": (value: boolean) => table.toggleAllPageRowsSelected(!!value),
+        "onUpdate:checked": (value: boolean) =>
+          table.toggleAllPageRowsSelected(!!value),
         ariaLabel: "Select all",
       }),
     cell: ({ row }) =>
@@ -48,7 +49,7 @@ export const columns: ColumnDef<any>[] = [
         UserRow, //Добавлять аватарки сюда
         {
           class: "text-btnPrimary cursor-pointer font-inter font-medium",
-          onClick: () => useModalStore().setSelectedFilial(row.original),
+          onClick: () => useModalStore().setSelected(row.original),
         },
         row.getValue("caption")
       ), //getValue - значение поля из бд
@@ -79,7 +80,8 @@ export const columns: ColumnDef<any>[] = [
         () => ["Адрес", h(ArrowUpDown, { class: "ml-2 h-4 w-4" })]
       );
     },
-    cell: ({ row }) => h("div", { class: "lowercase" }, row.getValue("address")),
+    cell: ({ row }) =>
+      h("div", { class: "lowercase" }, row.getValue("address")),
   },
   {
     accessorKey: "phone",

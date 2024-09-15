@@ -5,6 +5,7 @@ import {
 } from "#imports";
 import { useAuthStore } from "#imports";
 import type {
+  IBrunchWithRelations,
   IFiles,
   ITasksHistory,
   ITasksWithRelations,
@@ -23,6 +24,7 @@ export class CRM_API {
   private tasksInstance = new Tasks(this.fetchApi);
   private filesInstance = new Files(this.fetchApi);
   private rolesInstance = new Roles(this.fetchApi);
+  private brunchesInstance = new Brunches(this.fetchApi);
 
   /**
    * Initializes a new instance of the CRM_API class.
@@ -38,6 +40,7 @@ export class CRM_API {
     this.tasksInstance = new Tasks(this.fetchApi);
     this.filesInstance = new Files(this.fetchApi);
     this.rolesInstance = new Roles(this.fetchApi);
+    this.brunchesInstance = new Brunches(this.fetchApi);
   }
 
   /**
@@ -97,6 +100,10 @@ export class CRM_API {
    */
   get roles(): Roles {
     return this.rolesInstance;
+  }
+
+  get brunches(): Brunches {
+    return this.brunchesInstance;
   }
 }
 
@@ -264,7 +271,7 @@ class Tasks {
     let query = `?page=${page}&limit=${limit}`;
     if (filters) {
       if (filters.responsibleUserId) {
-        query += `&responsible_employer_id=${filters.responsibleUserId}`;
+        query += `&responsibleUserId=${filters.responsibleUserId}`;
       }
 
       if (filters.userId) {
@@ -488,6 +495,48 @@ class Filials {
 
   public async delete(id: number): Promise<void> {
     await this.fetchApi(`/filials/${id}`, {
+      method: "DELETE",
+    });
+  }
+}
+
+class Brunches {
+  constructor(private fetchApi: ReturnType<typeof useFetchApi>) {}
+
+  public async getList(): Promise<IBrunchWithRelations[]> {
+    return (await this.fetchApi("/brunches", {
+      method: "GET",
+    })) as IBrunchWithRelations[];
+  }
+
+  public async getListByFilialId(id: number): Promise<IBrunchWithRelations[]> {
+    return (await this.fetchApi(`/brunches/getByfilial/${id}`, {
+      method: "GET",
+    })) as IBrunchWithRelations[];
+  }
+
+  public async getById(id: number): Promise<IBrunchWithRelations> {
+    return (await this.fetchApi(`/brunches/get/${id}`, {
+      method: "GET",
+    })) as IBrunchWithRelations;
+  }
+
+  public async create(data: IBrunch): Promise<IBrunchWithRelations> {
+    return (await this.fetchApi("/brunches", {
+      method: "POST",
+      body: data,
+    })) as IBrunchWithRelations;
+  }
+
+  public async update(data: IBrunch): Promise<IBrunchWithRelations> {
+    return (await this.fetchApi(`/brunches`, {
+      method: "PATCH",
+      body: data,
+    })) as IBrunchWithRelations;
+  }
+
+  public async delete(id: number): Promise<void> {
+    await this.fetchApi(`/brunches/${id}`, {
       method: "DELETE",
     });
   }

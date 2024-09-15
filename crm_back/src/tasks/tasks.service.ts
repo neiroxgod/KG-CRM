@@ -113,22 +113,25 @@ export class TasksService {
     if (filters.targetUserId) whereClause.targetUserId = filters.targetUserId;
     if (filters.taskType) whereClause.taskType = filters.taskType;
 
+    filters.status = Number(filters.status);
+
     if (filters.status) {
       const now = new Date();
       switch (filters.status) {
-        case 3:
-          whereClause.dueDate = { [Op.lt]: now };
-          break;
         case 1:
-          whereClause.dueDate = { [Op.gt]: now };
+          console.log('here', filters.status);
+          whereClause.timedeadline = { [Op.gt]: now }; //просроченные
           break;
         case 2:
-          whereClause.result = { [Op.ne]: null };
+          whereClause.result = { [Op.ne]: null }; //выполненные
+          break;
+        case 3:
+          whereClause.timedeadline = { [Op.lt]: now }; //текущие
           break;
       }
     }
-    console.log(filters.status);
-    console.log(whereClause);
+
+    console.log(filters.responsibleUserId);
 
     const { count, rows: tasks } = await this.taskRepository.findAndCountAll({
       where: whereClause,
@@ -160,7 +163,7 @@ export class TasksService {
           as: 'taskHistory',
         },
       ],
-      order: [['result', 'DESC']],
+      order: [['timedeadline', 'ASC']],
       limit,
       offset,
     });

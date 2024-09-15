@@ -19,7 +19,8 @@ export const columns: ColumnDef<any>[] = [
     header: ({ table }) =>
       h(Checkbox, {
         checked: table.getIsAllPageRowsSelected(),
-        "onUpdate:checked": (value: boolean) => table.toggleAllPageRowsSelected(!!value),
+        "onUpdate:checked": (value: boolean) =>
+          table.toggleAllPageRowsSelected(!!value),
         ariaLabel: "Select all",
       }),
     cell: ({ row }) =>
@@ -48,13 +49,13 @@ export const columns: ColumnDef<any>[] = [
         UserRow, //Добавлять аватарки сюда
         {
           class: "text-btnPrimary cursor-pointer font-inter font-medium",
-          onClick: () => useModalStore().setSelectedFilial(row.original),
+          onClick: () => useModalStore().setSelected(row.original),
         },
         row.getValue("caption")
       ), //getValue - значение поля из бд
   },
   {
-    accessorKey: "city",
+    accessorKey: "filialCaption",
     header: ({ column }) => {
       return h(
         Button,
@@ -62,13 +63,14 @@ export const columns: ColumnDef<any>[] = [
           variant: "ghost",
           onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
         },
-        () => ["Город", h(ArrowUpDown, { class: "ml-2 h-4 w-4" })]
+        () => ["Название филиала", h(ArrowUpDown, { class: "ml-2 h-4 w-4" })]
       );
     },
-    cell: ({ row }) => h("div", { class: "lowercase" }, row.getValue("city")),
+    cell: ({ row }) =>
+      h("div", { class: "lowercase" }, row.getValue("filialCaption")),
   },
   {
-    accessorKey: "address",
+    accessorKey: "capacity",
     header: ({ column }) => {
       return h(
         Button,
@@ -76,24 +78,20 @@ export const columns: ColumnDef<any>[] = [
           variant: "ghost",
           onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
         },
-        () => ["Адрес", h(ArrowUpDown, { class: "ml-2 h-4 w-4" })]
+        () => [
+          "Вместимость аудитории",
+          h(ArrowUpDown, { class: "ml-2 h-4 w-4" }),
+        ]
       );
     },
-    cell: ({ row }) => h("div", { class: "lowercase" }, row.getValue("address")),
-  },
-  {
-    accessorKey: "phone",
-    header: ({ column }) => {
-      return h(
-        Button,
+    cell: ({ row }) =>
+      h(
+        "div",
         {
-          variant: "ghost",
-          onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+          class: "lowercase font-inter font-medium",
         },
-        () => ["Телефон", h(ArrowUpDown, { class: "ml-2 h-4 w-4" })]
-      );
-    },
-    cell: ({ row }) => h("div", { class: "lowercase" }, row.getValue("phone")),
+        row.getValue("capacity") + " чел."
+      ),
   },
 
   {

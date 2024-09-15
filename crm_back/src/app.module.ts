@@ -24,6 +24,8 @@ import { UsersTasks } from './tasks/users-tasks.model';
 import { TaskTypes } from './tasks/tasks-types.model';
 import { OllamaModule } from './ollama/ollama.module';
 import { TasksHistory } from './tasks/task-history.model';
+import { BrunchesModule } from './brunches/brunches.module';
+import { Brunch } from './brunches/brunches.model';
 
 @Module({
   controllers: [],
@@ -54,6 +56,7 @@ import { TasksHistory } from './tasks/task-history.model';
         UsersTasks,
         TaskTypes,
         TasksHistory,
+        Brunch,
       ],
       autoLoadModels: true,
       synchronize: true,
@@ -70,6 +73,7 @@ import { TasksHistory } from './tasks/task-history.model';
     FilesModule,
     FilialsModule,
     OllamaModule,
+    BrunchesModule,
   ],
 })
 export class AppModule {}

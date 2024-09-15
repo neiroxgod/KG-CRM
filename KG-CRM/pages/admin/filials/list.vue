@@ -1,41 +1,37 @@
 <template>
   <div class="p-5">
     <Tabs default-value="filials">
-      <div class="flex justify-between items-center">
-        <TabsList class="gap-10">
+      <div class="relative justify-between items-center">
+        <TabsList class="gap-5 dark:bg-slate-950 dark:text-white">
           <TabsTrigger value="filials"> Филиалы </TabsTrigger>
           <TabsTrigger value="audiences"> Аудитории </TabsTrigger>
         </TabsList>
-        <TabsContent value="filials" class="flex items-center">
-          <WidgetsModulesFilialsCreateSheet v-on:updateList="createFilials($event)" />
+        <TabsContent value="filials" class="w-full">
+          <div class="flex justify-end absolute right-0 top-0">
+            <WidgetsModulesFilialsCreateSheet
+              v-on:updateList="createFilials($event)"
+            />
+          </div>
+
+          <WidgetsModulesFilialsEditSheet
+            v-if="modalState.selected"
+            :state="modalState.ModalState"
+            :filial="modalState.selected"
+            v-on:updateList="updateFilials($event)"
+          />
+
+          <div class="mt-5 w-full">
+            <WidgetsModulesTableData
+              v-if="filials"
+              :columns="columns"
+              :data="filials"
+            />
+          </div>
         </TabsContent>
         <TabsContent value="audiences">
-          <WidgetsModulesAudiencesCreateSheet v-on:updateList="createFilials($event)" />
+          <WidgetsModulesAudiencesBrunches />
         </TabsContent>
       </div>
-      <TabsContent value="filials">
-        <WidgetsModulesFilialsEditSheet
-          v-if="modalState.selectedFilial"
-          :state="modalState.ModalState"
-          :filial="modalState.selectedFilial"
-          v-on:updateList="updateFilials($event)"
-        />
-
-        <div class="mt-5">
-          <WidgetsModulesTableData v-if="filials" :columns="columns" :data="filials" />
-        </div>
-      </TabsContent>
-      <TabsContent value="audiences">
-        <WidgetsModulesAudiencesEditSheet
-          v-if="modalState.selectedFilial"
-          :state="modalState.ModalState"
-          :filial="modalState.selectedFilial"
-          v-on:updateList="updateFilials($event)"
-        />
-        <div class="mt-5">
-          <WidgetsModulesTableData v-if="filials" :columns="columns" :data="filials" />
-        </div>
-      </TabsContent>
     </Tabs>
   </div>
 </template>
@@ -52,7 +48,9 @@ const filials = ref<IFilial[]>();
 const modalState = useModalStore();
 
 const updateFilials = function (event: IFilial) {
-  filials.value = filials.value?.map((el) => (el.id === event.id ? { ...el, ...event } : el));
+  filials.value = filials.value?.map((el) =>
+    el.id === event.id ? { ...el, ...event } : el
+  );
 };
 
 const createFilials = function (newFilial: IFilial) {

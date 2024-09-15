@@ -50,9 +50,9 @@
                 }).format(new Date(task.timedeadline))
               }}
             </div>
-            <div class="flex align-center items-center gap-2">
+            <div class="flex w-28 align-center items-center gap-2">
               <Icon name="material-symbols:person-outline" class="" />
-              {{ task.user.name }}
+              {{ task.usersTasks[0].user.name }}
             </div>
           </div>
           <Separator
@@ -140,7 +140,7 @@
         <div class="flex gap-2 lg:flex-nowrap flex-wrap">
           <SharedSelectWithLabel
             v-if="usersWithoutRelations"
-            v-model:model-value="task.user.id"
+            v-model:model-value="task.usersTasks[0].user.id"
             :items="usersWithoutRelations"
             label="Ответственный сотрудник"
           />
