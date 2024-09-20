@@ -38,6 +38,7 @@ export class AuthService {
     const candidate = await this.userService.getEmployerByUsername(
       user.username,
     );
+
     if (candidate) {
       throw new HttpException(
         'Пользователь с таким логином уже существует',

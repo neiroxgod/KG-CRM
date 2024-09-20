@@ -15,7 +15,7 @@ import { GetUser } from 'src/decorators/auth.decorator';
 import { Brunch } from './brunches.model';
 import { CreateBrunchDto } from './dto/createBrunch.dto';
 import { UpdateBrunchDto } from './dto/updateBrunch.dto';
-import { User } from '@prisma/client';
+import { User } from 'src/users/users.model';
 
 @ApiTags('Аудитории')
 @Controller('brunches')

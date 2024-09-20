@@ -1,0 +1,85 @@
+services:
+  api-gateway:
+    build: ./crm_back/api-gateway
+    ports:
+      - 7000:7000
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    restart: always
+    depends_on:
+      - crm
+      - app
+      - common
+      - db
+    networks:
+      - app-network
+    volumes:
+      - ./crm_back/api-gateway/src:/app/src
+
+  common:
+    build: ./crm_back/microservices/common
+    ports:
+      - 7001:7001
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - app-network
+    volumes:
+      - ./crm_back/microservices/common/src:/app/src
+
+  crm:
+    build: ./crm_back/microservices/crm
+    ports:
+      - 7002:7002
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - app-network
+    volumes:
+      - ./crm_back/microservices/crm/src:/app/src
+
+  app:
+    build: ./crm_back/microservices/app
+    ports:
+      - 7003:7003
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - app-network
+    volumes:
+      - ./crm_back/microservices/app/src:/app/src
+
+  frontend:
+    build: ./KG-CRM
+    ports:
+      - "3000:3000"
+    restart: always
+    depends_on:
+      - api-gateway
+    networks:
+      - app-network
+    volumes:
+      - ./KG-CRM:/app
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: postgres
+    restart: unless-stopped
+    networks:
+      - app-network
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+networks:
+  app-network:
+
+volumes:
+  db-data:

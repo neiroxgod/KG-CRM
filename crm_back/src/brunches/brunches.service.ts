@@ -20,8 +20,8 @@ export class BrunchesService {
         },
       ],
     });
-
-    brunch.filialCaption = brunch.filial.caption;
+    console.log(brunch);
+    // brunch.filialCaption = brunch.filial.caption;
 
     return brunch;
   };
